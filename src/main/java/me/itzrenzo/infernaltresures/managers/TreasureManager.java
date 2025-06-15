@@ -41,28 +41,44 @@ public class TreasureManager {
     }
     
     public boolean trySpawnTreasure(Block minedBlock, Player player) {
-        // Check if treasure should spawn based on config chances
-        int chancePercent = plugin.getConfigManager().getTreasureSpawnChance();
+        // Use BlockManager to determine if treasure should spawn and what rarity
+        Rarity rarity = InfernalTresures.getInstance().getBlockManager().shouldSpawnTreasure(minedBlock.getType());
         
-        if (ThreadLocalRandom.current().nextInt(100) >= chancePercent) {
-            return false;
+        if (rarity == null) {
+            // Check if we should fall back to global spawn chance system
+            if (!InfernalTresures.getInstance().getBlockManager().isUsingBlockSpecificChances()) {
+                // Fall back to global system
+                int chancePercent = plugin.getConfigManager().getTreasureSpawnChance();
+                
+                if (ThreadLocalRandom.current().nextInt(100) >= chancePercent) {
+                    return false;
+                }
+                
+                // Use global rarity distribution
+                rarity = getRandomRarity();
+            } else {
+                // Block-specific system determined no treasure should spawn
+                return false;
+            }
         }
+        
+        // Make final variable for lambda expression
+        final Rarity finalRarity = rarity;
         
         // Use the exact location of the broken block, but delay the spawning
         Location spawnLocation = minedBlock.getLocation().add(0.5, 0, 0.5); // Center the barrel in the block
         
-        // Determine rarity and biome
-        Rarity rarity = getRandomRarity();
+        // Get biome
         Biome biome = minedBlock.getBiome();
         
         // Delay the treasure creation to ensure the block breaking event completes first
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            Treasure treasure = new Treasure(spawnLocation, rarity, biome);
+            Treasure treasure = new Treasure(spawnLocation, finalRarity, biome);
             activeTreasures.put(treasure.getId(), treasure);
         }, 1L); // 1 tick delay
         
         // Announce to player immediately
-        Component message = InfernalTresures.getInstance().getMessageManager().getTreasureFoundMessage(rarity, rarity.getDespawnTime());
+        Component message = InfernalTresures.getInstance().getMessageManager().getTreasureFoundMessage(finalRarity, finalRarity.getDespawnTime());
         
         player.sendMessage(message);
         
@@ -71,6 +87,10 @@ public class TreasureManager {
     
     public void removeTreasure(Treasure treasure) {
         activeTreasures.remove(treasure.getId());
+    }
+    
+    public void addTreasure(Treasure treasure) {
+        activeTreasures.put(treasure.getId(), treasure);
     }
     
     public void cleanupAllTreasures() {

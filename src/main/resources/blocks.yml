@@ -1,0 +1,397 @@
+# ========================================
+#         InfernalTreasures Block Config
+# ========================================
+# Configure treasure spawn chances for specific blocks
+# Each block can have different spawn rates for each rarity tier
+
+# ========================================
+#          BLOCK CONFIGURATIONS
+# ========================================
+blocks:
+  # Amethyst blocks
+  amethyst_block:
+    display-name: "Amethyst Block"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  # Stone variants
+  andesite:
+    display-name: "Andesite"
+    spawn-chances:
+      common: 0.8      # 0.8%
+      rare: 0.375      # 0.375%
+      epic: 0.0256     # 0.0256%
+      legendary: 0.0128 # 0.0128%
+      mythic: 0.0032   # 0.0032%
+
+  basalt:
+    display-name: "Basalt"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  blackstone:
+    display-name: "Blackstone"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  calcite:
+    display-name: "Calcite"
+    spawn-chances:
+      common: 0.75     # 0.75%
+      rare: 0.1875     # 0.1875%
+      epic: 0.024      # 0.024%
+      legendary: 0.012 # 0.012%
+      mythic: 0.003    # 0.003%
+
+  deepslate:
+    display-name: "Deepslate"
+    spawn-chances:
+      common: 1.4      # 1.4%
+      rare: 0.35       # 0.35%
+      epic: 0.0448     # 0.0448%
+      legendary: 0.0224 # 0.0224%
+      mythic: 0.0056   # 0.0056%
+
+  diorite:
+    display-name: "Diorite"
+    spawn-chances:
+      common: 1.5      # 1.5%
+      rare: 0.2        # 0.2%
+      epic: 0.0256     # 0.0256%
+      legendary: 0.0128 # 0.0128%
+      mythic: 0.0032   # 0.0032%
+
+  dripstone_block:
+    display-name: "Dripstone Block"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  end_stone:
+    display-name: "End Stone"
+    spawn-chances:
+      common: 1.4      # 1.4%
+      rare: 0.35       # 0.35%
+      epic: 0.0448     # 0.0448%
+      legendary: 0.0224 # 0.0224%
+      mythic: 0.0056   # 0.0056%
+
+  granite:
+    display-name: "Granite"
+    spawn-chances:
+      common: 0.8      # 0.8%
+      rare: 0.2        # 0.2%
+      epic: 0.048      # 0.048%
+      legendary: 0.0128 # 0.0128%
+      mythic: 0.0032   # 0.0032%
+
+  magma_block:
+    display-name: "Magma Block"
+    spawn-chances:
+      common: 0.8      # 0.8%
+      rare: 0.375      # 0.375%
+      epic: 0.0256     # 0.0256%
+      legendary: 0.0128 # 0.0128%
+      mythic: 0.0032   # 0.0032%
+
+  netherrack:
+    display-name: "Netherrack"
+    spawn-chances:
+      common: 0.75     # 0.75%
+      rare: 0.1875     # 0.1875%
+      epic: 0.024      # 0.024%
+      legendary: 0.012 # 0.012%
+      mythic: 0.003    # 0.003%
+
+  sandstone:
+    display-name: "Sandstone"
+    spawn-chances:
+      common: 0.75     # 0.75%
+      rare: 0.1875     # 0.1875%
+      epic: 0.024      # 0.024%
+      legendary: 0.012 # 0.012%
+      mythic: 0.003    # 0.003%
+
+  smooth_basalt:
+    display-name: "Smooth Basalt"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  stone:
+    display-name: "Stone"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  tuff:
+    display-name: "Tuff"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  # Ore blocks
+  coal_ore:
+    display-name: "Coal Ore"
+    spawn-chances:
+      common: 1.4      # 1.4%
+      rare: 0.35       # 0.35%
+      epic: 0.0448     # 0.0448%
+      legendary: 0.0224 # 0.0224%
+      mythic: 0.0056   # 0.0056%
+
+  copper_ore:
+    display-name: "Copper Ore"
+    spawn-chances:
+      common: 1.4      # 1.4%
+      rare: 0.35       # 0.35%
+      epic: 0.0448     # 0.0448%
+      legendary: 0.0224 # 0.0224%
+      mythic: 0.0056   # 0.0056%
+
+  diamond_ore:
+    display-name: "Diamond Ore"
+    spawn-chances:
+      common: 2.0      # 2%
+      rare: 0.5        # 0.5%
+      epic: 0.064      # 0.064%
+      legendary: 0.032 # 0.032%
+      mythic: 0.008    # 0.008%
+
+  emerald_ore:
+    display-name: "Emerald Ore"
+    spawn-chances:
+      common: 2.0      # 2%
+      rare: 0.5        # 0.5%
+      epic: 0.064      # 0.064%
+      legendary: 0.032 # 0.032%
+      mythic: 0.008    # 0.008%
+
+  gold_ore:
+    display-name: "Gold Ore"
+    spawn-chances:
+      common: 1.4      # 1.4%
+      rare: 0.35       # 0.35%
+      epic: 0.0448     # 0.0448%
+      legendary: 0.0224 # 0.0224%
+      mythic: 0.0056   # 0.0056%
+
+  iron_ore:
+    display-name: "Iron Ore"
+    spawn-chances:
+      common: 1.4      # 1.4%
+      rare: 0.35       # 0.35%
+      epic: 0.0448     # 0.0448%
+      legendary: 0.0224 # 0.0224%
+      mythic: 0.0056   # 0.0056%
+
+  lapis_ore:
+    display-name: "Lapis Ore"
+    spawn-chances:
+      common: 1.4      # 1.4%
+      rare: 0.35       # 0.35%
+      epic: 0.0448     # 0.0448%
+      legendary: 0.0224 # 0.0224%
+      mythic: 0.0056   # 0.0056%
+
+  redstone_ore:
+    display-name: "Redstone Ore"
+    spawn-chances:
+      common: 1.4      # 1.4%
+      rare: 0.35       # 0.35%
+      epic: 0.0448     # 0.0448%
+      legendary: 0.0224 # 0.0224%
+      mythic: 0.0056   # 0.0056%
+
+  # Deepslate ores
+  deepslate_coal_ore:
+    display-name: "Deepslate Coal Ore"
+    spawn-chances:
+      common: 1.6      # 1.6%
+      rare: 0.4        # 0.4%
+      epic: 0.0512     # 0.0512%
+      legendary: 0.0256 # 0.0256%
+      mythic: 0.0064   # 0.0064%
+
+  deepslate_copper_ore:
+    display-name: "Deepslate Copper Ore"
+    spawn-chances:
+      common: 1.6      # 1.6%
+      rare: 0.4        # 0.4%
+      epic: 0.0512     # 0.0512%
+      legendary: 0.0256 # 0.0256%
+      mythic: 0.0064   # 0.0064%
+
+  deepslate_diamond_ore:
+    display-name: "Deepslate Diamond Ore"
+    spawn-chances:
+      common: 2.0      # 2%
+      rare: 0.5        # 0.5%
+      epic: 0.064      # 0.064%
+      legendary: 0.032 # 0.032%
+      mythic: 0.008    # 0.008%
+
+  deepslate_emerald_ore:
+    display-name: "Deepslate Emerald Ore"
+    spawn-chances:
+      common: 2.0      # 2%
+      rare: 0.5        # 0.5%
+      epic: 0.064      # 0.064%
+      legendary: 0.032 # 0.032%
+      mythic: 0.008    # 0.008%
+
+  deepslate_gold_ore:
+    display-name: "Deepslate Gold Ore"
+    spawn-chances:
+      common: 1.6      # 1.6%
+      rare: 0.4        # 0.4%
+      epic: 0.0512     # 0.0512%
+      legendary: 0.0256 # 0.0256%
+      mythic: 0.0064   # 0.0064%
+
+  deepslate_iron_ore:
+    display-name: "Deepslate Iron Ore"
+    spawn-chances:
+      common: 1.6      # 1.6%
+      rare: 0.4        # 0.4%
+      epic: 0.0512     # 0.0512%
+      legendary: 0.0256 # 0.0256%
+      mythic: 0.0064   # 0.0064%
+
+  deepslate_lapis_ore:
+    display-name: "Deepslate Lapis Ore"
+    spawn-chances:
+      common: 1.6      # 1.6%
+      rare: 0.4        # 0.4%
+      epic: 0.0512     # 0.0512%
+      legendary: 0.0256 # 0.0256%
+      mythic: 0.0064   # 0.0064%
+
+  deepslate_redstone_ore:
+    display-name: "Deepslate Redstone Ore"
+    spawn-chances:
+      common: 1.6      # 1.6%
+      rare: 0.4        # 0.4%
+      epic: 0.0512     # 0.0512%
+      legendary: 0.0256 # 0.0256%
+      mythic: 0.0064   # 0.0064%
+
+  # Nether ores
+  nether_gold_ore:
+    display-name: "Nether Gold Ore"
+    spawn-chances:
+      common: 1.4      # 1.4%
+      rare: 0.35       # 0.35%
+      epic: 0.0448     # 0.0448%
+      legendary: 0.0224 # 0.0224%
+      mythic: 0.0056   # 0.0056%
+
+  nether_quartz_ore:
+    display-name: "Nether Quartz Ore"
+    spawn-chances:
+      common: 1.4      # 1.4%
+      rare: 0.35       # 0.35%
+      epic: 0.0448     # 0.0448%
+      legendary: 0.0224 # 0.0224%
+      mythic: 0.0056   # 0.0056%
+
+  # Terracotta blocks
+  brown_terracotta:
+    display-name: "Brown Terracotta"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  light_gray_terracotta:
+    display-name: "Light Gray Terracotta"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  orange_terracotta:
+    display-name: "Orange Terracotta"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  red_terracotta:
+    display-name: "Red Terracotta"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  terracotta:
+    display-name: "Terracotta"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  white_terracotta:
+    display-name: "White Terracotta"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+  yellow_terracotta:
+    display-name: "Yellow Terracotta"
+    spawn-chances:
+      common: 1.0      # 1%
+      rare: 0.25       # 0.25%
+      epic: 0.032      # 0.032%
+      legendary: 0.016 # 0.016%
+      mythic: 0.004    # 0.004%
+
+# ========================================
+#          GLOBAL SETTINGS
+# ========================================
+settings:
+  # Use block-specific chances (true) or global config chance (false)
+  use-block-specific-chances: true
+  
+  # Fallback spawn chance if block is not configured (percentage)
+  fallback-chance: 1.0
+  
+  # Debug logging for block spawn chances
+  debug-block-chances: false

@@ -2,6 +2,7 @@ package me.itzrenzo.infernaltresures;
 
 import me.itzrenzo.infernaltresures.commands.TreasureCommand;
 import me.itzrenzo.infernaltresures.listeners.MiningListener;
+import me.itzrenzo.infernaltresures.managers.BlockManager;
 import me.itzrenzo.infernaltresures.managers.ConfigManager;
 import me.itzrenzo.infernaltresures.managers.LootManager;
 import me.itzrenzo.infernaltresures.managers.MessageManager;
@@ -13,6 +14,7 @@ public final class InfernalTresures extends JavaPlugin {
     private static InfernalTresures instance;
     private ConfigManager configManager;
     private MessageManager messageManager;
+    private BlockManager blockManager;
     private TreasureManager treasureManager;
     private LootManager lootManager;
 
@@ -27,6 +29,9 @@ public final class InfernalTresures extends JavaPlugin {
         
         messageManager = new MessageManager(this);
         messageManager.loadMessages();
+        
+        blockManager = new BlockManager(this);
+        blockManager.loadBlocks();
         
         lootManager = new LootManager(this);
         treasureManager = new TreasureManager(this);
@@ -69,5 +74,9 @@ public final class InfernalTresures extends JavaPlugin {
     
     public MessageManager getMessageManager() {
         return messageManager;
+    }
+    
+    public BlockManager getBlockManager() {
+        return blockManager;
     }
 }
