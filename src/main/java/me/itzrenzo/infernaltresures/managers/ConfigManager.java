@@ -103,12 +103,16 @@ public class ConfigManager {
         plugin.reloadConfig();
         config = plugin.getConfig();
         
-        // Also reload loot tables
+        // Also reload loot tables and messages
         if (plugin.getLootManager() != null) {
             plugin.getLootManager().reload();
         }
         
-        plugin.getLogger().info("Configuration and loot tables reloaded.");
+        if (plugin.getMessageManager() != null) {
+            plugin.getMessageManager().reload();
+        }
+        
+        plugin.getLogger().info("Configuration, loot tables, and messages reloaded.");
     }
     
     public int getTreasureSpawnChance() {

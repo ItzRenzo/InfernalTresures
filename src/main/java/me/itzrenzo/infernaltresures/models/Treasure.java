@@ -75,9 +75,7 @@ public class Treasure {
             
             // Set custom name for the barrel
             if (barrelBlock.getState() instanceof org.bukkit.block.Barrel barrel) {
-                Component name = Component.text(rarity.getDisplayName() + " " + formatBiomeName(biome) + " Treasure")
-                    .color(rarity.getColor())
-                    .decoration(TextDecoration.BOLD, true);
+                Component name = InfernalTresures.getInstance().getMessageManager().getTreasureNameComponent(rarity, biome);
                 barrel.customName(name);
                 // Don't call update() here, just set the name
             }

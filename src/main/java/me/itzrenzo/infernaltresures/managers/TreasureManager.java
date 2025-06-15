@@ -62,11 +62,7 @@ public class TreasureManager {
         }, 1L); // 1 tick delay
         
         // Announce to player immediately
-        Component message = Component.text("You found a ")
-            .append(Component.text(rarity.getDisplayName())
-                .color(rarity.getColor())
-                .decoration(TextDecoration.BOLD, true))
-            .append(Component.text(" treasure! It will despawn in " + rarity.getDespawnTime() + " seconds."));
+        Component message = InfernalTresures.getInstance().getMessageManager().getTreasureFoundMessage(rarity, rarity.getDespawnTime());
         
         player.sendMessage(message);
         

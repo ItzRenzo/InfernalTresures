@@ -1,0 +1,94 @@
+# ========================================
+#         InfernalTreasures Messages
+# ========================================
+# All configurable messages and text for the plugin
+
+# ========================================
+#          TREASURE NAMES
+# ========================================
+treasure-names:
+  # Treasure barrel/chest names by rarity
+  # Available placeholders: {rarity}, {biome}, {rarity_color}
+  common: "&f{rarity} {biome} Treasure"
+  rare: "&9{rarity} {biome} Treasure"
+  epic: "&5{rarity} {biome} Treasure"
+  legendary: "&6{rarity} {biome} Treasure"
+  mythic: "&c{rarity} {biome} Treasure"
+  
+  # Alternative format (you can choose which style you prefer)
+  # common: "&f✦ {biome} Cache ✦"
+  # rare: "&9✧ {biome} Hoard ✧"
+  # epic: "&5✦ {biome} Reliquary ✦"
+  # legendary: "&6✧ {biome} Vault ✧"
+  # mythic: "&c✦ Legendary {biome} Treasure ✦"
+
+# ========================================
+#          PLAYER MESSAGES
+# ========================================
+messages:
+  # When player finds a treasure
+  treasure-found: "&6✦ &7You found a &{rarity_color}{rarity} &7treasure! It will despawn in &e{despawn_time} &7seconds."
+  
+  # Server-wide announcements (if enabled in config)
+  treasure-announcement: "&6✦ &e{player} &7found a &{rarity_color}{rarity} &7treasure in {biome}!"
+  
+  # Command messages
+  no-permission: "&cYou don't have permission to use this command!"
+  config-reloaded: "&aConfiguration and messages reloaded successfully!"
+  treasure-spawned: "&aSpawned a &{rarity_color}{rarity} &atreasure at your location."
+  biome-info: "&eCurrent biome: &f{biome}"
+  
+  # Plugin info messages
+  plugin-info-header: "&6=== InfernalTreasures Info ==="
+  active-treasures: "&eActive treasures: &f{count}"
+  spawn-chance: "&eSpawn chance: &f{chance}%"
+  biomes-loaded: "&aBiome configurations loaded: &f{count} &abiomes"
+  
+  # Error messages
+  only-players: "&cOnly players can use this command."
+  invalid-rarity: "&cInvalid rarity. Valid options are: &f{rarities}"
+  unknown-command: "&cUnknown command. Use &f/treasure help &cfor a list of commands."
+  biome-not-found: "&cBiome configuration not found for &f{biome}&c, using default loot"
+  
+  # Help messages
+  help-header: "&6=== InfernalTreasures Commands ==="
+  help-spawn: "&e/treasure spawn [rarity] &f- Spawn a treasure at your location"
+  help-reload: "&e/treasure reload &f- Reload the plugin configuration"
+  help-info: "&e/treasure info &f- Show plugin information"
+  help-help: "&e/treasure help &f- Show this help message"
+
+# ========================================
+#          BIOME DISPLAY NAMES
+# ========================================
+biome-names:
+  # Custom display names for biomes (optional)
+  # If not specified, the plugin will format the biome name automatically
+  plains: "Plains"
+  forest: "Forest"
+  desert: "Desert"
+  ocean: "Ocean"
+  taiga: "Taiga"
+  jungle: "Jungle"
+  swamp: "Swamp"
+  mountains: "Mountains"
+  nether_wastes: "Nether Wastes"
+  the_end: "The End"
+  # Add more biomes as needed
+
+# ========================================
+#          FORMATTING
+# ========================================
+formatting:
+  # Color codes for rarities (used in {rarity_color} placeholder)
+  rarity-colors:
+    common: "&f"      # White
+    rare: "&9"        # Blue
+    epic: "&5"        # Purple
+    legendary: "&6"   # Gold
+    mythic: "&c"      # Red
+  
+  # Symbols and decorations
+  symbols:
+    treasure: "✦"
+    rare-treasure: "✧"
+    separator: "•"

@@ -4,6 +4,7 @@ import me.itzrenzo.infernaltresures.commands.TreasureCommand;
 import me.itzrenzo.infernaltresures.listeners.MiningListener;
 import me.itzrenzo.infernaltresures.managers.ConfigManager;
 import me.itzrenzo.infernaltresures.managers.LootManager;
+import me.itzrenzo.infernaltresures.managers.MessageManager;
 import me.itzrenzo.infernaltresures.managers.TreasureManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,6 +12,7 @@ public final class InfernalTresures extends JavaPlugin {
     
     private static InfernalTresures instance;
     private ConfigManager configManager;
+    private MessageManager messageManager;
     private TreasureManager treasureManager;
     private LootManager lootManager;
 
@@ -22,6 +24,9 @@ public final class InfernalTresures extends JavaPlugin {
         // Initialize managers
         configManager = new ConfigManager(this);
         configManager.loadConfig();
+        
+        messageManager = new MessageManager(this);
+        messageManager.loadMessages();
         
         lootManager = new LootManager(this);
         treasureManager = new TreasureManager(this);
@@ -60,5 +65,9 @@ public final class InfernalTresures extends JavaPlugin {
     
     public LootManager getLootManager() {
         return lootManager;
+    }
+    
+    public MessageManager getMessageManager() {
+        return messageManager;
     }
 }
