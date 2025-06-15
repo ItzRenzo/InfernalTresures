@@ -8,6 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -21,6 +23,7 @@ public class Treasure {
     private final Biome biome;
     private final BukkitTask despawnTask;
     private boolean claimed = false;
+    private ArmorStand hologram;
     
     public Treasure(Location location, Rarity rarity, Biome biome) {
         this.id = UUID.randomUUID();
@@ -44,6 +47,11 @@ public class Treasure {
         Block block = location.getBlock();
         block.setType(Material.BARREL);
         
+        // Create hologram above the barrel (only if enabled for this rarity)
+        if (InfernalTresures.getInstance().getConfigManager().isHologramEnabledForRarity(rarity)) {
+            createHologram();
+        }
+        
         // Generate loot using the LootManager
         List<ItemStack> loot = InfernalTresures.getInstance().getLootManager().generateLoot(biome, rarity);
         
@@ -57,6 +65,33 @@ public class Treasure {
         Bukkit.getScheduler().runTaskLater(InfernalTresures.getInstance(), () -> {
             fillBarrelDirectly(location.getBlock(), loot);
         }, 3L);
+    }
+    
+    private void createHologram() {
+        // Get configurable hologram height
+        double hologramHeight = InfernalTresures.getInstance().getConfigManager().getHologramHeight();
+        
+        // Create armor stand at configurable height above the barrel
+        Location hologramLocation = location.clone().add(0, hologramHeight, 0);
+        hologram = (ArmorStand) location.getWorld().spawnEntity(hologramLocation, EntityType.ARMOR_STAND);
+        
+        // Configure the armor stand as a hologram
+        hologram.setVisible(false);           // Make armor stand invisible
+        hologram.setGravity(false);          // No gravity
+        hologram.setMarker(true);            // Make it a marker (no collision)
+        hologram.setSmall(true);             // Make it small
+        hologram.setBasePlate(false);        // Remove base plate
+        hologram.setArms(false);             // Remove arms
+        hologram.setCanPickupItems(false);   // Can't pickup items
+        hologram.setRemoveWhenFarAway(false); // Don't despawn when players leave
+        hologram.setInvulnerable(true);      // Make invulnerable
+        
+        // Set the hologram text using MessageManager
+        Component hologramText = InfernalTresures.getInstance().getMessageManager().getHologramText(rarity, biome);
+        hologram.customName(hologramText);
+        hologram.setCustomNameVisible(true);
+        
+        InfernalTresures.getInstance().getLogger().info("Created hologram for " + rarity + " treasure");
     }
     
     private void fillBarrelDirectly(Block barrelBlock, List<ItemStack> loot) {
@@ -73,7 +108,7 @@ public class Treasure {
             
             InfernalTresures.getInstance().getLogger().info("Got barrel inventory directly: " + inventory.getClass().getSimpleName());
             
-            // Set custom name for the barrel
+            // Set custom name for the barrel using MessageManager
             if (barrelBlock.getState() instanceof org.bukkit.block.Barrel barrel) {
                 Component name = InfernalTresures.getInstance().getMessageManager().getTreasureNameComponent(rarity, biome);
                 barrel.customName(name);
@@ -152,6 +187,11 @@ public class Treasure {
         if (!claimed && location.getBlock().getType() == Material.BARREL) {
             location.getBlock().setType(Material.AIR);
             InfernalTresures.getInstance().getTreasureManager().removeTreasure(this);
+        }
+        
+        // Remove hologram
+        if (hologram != null && !hologram.isDead()) {
+            hologram.remove();
         }
         
         if (despawnTask != null && !despawnTask.isCancelled()) {

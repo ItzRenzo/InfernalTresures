@@ -126,4 +126,17 @@ public class ConfigManager {
     public String[] getEnabledBlocks() {
         return config.getStringList("treasure.enabled-blocks").toArray(new String[0]);
     }
+    
+    // Hologram configuration methods
+    public boolean isHologramEnabledForRarity(me.itzrenzo.infernaltresures.models.Rarity rarity) {
+        return config.getBoolean("holograms.enabled-rarities." + rarity.name().toLowerCase(), true);
+    }
+    
+    public double getHologramHeight() {
+        return config.getDouble("holograms.height", 1.5);
+    }
+    
+    public int getHologramVisibleDistance() {
+        return config.getInt("holograms.visible-distance", 16);
+    }
 }

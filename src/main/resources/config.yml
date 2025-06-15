@@ -22,6 +22,23 @@ treasure:
   hourly-limit: 50
 
 # ========================================
+#          HOLOGRAM SETTINGS
+# ========================================
+holograms:
+  # Enable or disable holograms for specific treasure rarities
+  # Set to true to show hologram, false to hide it
+  enabled-rarities:
+    common: false     # No hologram for common treasures
+    rare: false       # No hologram for rare treasures  
+    epic: false       # No hologram for epic treasures
+    legendary: true   # Show hologram for legendary treasures
+    mythic: true      # Show hologram for mythic treasures
+  
+  # Global hologram settings
+  height: 1.5         # Height above barrel (in blocks)
+  visible-distance: 16 # Distance players can see holograms (in blocks)
+
+# ========================================
 #           MINING SETTINGS
 # ========================================
 mining:

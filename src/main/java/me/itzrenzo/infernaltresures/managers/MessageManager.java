@@ -82,6 +82,20 @@ public class MessageManager {
         return LegacyComponentSerializer.legacyAmpersand().deserialize(name);
     }
     
+    public Component getHologramText(Rarity rarity, Biome biome) {
+        if (messagesConfig == null) {
+            return LegacyComponentSerializer.legacyAmpersand().deserialize(
+                "&{rarity_color}{rarity} {biome} Treasure".replace("{rarity_color}", getRarityColor(rarity))
+                    .replace("{rarity}", rarity.getDisplayName())
+                    .replace("{biome}", formatBiomeName(biome))
+            );
+        }
+        
+        String template = messagesConfig.getString("hologram.text", "&{rarity_color}{rarity} {biome} Treasure");
+        String hologramText = replacePlaceholders(template, rarity, biome, null, null);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(hologramText);
+    }
+    
     public String getFormattedMessage(String messagePath, Rarity rarity, Biome biome, Player player, Integer despawnTime) {
         String template = getMessage(messagePath);
         return replacePlaceholders(template, rarity, biome, player, despawnTime);

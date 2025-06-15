@@ -23,14 +23,27 @@ treasure-names:
   # mythic: "&c✦ Legendary {biome} Treasure ✦"
 
 # ========================================
+#          HOLOGRAM SETTINGS
+# ========================================
+hologram:
+  # Text displayed above treasure barrels
+  # Available placeholders: {rarity}, {biome}, {rarity_color}
+  text: "{rarity_color}&l{rarity} {biome} Treasure"
+  
+  # Alternative hologram formats:
+  # text: "&{rarity_color}✦ &l{rarity} &{rarity_color}✦"
+  # text: "&{rarity_color}&l[ {rarity} {biome} ]"
+  # text: "&{rarity_color}▬▬▬ &l{rarity} &{rarity_color}▬▬▬"
+
+# ========================================
 #          PLAYER MESSAGES
 # ========================================
 messages:
   # When player finds a treasure
-  treasure-found: "&6✦ &7You found a &{rarity_color}{rarity} &7treasure! It will despawn in &e{despawn_time} &7seconds."
+  treasure-found: "&6✦ &7You found a {rarity_color}{rarity} &7treasure! It will despawn in &e{despawn_time} &7seconds."
   
   # Server-wide announcements (if enabled in config)
-  treasure-announcement: "&6✦ &e{player} &7found a &{rarity_color}{rarity} &7treasure in {biome}!"
+  treasure-announcement: "&6✦ &e{player} &7found a {rarity_color}{rarity} &7treasure in {biome}!"
   
   # Command messages
   no-permission: "&cYou don't have permission to use this command!"
