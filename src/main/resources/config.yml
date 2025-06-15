@@ -15,8 +15,13 @@ treasure:
     sound: true
     particles: true
     
-  # Announce rare treasure finds to the server (RARE and above)
-  announce-finds: true
+  # Announce treasure finds to the server (per rarity)
+  announce-finds:
+    common: false      # Don't announce common treasures
+    rare: false        # Don't announce rare treasures
+    epic: false        # Don't announce epic treasures
+    legendary: true    # Announce legendary treasures
+    mythic: true       # Announce mythic treasures
   
   # Maximum treasures a player can find per hour (0 = unlimited)
   hourly-limit: 50

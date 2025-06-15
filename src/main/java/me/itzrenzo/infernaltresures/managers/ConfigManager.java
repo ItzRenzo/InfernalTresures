@@ -96,6 +96,28 @@ public class ConfigManager {
             config.set("debug.enabled", false);
         }
         
+        // Set treasure announcement defaults (per rarity)
+        if (!config.isSet("treasure.announce-finds.common")) {
+            config.set("treasure.announce-finds.common", false);
+        }
+        if (!config.isSet("treasure.announce-finds.rare")) {
+            config.set("treasure.announce-finds.rare", false);
+        }
+        if (!config.isSet("treasure.announce-finds.epic")) {
+            config.set("treasure.announce-finds.epic", false);
+        }
+        if (!config.isSet("treasure.announce-finds.legendary")) {
+            config.set("treasure.announce-finds.legendary", true);
+        }
+        if (!config.isSet("treasure.announce-finds.mythic")) {
+            config.set("treasure.announce-finds.mythic", true);
+        }
+        
+        // Remove old single announce-finds setting if it exists
+        if (config.isSet("treasure.announce-finds") && !config.isConfigurationSection("treasure.announce-finds")) {
+            config.set("treasure.announce-finds", null);
+        }
+        
         if (!config.isSet("debug.categories.loot-generation")) {
             config.set("debug.categories.loot-generation", true);
         }
@@ -207,5 +229,21 @@ public class ConfigManager {
     
     public boolean isBiomeDetectionDebugEnabled() {
         return isDebugCategoryEnabled("biome-detection");
+    }
+    
+    // Treasure announcement configuration methods
+    public boolean isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity rarity) {
+        return config.getBoolean("treasure.announce-finds." + rarity.name().toLowerCase(), 
+            rarity == me.itzrenzo.infernaltresures.models.Rarity.LEGENDARY || 
+            rarity == me.itzrenzo.infernaltresures.models.Rarity.MYTHIC);
+    }
+    
+    // Backward compatibility - check if any rarity has announcements enabled
+    public boolean isTreasureAnnouncementEnabled() {
+        return isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity.COMMON) ||
+               isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity.RARE) ||
+               isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity.EPIC) ||
+               isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity.LEGENDARY) ||
+               isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity.MYTHIC);
     }
 }

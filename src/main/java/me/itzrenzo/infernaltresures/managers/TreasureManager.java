@@ -79,10 +79,45 @@ public class TreasureManager {
         
         // Announce to player immediately
         Component message = InfernalTresures.getInstance().getMessageManager().getTreasureFoundMessage(finalRarity, finalRarity.getDespawnTime());
-        
         player.sendMessage(message);
         
+        // Check if we should announce this treasure to the server (configurable per rarity)
+        if (shouldAnnounce(finalRarity)) {
+            announceToServer(player, finalRarity, biome);
+        }
+        
         return true;
+    }
+    
+    /**
+     * Check if this rarity level should be announced to the server
+     */
+    private boolean shouldAnnounce(Rarity rarity) {
+        return plugin.getConfigManager().isTreasureAnnouncementEnabled(rarity);
+    }
+    
+    /**
+     * Announce a rare treasure find to all players on the server
+     */
+    private void announceToServer(Player finder, Rarity rarity, Biome biome) {
+        Component announcement = InfernalTresures.getInstance().getMessageManager()
+            .getTreasureAnnouncementMessage(finder.getName(), rarity, biome);
+        
+        // Broadcast to all online players
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            onlinePlayer.sendMessage(announcement);
+        }
+        
+        // Also log to console
+        plugin.getLogger().info(String.format("%s found a %s treasure in %s!", 
+            finder.getName(), rarity.name(), formatBiomeName(biome)));
+    }
+    
+    /**
+     * Format biome name for display
+     */
+    private String formatBiomeName(Biome biome) {
+        return InfernalTresures.getInstance().getMessageManager().getBiomeDisplayName(biome);
     }
     
     public void removeTreasure(Treasure treasure) {

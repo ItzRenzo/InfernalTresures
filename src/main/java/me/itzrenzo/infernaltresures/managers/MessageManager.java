@@ -188,6 +188,19 @@ public class MessageManager {
         return getFormattedMessageComponent("treasure-found", rarity, null, null, despawnTime);
     }
     
+    public Component getTreasureAnnouncementMessage(String playerName, Rarity rarity, Biome biome) {
+        String template = getMessage("treasure-announcement");
+        String message = template.replace("{player}", playerName)
+                                .replace("{rarity_color}", getRarityColor(rarity))
+                                .replace("{rarity}", rarity.getDisplayName())
+                                .replace("{biome}", formatBiomeName(biome));
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
+    }
+    
+    public String getBiomeDisplayName(Biome biome) {
+        return formatBiomeName(biome);
+    }
+    
     public String getMessageWithCount(String messagePath, int count) {
         String message = getMessage(messagePath);
         return message.replace("{count}", String.valueOf(count));
