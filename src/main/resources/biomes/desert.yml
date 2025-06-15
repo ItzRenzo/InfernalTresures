@@ -8,91 +8,272 @@ loot:
       min_amount: 8
       max_amount: 16
       chance: 90
+      display_name: "&e&lDesert Sand"
+      lore:
+        - "&7Warm sand from the endless"
+        - "&7desert dunes."
+        - ""
+        - "&6Common Treasure Item"
+    
     - material: CACTUS
       min_amount: 2
       max_amount: 6
       chance: 70
+      display_name: "&2&lPrickly Cactus"
+      lore:
+        - "&7A thorny plant that survived"
+        - "&7the harsh desert heat."
+    
     - material: DEAD_BUSH
       min_amount: 1
       max_amount: 4
       chance: 50
+      display_name: "&8&lWithered Bush"
+      lore:
+        - "&7Dried remains of desert vegetation."
+    
     - material: BONE
       min_amount: 2
       max_amount: 8
       chance: 60
+      display_name: "&f&lSun-Bleached Bone"
+      lore:
+        - "&7Ancient bones weathered by"
+        - "&7countless desert storms."
 
   RARE:
     - material: GOLD_INGOT
       min_amount: 3
       max_amount: 8
       chance: 80
+      display_name: "&6&lDesert Gold"
+      lore:
+        - "&7Pure gold found in the"
+        - "&7hidden chambers beneath"
+        - "&7the shifting sands."
+        - ""
+        - "&9Rare Treasure Item"
+    
     - material: IRON_INGOT
       min_amount: 1
       max_amount: 4
       chance: 60
+      display_name: "&7&lForged Iron"
+      lore:
+        - "&7Iron refined by ancient"
+        - "&7desert civilizations."
+    
     - material: EMERALD
       min_amount: 1
       max_amount: 2
       chance: 40
+      display_name: "&a&lOasis Emerald"
+      lore:
+        - "&7A precious gem as rare"
+        - "&7as water in the desert."
+    
     - material: GOLDEN_SWORD
       min_amount: 1
       max_amount: 1
       chance: 35
+      display_name: "&6&lScimitar of the Dunes"
+      lore:
+        - "&7A curved blade forged by"
+        - "&7ancient desert warriors."
+        - ""
+        - "&6+3 Attack Damage"
+        - "&6+1.6 Attack Speed"
+      enchantments:
+        - enchant: SHARPNESS
+          level: 3
+        - enchant: UNBREAKING
+          level: 2
+      attributes:
+        - attribute: GENERIC_ATTACK_DAMAGE
+          value: 6.0
+          operation: ADD_NUMBER
+        - attribute: GENERIC_ATTACK_SPEED
+          value: -2.4
+          operation: ADD_NUMBER
 
   EPIC:
     - material: GOLD_INGOT
       min_amount: 6
       max_amount: 12
       chance: 85
+      display_name: "&6&l&nRefined Desert Gold"
+      lore:
+        - "&7The finest gold extracted"
+        - "&7from deep desert mines."
+        - ""
+        - "&5Epic Quality"
+    
     - material: DIAMOND
       min_amount: 2
       max_amount: 5
       chance: 70
+      display_name: "&b&lSunfire Diamond"
+      lore:
+        - "&7A diamond that gleams with"
+        - "&7the intensity of desert sun."
+    
     - material: EMERALD
       min_amount: 2
       max_amount: 6
       chance: 75
+      display_name: "&a&lMirage Emerald"
+      lore:
+        - "&7Emeralds that shimmer like"
+        - "&7mirages in the heat."
+    
     - material: ENCHANTED_BOOK
       min_amount: 1
       max_amount: 1
       chance: 65
+      display_name: "&d&lTome of Desert Secrets"
+      lore:
+        - "&7Ancient knowledge preserved"
+        - "&7in the dry desert air."
+        - ""
+        - "&5Contains random enchantment"
+      enchantments:
+        - enchant: RANDOM
+          min_level: 2
+          max_level: 4
 
   LEGENDARY:
     - material: GOLD_BLOCK
       min_amount: 2
       max_amount: 6
       chance: 80
+      display_name: "&6&l&kI&r &6&lGolden Pyramid Block &6&l&kI"
+      lore:
+        - "&7Solid gold blocks from the"
+        - "&7legendary desert pyramids."
+        - ""
+        - "&6&lLegendary Treasure"
+        - "&7Whispers of ancient pharaohs"
+        - "&7echo within this gold."
+    
     - material: DIAMOND
       min_amount: 5
       max_amount: 12
       chance: 85
+      display_name: "&b&l&nCelestial Diamond"
+      lore:
+        - "&7Diamonds blessed by the"
+        - "&7eternal desert stars."
+    
     - material: NETHERITE_INGOT
       min_amount: 1
       max_amount: 3
       chance: 65
+      display_name: "&8&lForged Netherite"
+      lore:
+        - "&7Netherite tempered in the"
+        - "&7scorching desert heat."
+    
     - material: DIAMOND_PICKAXE
       min_amount: 1
       max_amount: 1
       chance: 60
+      display_name: "&b&lSandstorm Excavator"
+      lore:
+        - "&7A legendary pickaxe used to"
+        - "&7uncover hidden desert treasures."
+        - ""
+        - "&6+8 Attack Damage"
+        - "&aEfficiency VI"
+        - "&aMending"
+        - "&aUnbreaking IV"
+      enchantments:
+        - enchant: EFFICIENCY
+          level: 6
+        - enchant: MENDING
+          level: 1
+        - enchant: UNBREAKING
+          level: 4
+        - enchant: FORTUNE
+          level: 3
+      attributes:
+        - attribute: GENERIC_ATTACK_DAMAGE
+          value: 8.0
+          operation: ADD_NUMBER
 
   MYTHIC:
     - material: GOLD_BLOCK
       min_amount: 4
       max_amount: 10
       chance: 90
+      display_name: "&6&l&kIII&r &6&lPharaoh's Gold &6&l&kIII"
+      lore:
+        - "&7&kab&r &7Pure gold from the tomb &7&kab"
+        - "&7&kab&r &7of the greatest pharaoh. &7&kab"
+        - ""
+        - "&c&lMYTHIC TREASURE"
+        - "&7The very essence of ancient"
+        - "&7Egyptian wealth and power."
+        - ""
+        - "&c⚡ &7Radiates divine energy"
+    
     - material: NETHERITE_INGOT
       min_amount: 4
       max_amount: 10
       chance: 85
+      display_name: "&8&l&kI&r &4&lInfernal Netherite &8&l&kI"
+      lore:
+        - "&7Netherite infused with the"
+        - "&7eternal flames of the desert."
+        - ""
+        - "&c&lMYTHIC QUALITY"
+    
     - material: NETHER_STAR
       min_amount: 1
       max_amount: 2
       chance: 75
+      display_name: "&f&l&kII&r &e&lStar of the Dunes &f&l&kII"
+      lore:
+        - "&7A fallen star that crashed"
+        - "&7into the ancient desert."
+        - ""
+        - "&c&lMYTHIC ARTIFACT"
+        - "&7&oLegends say it grants wishes..."
+    
     - material: BEACON
       min_amount: 1
       max_amount: 1
       chance: 40
+      display_name: "&f&l&kIII&r &6&lPyramid's Beacon &f&l&kIII"
+      lore:
+        - "&7 The sacred beacon that once"
+        - "&7guided travelers across the"
+        - "&7endless desert expanse."
+        - ""
+        - "&c&lMYTHIC STRUCTURE"
+        - "&7&oStill pulses with ancient magic..."
+    
     - material: ENCHANTED_GOLDEN_APPLE
       min_amount: 2
       max_amount: 5
       chance: 70
+      display_name: "&6&l&kI&r &e&lGolden Fruit of Ra &6&l&kI"
+      lore:
+        - "&7Divine fruit blessed by the"
+        - "&7sun god Ra himself."
+        - ""
+        - "&c&lMYTHIC CONSUMABLE"
+        - "&7&oGrants the power of the gods"
+        - ""
+        - "&6+20 Absorption Hearts"
+        - "&6+5 Minutes Regeneration V"
+        - "&6+5 Minutes Resistance IV"
+      custom_effects:
+        - effect: ABSORPTION
+          duration: 2400  # 2 minutes
+          amplifier: 4    # Level V
+        - effect: REGENERATION
+          duration: 6000  # 5 minutes
+          amplifier: 4    # Level V
+        - effect: DAMAGE_RESISTANCE
+          duration: 6000  # 5 minutes
+          amplifier: 3    # Level IV
