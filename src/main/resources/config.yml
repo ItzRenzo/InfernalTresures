@@ -127,14 +127,3 @@ player:
   
   # Save player statistics
   save-stats: true
-
-# ========================================
-#            MESSAGES
-# ========================================
-messages:
-  treasure-found: "&6✦ &e{player} &7found a &{rarity_color}{rarity} &7treasure in {biome}!"
-  personal-find: "&6✦ &7You found a &{rarity_color}{rarity} &7treasure!"
-  no-permission: "&cYou don't have permission to use this command!"
-  config-reloaded: "&aConfiguration reloaded successfully!"
-  biomes-loaded: "&aBiome configurations loaded: {count} biomes"
-  biome-not-found: "&cBiome configuration not found for {biome}, using default loot"
