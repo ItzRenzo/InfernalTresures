@@ -144,3 +144,18 @@ player:
   
   # Save player statistics
   save-stats: true
+
+# ========================================
+#           DEBUG SETTINGS
+# ========================================
+debug:
+  # Enable debug logging for troubleshooting
+  enabled: false
+  
+  # Specific debug categories (only work if debug.enabled is true)
+  categories:
+    loot-generation: true    # Debug loot generation process
+    treasure-spawning: true  # Debug treasure spawning
+    mmo-items: true         # Debug MMOItems integration
+    barrel-filling: true    # Debug barrel inventory filling
+    biome-detection: true   # Debug biome detection  

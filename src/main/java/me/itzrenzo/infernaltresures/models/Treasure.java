@@ -56,9 +56,11 @@ public class Treasure {
         List<ItemStack> loot = InfernalTresures.getInstance().getLootManager().generateLoot(biome, rarity);
         
         // Debug log
-        InfernalTresures.getInstance().getLogger().info("Generated " + loot.size() + " items for " + rarity + " treasure");
-        for (ItemStack item : loot) {
-            InfernalTresures.getInstance().getLogger().info("- " + item.getType() + " x" + item.getAmount());
+        if (InfernalTresures.getInstance().getConfigManager().isLootGenerationDebugEnabled()) {
+            InfernalTresures.getInstance().getLogger().info("Generated " + loot.size() + " items for " + rarity + " treasure");
+            for (ItemStack item : loot) {
+                InfernalTresures.getInstance().getLogger().info("- " + item.getType() + " x" + item.getAmount());
+            }
         }
         
         // Use the working direct inventory approach with barrels
@@ -91,11 +93,15 @@ public class Treasure {
         hologram.customName(hologramText);
         hologram.setCustomNameVisible(true);
         
-        InfernalTresures.getInstance().getLogger().info("Created hologram for " + rarity + " treasure");
+        if (InfernalTresures.getInstance().getConfigManager().isTreasureSpawningDebugEnabled()) {
+            InfernalTresures.getInstance().getLogger().info("Created hologram for " + rarity + " treasure");
+        }
     }
     
     private void fillBarrelDirectly(Block barrelBlock, List<ItemStack> loot) {
-        InfernalTresures.getInstance().getLogger().info("=== FILLING BARREL WITH SCATTERED ITEMS ===");
+        if (InfernalTresures.getInstance().getConfigManager().isBarrelFillingDebugEnabled()) {
+            InfernalTresures.getInstance().getLogger().info("=== FILLING BARREL WITH SCATTERED ITEMS ===");
+        }
         
         if (barrelBlock.getType() != Material.BARREL) {
             InfernalTresures.getInstance().getLogger().warning("Block is not a barrel: " + barrelBlock.getType());
@@ -108,7 +114,9 @@ public class Treasure {
                 Component name = InfernalTresures.getInstance().getMessageManager().getTreasureNameComponent(rarity, biome);
                 barrel.customName(name);
                 barrel.update(true, false); // Update the barrel name only
-                InfernalTresures.getInstance().getLogger().info("Set barrel name to: " + InfernalTresures.getInstance().getMessageManager().getTreasureName(rarity, biome));
+                if (InfernalTresures.getInstance().getConfigManager().isBarrelFillingDebugEnabled()) {
+                    InfernalTresures.getInstance().getLogger().info("Set barrel name to: " + InfernalTresures.getInstance().getMessageManager().getTreasureName(rarity, biome));
+                }
             }
             
             // Small delay to ensure the name is set before filling
@@ -117,11 +125,15 @@ public class Treasure {
                     // Get the inventory directly from the barrel
                     org.bukkit.inventory.Inventory inventory = ((org.bukkit.inventory.InventoryHolder) barrelBlock.getState()).getInventory();
                     
-                    InfernalTresures.getInstance().getLogger().info("Got barrel inventory directly: " + inventory.getClass().getSimpleName());
+                    if (InfernalTresures.getInstance().getConfigManager().isBarrelFillingDebugEnabled()) {
+                        InfernalTresures.getInstance().getLogger().info("Got barrel inventory directly: " + inventory.getClass().getSimpleName());
+                    }
                     
                     // Clear inventory
                     inventory.clear();
-                    InfernalTresures.getInstance().getLogger().info("Cleared barrel inventory");
+                    if (InfernalTresures.getInstance().getConfigManager().isBarrelFillingDebugEnabled()) {
+                        InfernalTresures.getInstance().getLogger().info("Cleared barrel inventory");
+                    }
                     
                     // Create a list of available slots (0-26 for barrel)
                     java.util.List<Integer> availableSlots = new java.util.ArrayList<>();
@@ -138,34 +150,46 @@ public class Treasure {
                         if (item != null && item.getType() != Material.AIR) {
                             int randomSlot = availableSlots.get(i);
                             inventory.setItem(randomSlot, item.clone());
-                            InfernalTresures.getInstance().getLogger().info("Scattered item to slot " + randomSlot + ": " + item.getType() + " x" + item.getAmount());
+                            if (InfernalTresures.getInstance().getConfigManager().isBarrelFillingDebugEnabled()) {
+                                InfernalTresures.getInstance().getLogger().info("Scattered item to slot " + randomSlot + ": " + item.getType() + " x" + item.getAmount());
+                            }
                         }
                     }
                     
                     // Skip the update() call for inventory since it was causing the items to disappear
-                    InfernalTresures.getInstance().getLogger().info("Items scattered in barrel, skipping inventory update() call");
+                    if (InfernalTresures.getInstance().getConfigManager().isBarrelFillingDebugEnabled()) {
+                        InfernalTresures.getInstance().getLogger().info("Items scattered in barrel, skipping inventory update() call");
+                    }
                     
                     // Verification after a short delay
                     Bukkit.getScheduler().runTaskLater(InfernalTresures.getInstance(), () -> {
                         try {
                             org.bukkit.inventory.Inventory checkInventory = ((org.bukkit.inventory.InventoryHolder) barrelBlock.getState()).getInventory();
                             int itemCount = 0;
-                            InfernalTresures.getInstance().getLogger().info("=== BARREL VERIFICATION ===");
                             
-                            // Check barrel name
-                            if (barrelBlock.getState() instanceof org.bukkit.block.Barrel checkBarrel) {
-                                Component currentName = checkBarrel.customName();
-                                InfernalTresures.getInstance().getLogger().info("Barrel name: " + (currentName != null ? "SET" : "NOT SET"));
+                            if (InfernalTresures.getInstance().getConfigManager().isBarrelFillingDebugEnabled()) {
+                                InfernalTresures.getInstance().getLogger().info("=== BARREL VERIFICATION ===");
+                                
+                                // Check barrel name
+                                if (barrelBlock.getState() instanceof org.bukkit.block.Barrel checkBarrel) {
+                                    Component currentName = checkBarrel.customName();
+                                    InfernalTresures.getInstance().getLogger().info("Barrel name: " + (currentName != null ? "SET" : "NOT SET"));
+                                }
                             }
                             
                             for (int i = 0; i < checkInventory.getSize(); i++) {
                                 ItemStack item = checkInventory.getItem(i);
                                 if (item != null && item.getType() != Material.AIR) {
                                     itemCount++;
-                                    InfernalTresures.getInstance().getLogger().info("Slot " + i + ": " + item.getType() + " x" + item.getAmount());
+                                    if (InfernalTresures.getInstance().getConfigManager().isBarrelFillingDebugEnabled()) {
+                                        InfernalTresures.getInstance().getLogger().info("Slot " + i + ": " + item.getType() + " x" + item.getAmount());
+                                    }
                                 }
                             }
-                            InfernalTresures.getInstance().getLogger().info("=== BARREL CONTAINS: " + itemCount + " scattered items ===");
+                            
+                            if (InfernalTresures.getInstance().getConfigManager().isBarrelFillingDebugEnabled()) {
+                                InfernalTresures.getInstance().getLogger().info("=== BARREL CONTAINS: " + itemCount + " scattered items ===");
+                            }
                         } catch (Exception e) {
                             InfernalTresures.getInstance().getLogger().severe("Barrel verification failed: " + e.getMessage());
                             e.printStackTrace();

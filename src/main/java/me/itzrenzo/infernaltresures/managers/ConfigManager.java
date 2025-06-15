@@ -143,4 +143,36 @@ public class ConfigManager {
     public int getHologramVisibleDistance() {
         return config.getInt("holograms.visible-distance", 16);
     }
+    
+    // Debug configuration methods
+    public boolean isDebugEnabled() {
+        return config.getBoolean("debug.enabled", false);
+    }
+    
+    public boolean isDebugCategoryEnabled(String category) {
+        if (!isDebugEnabled()) {
+            return false;
+        }
+        return config.getBoolean("debug.categories." + category, true);
+    }
+    
+    public boolean isLootGenerationDebugEnabled() {
+        return isDebugCategoryEnabled("loot-generation");
+    }
+    
+    public boolean isTreasureSpawningDebugEnabled() {
+        return isDebugCategoryEnabled("treasure-spawning");
+    }
+    
+    public boolean isMMOItemsDebugEnabled() {
+        return isDebugCategoryEnabled("mmo-items");
+    }
+    
+    public boolean isBarrelFillingDebugEnabled() {
+        return isDebugCategoryEnabled("barrel-filling");
+    }
+    
+    public boolean isBiomeDetectionDebugEnabled() {
+        return isDebugCategoryEnabled("biome-detection");
+    }
 }

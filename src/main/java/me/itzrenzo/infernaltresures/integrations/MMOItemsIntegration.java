@@ -45,35 +45,49 @@ public class MMOItemsIntegration {
      */
     public ItemStack createMMOItem(String type, String id, int amount) {
         if (!enabled) {
-            plugin.getLogger().warning("MMOItems integration is not enabled - cannot create MMOItem: " + type + "." + id);
+            if (InfernalTresures.getInstance().getConfigManager().isMMOItemsDebugEnabled()) {
+                plugin.getLogger().warning("MMOItems integration is not enabled - cannot create MMOItem: " + type + "." + id);
+            }
             return null;
         }
         
         try {
-            plugin.getLogger().info("Attempting to create MMOItem: " + type + "." + id + " (amount: " + amount + ")");
+            if (InfernalTresures.getInstance().getConfigManager().isMMOItemsDebugEnabled()) {
+                plugin.getLogger().info("Attempting to create MMOItem: " + type + "." + id + " (amount: " + amount + ")");
+            }
             
             Type mmoType = Type.get(type.toUpperCase());
             if (mmoType == null) {
                 plugin.getLogger().warning("Unknown MMOItems type: " + type);
-                plugin.getLogger().info("Available types should include: SWORD, AXE, HELMET, CHESTPLATE, etc.");
+                if (InfernalTresures.getInstance().getConfigManager().isMMOItemsDebugEnabled()) {
+                    plugin.getLogger().info("Available types should include: SWORD, AXE, HELMET, CHESTPLATE, etc.");
+                }
                 return null;
             }
             
-            plugin.getLogger().info("Found MMOItems type: " + mmoType.getId());
+            if (InfernalTresures.getInstance().getConfigManager().isMMOItemsDebugEnabled()) {
+                plugin.getLogger().info("Found MMOItems type: " + mmoType.getId());
+            }
             
             MMOItem mmoItem = MMOItems.plugin.getMMOItem(mmoType, id.toUpperCase());
             if (mmoItem == null) {
                 plugin.getLogger().warning("Unknown MMOItems item: " + type + "." + id);
-                plugin.getLogger().info("Make sure the item exists in your MMOItems configuration");
+                if (InfernalTresures.getInstance().getConfigManager().isMMOItemsDebugEnabled()) {
+                    plugin.getLogger().info("Make sure the item exists in your MMOItems configuration");
+                }
                 return null;
             }
             
-            plugin.getLogger().info("Found MMOItem definition: " + mmoItem.getId());
+            if (InfernalTresures.getInstance().getConfigManager().isMMOItemsDebugEnabled()) {
+                plugin.getLogger().info("Found MMOItem definition: " + mmoItem.getId());
+            }
             
             ItemStack item = mmoItem.newBuilder().build();
             if (item != null) {
                 item.setAmount(Math.max(1, amount));
-                plugin.getLogger().info("Successfully created MMOItem: " + type + "." + id + " -> " + item.getType());
+                if (InfernalTresures.getInstance().getConfigManager().isMMOItemsDebugEnabled()) {
+                    plugin.getLogger().info("Successfully created MMOItem: " + type + "." + id + " -> " + item.getType());
+                }
             } else {
                 plugin.getLogger().warning("MMOItem builder returned null for: " + type + "." + id);
             }
@@ -81,7 +95,9 @@ public class MMOItemsIntegration {
             return item;
         } catch (Exception e) {
             plugin.getLogger().severe("Failed to create MMOItem " + type + "." + id + ": " + e.getMessage());
-            e.printStackTrace();
+            if (InfernalTresures.getInstance().getConfigManager().isMMOItemsDebugEnabled()) {
+                e.printStackTrace();
+            }
             return null;
         }
     }

@@ -83,7 +83,9 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         
         // Debug: Show what biome we're in
         Biome biome = player.getWorld().getBiome(location);
-        player.sendMessage(Component.text("Current biome: " + biome.name()).color(NamedTextColor.YELLOW));
+        if (InfernalTresures.getInstance().getConfigManager().isBiomeDetectionDebugEnabled()) {
+            player.sendMessage(Component.text("Current biome: " + biome.name()).color(NamedTextColor.YELLOW));
+        }
         
         // Create treasure at player's location
         Treasure treasure = new Treasure(location, rarity, biome);
