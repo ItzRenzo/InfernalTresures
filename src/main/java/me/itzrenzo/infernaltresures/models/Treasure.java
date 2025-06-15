@@ -103,63 +103,80 @@ public class Treasure {
         }
         
         try {
-            // Get the inventory directly from the barrel
-            org.bukkit.inventory.Inventory inventory = ((org.bukkit.inventory.InventoryHolder) barrelBlock.getState()).getInventory();
-            
-            InfernalTresures.getInstance().getLogger().info("Got barrel inventory directly: " + inventory.getClass().getSimpleName());
-            
-            // Set custom name for the barrel using MessageManager
+            // First, set the barrel name using a separate approach
             if (barrelBlock.getState() instanceof org.bukkit.block.Barrel barrel) {
                 Component name = InfernalTresures.getInstance().getMessageManager().getTreasureNameComponent(rarity, biome);
                 barrel.customName(name);
-                // Don't call update() here, just set the name
+                barrel.update(true, false); // Update the barrel name only
+                InfernalTresures.getInstance().getLogger().info("Set barrel name to: " + InfernalTresures.getInstance().getMessageManager().getTreasureName(rarity, biome));
             }
             
-            // Clear inventory
-            inventory.clear();
-            InfernalTresures.getInstance().getLogger().info("Cleared barrel inventory");
-            
-            // Create a list of available slots (0-26 for barrel)
-            java.util.List<Integer> availableSlots = new java.util.ArrayList<>();
-            for (int i = 0; i < inventory.getSize(); i++) {
-                availableSlots.add(i);
-            }
-            
-            // Shuffle the available slots to create scattered placement
-            java.util.Collections.shuffle(availableSlots);
-            
-            // Add items to random scattered slots
-            for (int i = 0; i < loot.size() && i < availableSlots.size(); i++) {
-                ItemStack item = loot.get(i);
-                if (item != null && item.getType() != Material.AIR) {
-                    int randomSlot = availableSlots.get(i);
-                    inventory.setItem(randomSlot, item.clone());
-                    InfernalTresures.getInstance().getLogger().info("Scattered item to slot " + randomSlot + ": " + item.getType() + " x" + item.getAmount());
-                }
-            }
-            
-            // Skip the update() call since it was causing the items to disappear
-            InfernalTresures.getInstance().getLogger().info("Items scattered in barrel, skipping update() call");
-            
-            // Verification after a short delay
+            // Small delay to ensure the name is set before filling
             Bukkit.getScheduler().runTaskLater(InfernalTresures.getInstance(), () -> {
                 try {
-                    org.bukkit.inventory.Inventory checkInventory = ((org.bukkit.inventory.InventoryHolder) barrelBlock.getState()).getInventory();
-                    int itemCount = 0;
-                    InfernalTresures.getInstance().getLogger().info("=== BARREL VERIFICATION ===");
-                    for (int i = 0; i < checkInventory.getSize(); i++) {
-                        ItemStack item = checkInventory.getItem(i);
+                    // Get the inventory directly from the barrel
+                    org.bukkit.inventory.Inventory inventory = ((org.bukkit.inventory.InventoryHolder) barrelBlock.getState()).getInventory();
+                    
+                    InfernalTresures.getInstance().getLogger().info("Got barrel inventory directly: " + inventory.getClass().getSimpleName());
+                    
+                    // Clear inventory
+                    inventory.clear();
+                    InfernalTresures.getInstance().getLogger().info("Cleared barrel inventory");
+                    
+                    // Create a list of available slots (0-26 for barrel)
+                    java.util.List<Integer> availableSlots = new java.util.ArrayList<>();
+                    for (int i = 0; i < inventory.getSize(); i++) {
+                        availableSlots.add(i);
+                    }
+                    
+                    // Shuffle the available slots to create scattered placement
+                    java.util.Collections.shuffle(availableSlots);
+                    
+                    // Add items to random scattered slots
+                    for (int i = 0; i < loot.size() && i < availableSlots.size(); i++) {
+                        ItemStack item = loot.get(i);
                         if (item != null && item.getType() != Material.AIR) {
-                            itemCount++;
-                            InfernalTresures.getInstance().getLogger().info("Slot " + i + ": " + item.getType() + " x" + item.getAmount());
+                            int randomSlot = availableSlots.get(i);
+                            inventory.setItem(randomSlot, item.clone());
+                            InfernalTresures.getInstance().getLogger().info("Scattered item to slot " + randomSlot + ": " + item.getType() + " x" + item.getAmount());
                         }
                     }
-                    InfernalTresures.getInstance().getLogger().info("=== BARREL CONTAINS: " + itemCount + " scattered items ===");
+                    
+                    // Skip the update() call for inventory since it was causing the items to disappear
+                    InfernalTresures.getInstance().getLogger().info("Items scattered in barrel, skipping inventory update() call");
+                    
+                    // Verification after a short delay
+                    Bukkit.getScheduler().runTaskLater(InfernalTresures.getInstance(), () -> {
+                        try {
+                            org.bukkit.inventory.Inventory checkInventory = ((org.bukkit.inventory.InventoryHolder) barrelBlock.getState()).getInventory();
+                            int itemCount = 0;
+                            InfernalTresures.getInstance().getLogger().info("=== BARREL VERIFICATION ===");
+                            
+                            // Check barrel name
+                            if (barrelBlock.getState() instanceof org.bukkit.block.Barrel checkBarrel) {
+                                Component currentName = checkBarrel.customName();
+                                InfernalTresures.getInstance().getLogger().info("Barrel name: " + (currentName != null ? "SET" : "NOT SET"));
+                            }
+                            
+                            for (int i = 0; i < checkInventory.getSize(); i++) {
+                                ItemStack item = checkInventory.getItem(i);
+                                if (item != null && item.getType() != Material.AIR) {
+                                    itemCount++;
+                                    InfernalTresures.getInstance().getLogger().info("Slot " + i + ": " + item.getType() + " x" + item.getAmount());
+                                }
+                            }
+                            InfernalTresures.getInstance().getLogger().info("=== BARREL CONTAINS: " + itemCount + " scattered items ===");
+                        } catch (Exception e) {
+                            InfernalTresures.getInstance().getLogger().severe("Barrel verification failed: " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }, 1L);
+                    
                 } catch (Exception e) {
-                    InfernalTresures.getInstance().getLogger().severe("Barrel verification failed: " + e.getMessage());
+                    InfernalTresures.getInstance().getLogger().severe("Barrel inventory filling failed: " + e.getMessage());
                     e.printStackTrace();
                 }
-            }, 1L);
+            }, 1L); // Small delay before filling inventory
             
         } catch (Exception e) {
             InfernalTresures.getInstance().getLogger().severe("Direct barrel filling failed: " + e.getMessage());
