@@ -4,22 +4,20 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 
 public enum Rarity {
-    COMMON(NamedTextColor.GREEN, "Common", 50, 30),
-    RARE(NamedTextColor.BLUE, "Rare", 30, 45),
-    EPIC(NamedTextColor.DARK_PURPLE, "Epic", 15, 60),
-    LEGENDARY(NamedTextColor.GOLD, "Legendary", 4, 90),
-    MYTHIC(NamedTextColor.RED, "Mythic", 1, 120);
+    COMMON(NamedTextColor.GREEN, "Common", 50),
+    RARE(NamedTextColor.BLUE, "Rare", 30),
+    EPIC(NamedTextColor.DARK_PURPLE, "Epic", 15),
+    LEGENDARY(NamedTextColor.GOLD, "Legendary", 4),
+    MYTHIC(NamedTextColor.RED, "Mythic", 1);
 
     private final TextColor color;
     private final String displayName;
     private final int chance; // Spawn chance weight
-    private final int despawnTime; // Despawn time in seconds
 
-    Rarity(TextColor color, String displayName, int chance, int despawnTime) {
+    Rarity(TextColor color, String displayName, int chance) {
         this.color = color;
         this.displayName = displayName;
         this.chance = chance;
-        this.despawnTime = despawnTime;
     }
 
     public TextColor getColor() {
@@ -34,8 +32,10 @@ public enum Rarity {
         return chance;
     }
 
+    // Get despawn time from configuration
     public int getDespawnTime() {
-        return despawnTime;
+        return me.itzrenzo.infernaltresures.InfernalTresures.getInstance()
+            .getConfigManager().getDespawnTime(this);
     }
 
     // Get total weight for random calculations

@@ -113,6 +113,23 @@ public class ConfigManager {
             config.set("treasure.announce-finds.mythic", true);
         }
         
+        // Set despawn time defaults (per rarity, in seconds)
+        if (!config.isSet("rarity.despawn-times.common")) {
+            config.set("rarity.despawn-times.common", 300); // 5 minutes
+        }
+        if (!config.isSet("rarity.despawn-times.rare")) {
+            config.set("rarity.despawn-times.rare", 420); // 7 minutes
+        }
+        if (!config.isSet("rarity.despawn-times.epic")) {
+            config.set("rarity.despawn-times.epic", 600); // 10 minutes
+        }
+        if (!config.isSet("rarity.despawn-times.legendary")) {
+            config.set("rarity.despawn-times.legendary", 900); // 15 minutes
+        }
+        if (!config.isSet("rarity.despawn-times.mythic")) {
+            config.set("rarity.despawn-times.mythic", 1200); // 20 minutes
+        }
+        
         // Remove old single announce-finds setting if it exists
         if (config.isSet("treasure.announce-finds") && !config.isConfigurationSection("treasure.announce-finds")) {
             config.set("treasure.announce-finds", null);
@@ -245,5 +262,19 @@ public class ConfigManager {
                isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity.EPIC) ||
                isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity.LEGENDARY) ||
                isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity.MYTHIC);
+    }
+    
+    // Despawn time configuration methods
+    public int getDespawnTime(me.itzrenzo.infernaltresures.models.Rarity rarity) {
+        // Default despawn times if not configured
+        int defaultTime = switch (rarity) {
+            case COMMON -> 300;     // 5 minutes
+            case RARE -> 420;       // 7 minutes
+            case EPIC -> 600;       // 10 minutes
+            case LEGENDARY -> 900;  // 15 minutes
+            case MYTHIC -> 1200;    // 20 minutes
+        };
+        
+        return config.getInt("rarity.despawn-times." + rarity.name().toLowerCase(), defaultTime);
     }
 }

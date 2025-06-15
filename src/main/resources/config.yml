@@ -114,6 +114,14 @@ rarity:
     EPIC: "&5"        # Purple
     LEGENDARY: "&6"   # Gold
     MYTHIC: "&c"      # Red
+  
+  # Despawn times for each rarity (in seconds)
+  despawn-times:
+    common: 300       # 5 minutes
+    rare: 420         # 7 minutes  
+    epic: 600         # 10 minutes
+    legendary: 900    # 15 minutes
+    mythic: 1200      # 20 minutes
 
 # ========================================
 #          BIOME SETTINGS
