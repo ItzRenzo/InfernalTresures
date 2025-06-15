@@ -168,6 +168,10 @@ public class ConfigManager {
         return isDebugCategoryEnabled("mmo-items");
     }
     
+    public boolean isExecutableItemsDebugEnabled() {
+        return isDebugCategoryEnabled("executable-items");
+    }
+    
     public boolean isBarrelFillingDebugEnabled() {
         return isDebugCategoryEnabled("barrel-filling");
     }

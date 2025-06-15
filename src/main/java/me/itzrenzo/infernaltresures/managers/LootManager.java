@@ -93,40 +93,60 @@ public class LootManager {
         try {
             LootItem item = new LootItem();
             
-            // Check if this is an MMOItem first
-            String mmoType = (String) itemMap.get("mmo_type");
-            String mmoId = (String) itemMap.get("mmo_id");
+            // Check if this is an ExecutableItem first
+            String executableId = (String) itemMap.get("executable_id");
             
-            if (mmoType != null && mmoId != null) {
-                // This is an MMOItem
-                item.isMMOItem = true;
-                item.mmoType = mmoType;
-                item.mmoId = mmoId;
+            if (executableId != null) {
+                // This is an ExecutableItem
+                item.isExecutableItem = true;
+                item.executableId = executableId;
                 
-                // Verify MMOItem exists (only if MMOItems integration is enabled)
-                if (InfernalTresures.getInstance().getMMOItemsIntegration().isEnabled()) {
-                    if (!InfernalTresures.getInstance().getMMOItemsIntegration().isValidMMOItem(mmoType, mmoId)) {
-                        plugin.getLogger().warning("Invalid MMOItem: " + mmoType + "." + mmoId);
+                // Verify ExecutableItem exists (only if ExecutableItems integration is enabled)
+                if (InfernalTresures.getInstance().getExecutableItemsIntegration().isEnabled()) {
+                    if (!InfernalTresures.getInstance().getExecutableItemsIntegration().isValidExecutableItem(executableId)) {
+                        plugin.getLogger().warning("Invalid ExecutableItem: " + executableId);
                         return null;
                     }
                 } else {
-                    plugin.getLogger().warning("MMOItems not available, skipping MMOItem: " + mmoType + "." + mmoId);
+                    plugin.getLogger().warning("ExecutableItems not available, skipping ExecutableItem: " + executableId);
                     return null;
                 }
             } else {
-                // Regular Bukkit material
-                String materialName = (String) itemMap.get("material");
-                if (materialName == null) {
-                    plugin.getLogger().warning("Item missing both 'material' and 'mmo_type'/'mmo_id' fields");
-                    return null;
-                }
+                // Check if this is an MMOItem
+                String mmoType = (String) itemMap.get("mmo_type");
+                String mmoId = (String) itemMap.get("mmo_id");
                 
-                try {
-                    Material material = Material.valueOf(materialName.toUpperCase());
-                    item.material = material;
-                } catch (IllegalArgumentException e) {
-                    plugin.getLogger().warning("Unknown material: " + materialName);
-                    return null;
+                if (mmoType != null && mmoId != null) {
+                    // This is an MMOItem
+                    item.isMMOItem = true;
+                    item.mmoType = mmoType;
+                    item.mmoId = mmoId;
+                    
+                    // Verify MMOItem exists (only if MMOItems integration is enabled)
+                    if (InfernalTresures.getInstance().getMMOItemsIntegration().isEnabled()) {
+                        if (!InfernalTresures.getInstance().getMMOItemsIntegration().isValidMMOItem(mmoType, mmoId)) {
+                            plugin.getLogger().warning("Invalid MMOItem: " + mmoType + "." + mmoId);
+                            return null;
+                        }
+                    } else {
+                        plugin.getLogger().warning("MMOItems not available, skipping MMOItem: " + mmoType + "." + mmoId);
+                        return null;
+                    }
+                } else {
+                    // Regular Bukkit material
+                    String materialName = (String) itemMap.get("material");
+                    if (materialName == null) {
+                        plugin.getLogger().warning("Item missing 'material', 'mmo_type'/'mmo_id', or 'executable_id' fields");
+                        return null;
+                    }
+                    
+                    try {
+                        Material material = Material.valueOf(materialName.toUpperCase());
+                        item.material = material;
+                    } catch (IllegalArgumentException e) {
+                        plugin.getLogger().warning("Unknown material: " + materialName);
+                        return null;
+                    }
                 }
             }
             
@@ -272,6 +292,34 @@ public class LootManager {
             int amount = lootItem.minAmount;
             if (lootItem.maxAmount > lootItem.minAmount) {
                 amount = ThreadLocalRandom.current().nextInt(lootItem.minAmount, lootItem.maxAmount + 1);
+            }
+            
+            // Handle ExecutableItems
+            if (lootItem.isExecutableItem) {
+                ItemStack executableItem = InfernalTresures.getInstance().getExecutableItemsIntegration()
+                    .createExecutableItem(lootItem.executableId, amount);
+                
+                if (executableItem != null) {
+                    // Apply custom display name and lore if specified
+                    if (lootItem.displayName != null || (lootItem.lore != null && !lootItem.lore.isEmpty())) {
+                        ItemBuilder builder = ItemBuilder.from(executableItem);
+                        
+                        if (lootItem.displayName != null) {
+                            builder.setDisplayName(lootItem.displayName);
+                        }
+                        
+                        if (lootItem.lore != null && !lootItem.lore.isEmpty()) {
+                            builder.setLore(lootItem.lore);
+                        }
+                        
+                        return builder.build();
+                    }
+                    
+                    return executableItem;
+                } else {
+                    plugin.getLogger().warning("Failed to create ExecutableItem: " + lootItem.executableId);
+                    return null;
+                }
             }
             
             // Handle MMOItems
@@ -430,6 +478,10 @@ public class LootManager {
         boolean isMMOItem;
         String mmoType;
         String mmoId;
+        
+        // ExecutableItem fields
+        boolean isExecutableItem;
+        String executableId;
     }
     
     private static class EnchantmentData {

@@ -5,7 +5,7 @@ api-version: '1.21'
 load: STARTUP
 authors: [ ItzRenzo ]
 description: A plugin that spawns treasures with different rarities when mining blocks
-softdepend: [MMOItems]
+softdepend: [SCore, MMOItems, ExecutableItems]
 
 commands:
   treasure:

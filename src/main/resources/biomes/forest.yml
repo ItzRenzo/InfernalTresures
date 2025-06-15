@@ -37,6 +37,15 @@ loot:
           duration: 600
           amplifier: 0
 
+    # Example ExecutableItem - Forest Wand
+    - executable_id: FOREST_WAND
+      min_amount: 1
+      max_amount: 1
+      chance: 15
+      display_name: "&a&lNature's Wand"
+      lore:
+        - "&7A mystical wand from the forest"
+
   RARE:
     - material: EMERALD
       min_amount: 2
@@ -88,6 +97,29 @@ loot:
           operation: ADD_NUMBER
           slot: FEET
 
+    - material: DARK_OAK_LOG
+      min_amount: 2
+      max_amount: 8
+      chance: 80
+    
+    - material: GOLDEN_APPLE
+      min_amount: 1
+      max_amount: 3
+      chance: 60
+    
+    # Example MMOItem - Long Sword
+    - mmo_type: SWORD
+      mmo_id: LONG_SWORD
+      min_amount: 1
+      max_amount: 1
+      chance: 25
+    
+    # Example ExecutableItem - Nature Bow
+    - executable_id: NATURE_BOW
+      min_amount: 1
+      max_amount: 1
+      chance: 20
+
   EPIC:
     - material: DIAMOND
       min_amount: 3
@@ -132,6 +164,26 @@ loot:
           level: 2
         - enchant: UNBREAKING
           level: 3
+
+    - material: DARK_OAK_LOG
+      min_amount: 2
+      max_amount: 8
+      chance: 80
+    
+    - material: GOLDEN_APPLE
+      min_amount: 1
+      max_amount: 3
+      chance: 60
+    
+    # Example ExecutableItem - Druid Staff
+    - executable_id: DRUID_STAFF
+      min_amount: 1
+      max_amount: 1
+      chance: 15
+      display_name: "&5&lStaff of the Forest Druids"
+      lore:
+        - "&7Powerful magic flows through this staff"
+        - "&7Grants control over nature itself"
 
   LEGENDARY:
     - material: EMERALD_BLOCK
@@ -188,6 +240,12 @@ loot:
         - ""
         - "&6+4 Absorption Hearts"
         - "&6+2 Minutes Regeneration II"
+
+    # Example ExecutableItem - Legendary Forest Crown
+    - executable_id: FOREST_CROWN
+      min_amount: 1
+      max_amount: 1
+      chance: 10
 
   MYTHIC:
     - material: EMERALD_BLOCK
@@ -285,3 +343,14 @@ loot:
         - effect: JUMP
           duration: 3600
           amplifier: 1
+
+    # Example ExecutableItem - World Tree Seed
+    - executable_id: WORLD_TREE_SEED
+      min_amount: 1
+      max_amount: 1
+      chance: 5
+      display_name: "&c&lSeed of the World Tree"
+      lore:
+        - "&7The ultimate forest treasure"
+        - "&7Can grow into a massive world tree"
+        - "&7Contains immense magical power"
