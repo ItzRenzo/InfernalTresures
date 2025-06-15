@@ -1,0 +1,27 @@
+name: InfernalTresures
+version: '1.0'
+main: me.itzrenzo.infernaltresures.InfernalTresures
+api-version: '1.21'
+load: STARTUP
+authors: [ ItzRenzo ]
+description: A plugin that spawns treasures with different rarities when mining blocks
+commands:
+  treasure:
+    description: Main command for the InfernalTreasures plugin
+    usage: /<command> [spawn|reload|info|help]
+    permission: infernaltresures.command.use
+    aliases: [treasures, tr]
+    
+permissions:
+  infernaltresures.command.use:
+    description: Allows using the basic treasure command
+    default: true
+  infernaltresures.command.spawn:
+    description: Allows spawning treasures manually
+    default: op
+  infernaltresures.command.reload:
+    description: Allows reloading the plugin configuration
+    default: op
+  infernaltresures.command.info:
+    description: Allows viewing plugin information
+    default: op

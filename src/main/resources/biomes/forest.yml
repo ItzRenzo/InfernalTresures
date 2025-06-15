@@ -1,0 +1,98 @@
+# Forest Biome Treasure Loot Tables
+name: "Forest"
+description: "Lush woodlands rich with natural resources"
+
+loot:
+  COMMON:
+    - material: OAK_LOG
+      min_amount: 4
+      max_amount: 12
+      chance: 85
+    - material: APPLE
+      min_amount: 2
+      max_amount: 8
+      chance: 70
+    - material: MUSHROOM_STEW
+      min_amount: 1
+      max_amount: 3
+      chance: 50
+    - material: STICK
+      min_amount: 4
+      max_amount: 12
+      chance: 80
+
+  RARE:
+    - material: EMERALD
+      min_amount: 2
+      max_amount: 6
+      chance: 80
+    - material: IRON_INGOT
+      min_amount: 1
+      max_amount: 4
+      chance: 65
+    - material: BOW
+      min_amount: 1
+      max_amount: 1
+      chance: 50
+    - material: ARROW
+      min_amount: 8
+      max_amount: 24
+      chance: 70
+
+  EPIC:
+    - material: EMERALD
+      min_amount: 4
+      max_amount: 10
+      chance: 85
+    - material: DIAMOND
+      min_amount: 1
+      max_amount: 4
+      chance: 65
+    - material: ENCHANTED_BOOK
+      min_amount: 1
+      max_amount: 2
+      chance: 70
+    - material: GOLDEN_APPLE
+      min_amount: 1
+      max_amount: 3
+      chance: 60
+
+  LEGENDARY:
+    - material: EMERALD_BLOCK
+      min_amount: 1
+      max_amount: 4
+      chance: 75
+    - material: DIAMOND
+      min_amount: 3
+      max_amount: 8
+      chance: 80
+    - material: NETHERITE_INGOT
+      min_amount: 1
+      max_amount: 2
+      chance: 55
+    - material: DIAMOND_AXE
+      min_amount: 1
+      max_amount: 1
+      chance: 65
+
+  MYTHIC:
+    - material: EMERALD_BLOCK
+      min_amount: 3
+      max_amount: 8
+      chance: 90
+    - material: NETHERITE_INGOT
+      min_amount: 2
+      max_amount: 6
+      chance: 85
+    - material: NETHER_STAR
+      min_amount: 1
+      max_amount: 2
+      chance: 70
+    - material: NETHERITE_AXE
+      min_amount: 1
+      max_amount: 1
+      chance: 60
+    - material: ENCHANTED_GOLDEN_APPLE
+      min_amount: 1
+      max_amount: 4
+      chance: 65

@@ -1,0 +1,98 @@
+# Plains Biome Treasure Loot Tables
+name: "Plains"
+description: "Peaceful grasslands with basic resources"
+
+loot:
+  COMMON:
+    - material: WHEAT
+      min_amount: 4
+      max_amount: 12
+      chance: 80
+    - material: BREAD
+      min_amount: 2
+      max_amount: 6
+      chance: 60
+    - material: LEATHER
+      min_amount: 1
+      max_amount: 4
+      chance: 50
+    - material: STICK
+      min_amount: 3
+      max_amount: 8
+      chance: 70
+
+  RARE:
+    - material: IRON_INGOT
+      min_amount: 2
+      max_amount: 6
+      chance: 75
+    - material: GOLD_INGOT
+      min_amount: 1
+      max_amount: 4
+      chance: 60
+    - material: EMERALD
+      min_amount: 1
+      max_amount: 3
+      chance: 40
+    - material: IRON_SWORD
+      min_amount: 1
+      max_amount: 1
+      chance: 30
+
+  EPIC:
+    - material: DIAMOND
+      min_amount: 1
+      max_amount: 4
+      chance: 70
+    - material: EMERALD
+      min_amount: 3
+      max_amount: 8
+      chance: 80
+    - material: GOLDEN_APPLE
+      min_amount: 1
+      max_amount: 2
+      chance: 50
+    - material: ENCHANTED_BOOK
+      min_amount: 1
+      max_amount: 1
+      chance: 60
+
+  LEGENDARY:
+    - material: DIAMOND
+      min_amount: 4
+      max_amount: 10
+      chance: 85
+    - material: NETHERITE_INGOT
+      min_amount: 1
+      max_amount: 2
+      chance: 60
+    - material: DIAMOND_SWORD
+      min_amount: 1
+      max_amount: 1
+      chance: 70
+    - material: TOTEM_OF_UNDYING
+      min_amount: 1
+      max_amount: 1
+      chance: 30
+
+  MYTHIC:
+    - material: NETHERITE_INGOT
+      min_amount: 3
+      max_amount: 8
+      chance: 90
+    - material: DIAMOND
+      min_amount: 8
+      max_amount: 16
+      chance: 95
+    - material: NETHER_STAR
+      min_amount: 1
+      max_amount: 2
+      chance: 80
+    - material: NETHERITE_SWORD
+      min_amount: 1
+      max_amount: 1
+      chance: 70
+    - material: ENCHANTED_GOLDEN_APPLE
+      min_amount: 1
+      max_amount: 3
+      chance: 60
