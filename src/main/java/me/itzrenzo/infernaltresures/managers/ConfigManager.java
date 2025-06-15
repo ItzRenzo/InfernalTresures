@@ -90,6 +90,35 @@ public class ConfigManager {
             config.set("treasure.enabled-blocks", new String[]{"STONE", "DEEPSLATE", "NETHERRACK", "END_STONE", 
                 "DIORITE", "ANDESITE", "GRANITE", "BLACKSTONE", "BASALT", "TUFF", "CALCITE"});
         }
+        
+        // Set debug configuration defaults
+        if (!config.isSet("debug.enabled")) {
+            config.set("debug.enabled", false);
+        }
+        
+        if (!config.isSet("debug.categories.loot-generation")) {
+            config.set("debug.categories.loot-generation", true);
+        }
+        
+        if (!config.isSet("debug.categories.treasure-spawning")) {
+            config.set("debug.categories.treasure-spawning", true);
+        }
+        
+        if (!config.isSet("debug.categories.mmo-items")) {
+            config.set("debug.categories.mmo-items", true);
+        }
+        
+        if (!config.isSet("debug.categories.executable-items")) {
+            config.set("debug.categories.executable-items", true);
+        }
+        
+        if (!config.isSet("debug.categories.barrel-filling")) {
+            config.set("debug.categories.barrel-filling", true);
+        }
+        
+        if (!config.isSet("debug.categories.biome-detection")) {
+            config.set("debug.categories.biome-detection", true);
+        }
     }
     
     public void saveConfig() {
