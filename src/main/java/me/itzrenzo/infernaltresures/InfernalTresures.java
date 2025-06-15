@@ -1,6 +1,7 @@
 package me.itzrenzo.infernaltresures;
 
 import me.itzrenzo.infernaltresures.commands.TreasureCommand;
+import me.itzrenzo.infernaltresures.integrations.MMOItemsIntegration;
 import me.itzrenzo.infernaltresures.listeners.MiningListener;
 import me.itzrenzo.infernaltresures.managers.BlockManager;
 import me.itzrenzo.infernaltresures.managers.ConfigManager;
@@ -17,11 +18,15 @@ public final class InfernalTresures extends JavaPlugin {
     private BlockManager blockManager;
     private TreasureManager treasureManager;
     private LootManager lootManager;
+    private MMOItemsIntegration mmoItemsIntegration;
 
     @Override
     public void onEnable() {
         // Set instance
         instance = this;
+        
+        // Initialize integrations first
+        mmoItemsIntegration = new MMOItemsIntegration(this);
         
         // Initialize managers
         configManager = new ConfigManager(this);
@@ -78,5 +83,9 @@ public final class InfernalTresures extends JavaPlugin {
     
     public BlockManager getBlockManager() {
         return blockManager;
+    }
+    
+    public MMOItemsIntegration getMMOItemsIntegration() {
+        return mmoItemsIntegration;
     }
 }

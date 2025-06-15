@@ -38,6 +38,12 @@ loot:
       min_amount: 1
       max_amount: 1
       chance: 25
+    # Example MMOItem - Ocean Warrior Sword
+    - mmo_type: SWORD
+      mmo_id: LONG_SWORD
+      min_amount: 1
+      max_amount: 1
+      chance: 15
 
   EPIC:
     - material: PRISMARINE
@@ -56,6 +62,12 @@ loot:
       min_amount: 1
       max_amount: 2
       chance: 65
+    # Example MMOItem - Aquatic Armor
+    - mmo_type: HELMET
+      mmo_id: AQUATIC_HELM
+      min_amount: 1
+      max_amount: 1
+      chance: 20
 
   LEGENDARY:
     - material: DIAMOND
@@ -74,6 +86,12 @@ loot:
       min_amount: 1
       max_amount: 1
       chance: 50
+    # Example MMOItem - Legendary Trident
+    - mmo_type: TOOL
+      mmo_id: POSEIDON_TRIDENT
+      min_amount: 1
+      max_amount: 1
+      chance: 10
 
   MYTHIC:
     - material: NETHERITE_INGOT
@@ -96,3 +114,13 @@ loot:
       min_amount: 1
       max_amount: 3
       chance: 65
+    # Example MMOItem - Mythic Ocean Crown
+    - mmo_type: ACCESSORY
+      mmo_id: OCEAN_CROWN
+      min_amount: 1
+      max_amount: 1
+      chance: 5
+      display_name: "&c&lCrown of the Seven Seas"
+      lore:
+        - "&7The ultimate treasure of the ocean"
+        - "&7Grants dominion over water"

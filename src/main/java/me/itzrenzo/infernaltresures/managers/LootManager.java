@@ -91,13 +91,44 @@ public class LootManager {
     
     private LootItem parseLootItemFromMap(Map<?, ?> itemMap) {
         try {
-            String materialName = (String) itemMap.get("material");
-            if (materialName == null) return null;
-            
-            Material material = Material.valueOf(materialName.toUpperCase());
-            
             LootItem item = new LootItem();
-            item.material = material;
+            
+            // Check if this is an MMOItem first
+            String mmoType = (String) itemMap.get("mmo_type");
+            String mmoId = (String) itemMap.get("mmo_id");
+            
+            if (mmoType != null && mmoId != null) {
+                // This is an MMOItem
+                item.isMMOItem = true;
+                item.mmoType = mmoType;
+                item.mmoId = mmoId;
+                
+                // Verify MMOItem exists (only if MMOItems integration is enabled)
+                if (InfernalTresures.getInstance().getMMOItemsIntegration().isEnabled()) {
+                    if (!InfernalTresures.getInstance().getMMOItemsIntegration().isValidMMOItem(mmoType, mmoId)) {
+                        plugin.getLogger().warning("Invalid MMOItem: " + mmoType + "." + mmoId);
+                        return null;
+                    }
+                } else {
+                    plugin.getLogger().warning("MMOItems not available, skipping MMOItem: " + mmoType + "." + mmoId);
+                    return null;
+                }
+            } else {
+                // Regular Bukkit material
+                String materialName = (String) itemMap.get("material");
+                if (materialName == null) {
+                    plugin.getLogger().warning("Item missing both 'material' and 'mmo_type'/'mmo_id' fields");
+                    return null;
+                }
+                
+                try {
+                    Material material = Material.valueOf(materialName.toUpperCase());
+                    item.material = material;
+                } catch (IllegalArgumentException e) {
+                    plugin.getLogger().warning("Unknown material: " + materialName);
+                    return null;
+                }
+            }
             
             // Safe casting for numeric values
             Object minAmountObj = itemMap.get("min_amount");
@@ -128,71 +159,73 @@ public class LootManager {
             Object customModelDataObj = itemMap.get("custom_model_data");
             item.customModelData = customModelDataObj instanceof Number ? ((Number) customModelDataObj).intValue() : -1;
             
-            // Parse enchantments
-            Object enchantmentsObj = itemMap.get("enchantments");
-            if (enchantmentsObj instanceof List<?>) {
-                item.enchantments = new ArrayList<>();
-                for (Object enchantObj : (List<?>) enchantmentsObj) {
-                    if (enchantObj instanceof Map<?, ?>) {
-                        Map<?, ?> enchantMap = (Map<?, ?>) enchantObj;
-                        EnchantmentData enchantData = new EnchantmentData();
-                        enchantData.enchantment = (String) enchantMap.get("enchant");
-                        
-                        Object levelObj = enchantMap.get("level");
-                        enchantData.level = levelObj instanceof Number ? ((Number) levelObj).intValue() : 1;
-                        
-                        Object minLevelObj = enchantMap.get("min_level");
-                        enchantData.minLevel = minLevelObj instanceof Number ? ((Number) minLevelObj).intValue() : enchantData.level;
-                        
-                        Object maxLevelObj = enchantMap.get("max_level");
-                        enchantData.maxLevel = maxLevelObj instanceof Number ? ((Number) maxLevelObj).intValue() : enchantData.level;
-                        
-                        item.enchantments.add(enchantData);
+            // Parse enchantments (only for regular items, MMOItems handle their own enchantments)
+            if (!item.isMMOItem) {
+                Object enchantmentsObj = itemMap.get("enchantments");
+                if (enchantmentsObj instanceof List<?>) {
+                    item.enchantments = new ArrayList<>();
+                    for (Object enchantObj : (List<?>) enchantmentsObj) {
+                        if (enchantObj instanceof Map<?, ?>) {
+                            Map<?, ?> enchantMap = (Map<?, ?>) enchantObj;
+                            EnchantmentData enchantData = new EnchantmentData();
+                            enchantData.enchantment = (String) enchantMap.get("enchant");
+                            
+                            Object levelObj = enchantMap.get("level");
+                            enchantData.level = levelObj instanceof Number ? ((Number) levelObj).intValue() : 1;
+                            
+                            Object minLevelObj = enchantMap.get("min_level");
+                            enchantData.minLevel = minLevelObj instanceof Number ? ((Number) minLevelObj).intValue() : enchantData.level;
+                            
+                            Object maxLevelObj = enchantMap.get("max_level");
+                            enchantData.maxLevel = maxLevelObj instanceof Number ? ((Number) maxLevelObj).intValue() : enchantData.level;
+                            
+                            item.enchantments.add(enchantData);
+                        }
                     }
                 }
-            }
-            
-            // Parse attributes
-            Object attributesObj = itemMap.get("attributes");
-            if (attributesObj instanceof List<?>) {
-                item.attributes = new ArrayList<>();
-                for (Object attributeObj : (List<?>) attributesObj) {
-                    if (attributeObj instanceof Map<?, ?>) {
-                        Map<?, ?> attributeMap = (Map<?, ?>) attributeObj;
-                        AttributeData attributeData = new AttributeData();
-                        attributeData.attribute = (String) attributeMap.get("attribute");
-                        
-                        Object valueObj = attributeMap.get("value");
-                        attributeData.value = valueObj instanceof Number ? ((Number) valueObj).doubleValue() : 0.0;
-                        
-                        Object operationObj = attributeMap.get("operation");
-                        attributeData.operation = operationObj instanceof String ? (String) operationObj : "ADD_NUMBER";
-                        
-                        Object slotObj = attributeMap.get("slot");
-                        attributeData.slot = slotObj instanceof String ? (String) slotObj : "HAND";
-                        
-                        item.attributes.add(attributeData);
+                
+                // Parse attributes (only for regular items)
+                Object attributesObj = itemMap.get("attributes");
+                if (attributesObj instanceof List<?>) {
+                    item.attributes = new ArrayList<>();
+                    for (Object attributeObj : (List<?>) attributesObj) {
+                        if (attributeObj instanceof Map<?, ?>) {
+                            Map<?, ?> attributeMap = (Map<?, ?>) attributeObj;
+                            AttributeData attributeData = new AttributeData();
+                            attributeData.attribute = (String) attributeMap.get("attribute");
+                            
+                            Object valueObj = attributeMap.get("value");
+                            attributeData.value = valueObj instanceof Number ? ((Number) valueObj).doubleValue() : 0.0;
+                            
+                            Object operationObj = attributeMap.get("operation");
+                            attributeData.operation = operationObj instanceof String ? (String) operationObj : "ADD_NUMBER";
+                            
+                            Object slotObj = attributeMap.get("slot");
+                            attributeData.slot = slotObj instanceof String ? (String) slotObj : "HAND";
+                            
+                            item.attributes.add(attributeData);
+                        }
                     }
                 }
-            }
-            
-            // Parse custom effects
-            Object customEffectsObj = itemMap.get("custom_effects");
-            if (customEffectsObj instanceof List<?>) {
-                item.customEffects = new ArrayList<>();
-                for (Object effectObj : (List<?>) customEffectsObj) {
-                    if (effectObj instanceof Map<?, ?>) {
-                        Map<?, ?> effectMap = (Map<?, ?>) effectObj;
-                        CustomEffectData effectData = new CustomEffectData();
-                        effectData.effect = (String) effectMap.get("effect");
-                        
-                        Object durationObj = effectMap.get("duration");
-                        effectData.duration = durationObj instanceof Number ? ((Number) durationObj).intValue() : 600;
-                        
-                        Object amplifierObj = effectMap.get("amplifier");
-                        effectData.amplifier = amplifierObj instanceof Number ? ((Number) amplifierObj).intValue() : 0;
-                        
-                        item.customEffects.add(effectData);
+                
+                // Parse custom effects (only for regular items)
+                Object customEffectsObj = itemMap.get("custom_effects");
+                if (customEffectsObj instanceof List<?>) {
+                    item.customEffects = new ArrayList<>();
+                    for (Object effectObj : (List<?>) customEffectsObj) {
+                        if (effectObj instanceof Map<?, ?>) {
+                            Map<?, ?> effectMap = (Map<?, ?>) effectObj;
+                            CustomEffectData effectData = new CustomEffectData();
+                            effectData.effect = (String) effectMap.get("effect");
+                            
+                            Object durationObj = effectMap.get("duration");
+                            effectData.duration = durationObj instanceof Number ? ((Number) durationObj).intValue() : 600;
+                            
+                            Object amplifierObj = effectMap.get("amplifier");
+                            effectData.amplifier = amplifierObj instanceof Number ? ((Number) amplifierObj).intValue() : 0;
+                            
+                            item.customEffects.add(effectData);
+                        }
                     }
                 }
             }
@@ -241,7 +274,35 @@ public class LootManager {
                 amount = ThreadLocalRandom.current().nextInt(lootItem.minAmount, lootItem.maxAmount + 1);
             }
             
-            // Create item with ItemBuilder
+            // Handle MMOItems
+            if (lootItem.isMMOItem) {
+                ItemStack mmoItem = InfernalTresures.getInstance().getMMOItemsIntegration()
+                    .createMMOItem(lootItem.mmoType, lootItem.mmoId, amount);
+                
+                if (mmoItem != null) {
+                    // Apply custom display name and lore if specified
+                    if (lootItem.displayName != null || (lootItem.lore != null && !lootItem.lore.isEmpty())) {
+                        ItemBuilder builder = ItemBuilder.from(mmoItem); // Use the static from() method
+                        
+                        if (lootItem.displayName != null) {
+                            builder.setDisplayName(lootItem.displayName);
+                        }
+                        
+                        if (lootItem.lore != null && !lootItem.lore.isEmpty()) {
+                            builder.setLore(lootItem.lore);
+                        }
+                        
+                        return builder.build();
+                    }
+                    
+                    return mmoItem;
+                } else {
+                    plugin.getLogger().warning("Failed to create MMOItem: " + lootItem.mmoType + "." + lootItem.mmoId);
+                    return null;
+                }
+            }
+            
+            // Regular Bukkit item handling
             ItemBuilder builder = new ItemBuilder(lootItem.material, amount);
             
             // Set display name
@@ -364,6 +425,11 @@ public class LootManager {
         List<EnchantmentData> enchantments;
         List<AttributeData> attributes;
         List<CustomEffectData> customEffects;
+        
+        // MMOItem fields
+        boolean isMMOItem;
+        String mmoType;
+        String mmoId;
     }
     
     private static class EnchantmentData {
