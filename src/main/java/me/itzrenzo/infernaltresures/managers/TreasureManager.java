@@ -49,6 +49,9 @@ public class TreasureManager {
             return false;
         }
         
+        // Track treasure found statistics
+        plugin.getStatsManager().onTreasureFound(player, rarity);
+        
         // Make final variable for lambda expression
         final Rarity finalRarity = rarity;
         

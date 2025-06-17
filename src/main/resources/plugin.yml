@@ -10,7 +10,7 @@ softdepend: [SCore, MMOItems, ExecutableItems]
 commands:
   treasure:
     description: Main command for the InfernalTreasures plugin
-    usage: /<command> [spawn|reload|info|help]
+    usage: /<command> [spawn|reload|info|stats|help]
     permission: infernaltresures.command.use
     aliases: [treasures, tr]
     
@@ -26,4 +26,10 @@ permissions:
     default: op
   infernaltresures.command.info:
     description: Allows viewing plugin information
+    default: op
+  infernaltresures.command.stats:
+    description: Allows viewing your own treasure hunting statistics
+    default: true
+  infernaltresures.command.stats.others:
+    description: Allows viewing other players' treasure hunting statistics
     default: op

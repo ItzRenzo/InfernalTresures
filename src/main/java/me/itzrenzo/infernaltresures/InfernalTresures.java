@@ -4,10 +4,12 @@ import me.itzrenzo.infernaltresures.commands.TreasureCommand;
 import me.itzrenzo.infernaltresures.integrations.ExecutableItemsIntegration;
 import me.itzrenzo.infernaltresures.integrations.MMOItemsIntegration;
 import me.itzrenzo.infernaltresures.listeners.MiningListener;
+import me.itzrenzo.infernaltresures.listeners.StatsListener;
 import me.itzrenzo.infernaltresures.managers.BlockManager;
 import me.itzrenzo.infernaltresures.managers.ConfigManager;
 import me.itzrenzo.infernaltresures.managers.LootManager;
 import me.itzrenzo.infernaltresures.managers.MessageManager;
+import me.itzrenzo.infernaltresures.managers.StatsManager;
 import me.itzrenzo.infernaltresures.managers.TreasureManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,6 +21,7 @@ public final class InfernalTresures extends JavaPlugin {
     private BlockManager blockManager;
     private TreasureManager treasureManager;
     private LootManager lootManager;
+    private StatsManager statsManager;
     private MMOItemsIntegration mmoItemsIntegration;
     private ExecutableItemsIntegration executableItemsIntegration;
 
@@ -39,6 +42,7 @@ public final class InfernalTresures extends JavaPlugin {
         
         lootManager = new LootManager(this);
         treasureManager = new TreasureManager(this);
+        statsManager = new StatsManager(this);
         
         // Initialize integrations after managers are ready
         mmoItemsIntegration = new MMOItemsIntegration(this);
@@ -75,6 +79,7 @@ public final class InfernalTresures extends JavaPlugin {
         
         // Register listeners
         getServer().getPluginManager().registerEvents(new MiningListener(this), this);
+        getServer().getPluginManager().registerEvents(new StatsListener(this), this);
         
         // Register commands
         getCommand("treasure").setExecutor(new TreasureCommand(this));
@@ -84,6 +89,11 @@ public final class InfernalTresures extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Save stats before shutting down
+        if (statsManager != null) {
+            statsManager.saveStats();
+        }
+        
         // Clean up any remaining treasures
         if (treasureManager != null) {
             treasureManager.cleanupAllTreasures();
@@ -119,6 +129,10 @@ public final class InfernalTresures extends JavaPlugin {
     
     public BlockManager getBlockManager() {
         return blockManager;
+    }
+    
+    public StatsManager getStatsManager() {
+        return statsManager;
     }
     
     public MMOItemsIntegration getMMOItemsIntegration() {

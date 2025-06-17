@@ -24,16 +24,21 @@ public class MiningListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
         
+        // Track block mining statistics (for all blocks mined, not just those that spawn treasures)
+        if (player.getGameMode() != GameMode.CREATIVE) {
+            plugin.getStatsManager().onBlockMined(player);
+        }
+        
         // Check if block breaking should spawn treasure
         if (!canSpawnTreasure(player, block)) {
             return;
         }
         
         // Try to spawn treasure using the BlockManager system
-        plugin.getTreasureManager().trySpawnTreasure(block, player);
+        boolean treasureSpawned = plugin.getTreasureManager().trySpawnTreasure(block, player);
         
-        // Play sound and effects if treasure was spawned
-        if (plugin.getConfigManager().isMiningEffectEnabled()) {
+        // Play sound and effects only if treasure was actually spawned
+        if (treasureSpawned && plugin.getConfigManager().isMiningEffectEnabled()) {
             player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
         }
     }

@@ -62,13 +62,30 @@ messages:
   invalid-rarity: "&cInvalid rarity. Valid options are: &f{rarities}"
   unknown-command: "&cUnknown command. Use &f/treasure help &cfor a list of commands."
   biome-not-found: "&cBiome configuration not found for &f{biome}&c, using default loot"
+  player-not-found: "&cPlayer not found: &f{player}"
+  console-specify-player: "&cConsole must specify a player name."
+  no-permission-view-others: "&cYou don't have permission to view other players' statistics."
   
   # Help messages
   help-header: "&6=== InfernalTreasures Commands ==="
   help-spawn: "&e/treasure spawn [rarity] &f- Spawn a treasure at your location"
   help-reload: "&e/treasure reload &f- Reload the plugin configuration"
   help-info: "&e/treasure info &f- Show plugin information"
+  help-stats: "&e/treasure stats [player] &f- View treasure hunting statistics"
   help-help: "&e/treasure help &f- Show this help message"
+  
+  # Statistics messages
+  stats-header: "&6=== Statistics for {player} ==="
+  stats-total-blocks-mined: "&eTotal Blocks Mined: &f{count}"
+  stats-total-treasures-found: "&eTotal Treasures Found: &f{count}"
+  stats-treasure-breakdown: "&bTreasure Breakdown:"
+  stats-common-treasures: "&f  Common: &f{count}"
+  stats-rare-treasures: "&9  Rare: &f{count}"
+  stats-epic-treasures: "&d  Epic: &f{count}"
+  stats-legendary-treasures: "&6  Legendary: &f{count}"
+  stats-mythic-treasures: "&c  Mythic: &f{count}"
+  stats-playtime: "&ePlaytime: &f{hours}h {minutes}m"
+  stats-current-session: "&7Current Session: &f{hours}h {minutes}m"
 
 # ========================================
 #          BIOME DISPLAY NAMES
