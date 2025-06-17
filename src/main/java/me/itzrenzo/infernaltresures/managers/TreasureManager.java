@@ -63,7 +63,7 @@ public class TreasureManager {
         
         // Delay the treasure creation to ensure the block breaking event completes first
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            Treasure treasure = new Treasure(spawnLocation, finalRarity, biome);
+            Treasure treasure = new Treasure(spawnLocation, finalRarity, biome, player);
             activeTreasures.put(treasure.getId(), treasure);
         }, 1L); // 1 tick delay
         

@@ -21,18 +21,20 @@ public class Treasure {
     private final Location location;
     private final Rarity rarity;
     private final Biome biome;
+    private final UUID finderId; // Player who found this treasure
     private final BukkitTask despawnTask;
     private boolean claimed = false;
     private ArmorStand hologram;
     
-    public Treasure(Location location, Rarity rarity, Biome biome) {
+    public Treasure(Location location, Rarity rarity, Biome biome, org.bukkit.entity.Player finder) {
         this.id = UUID.randomUUID();
         this.location = location;
         this.rarity = rarity;
         this.biome = biome;
+        this.finderId = finder != null ? finder.getUniqueId() : null;
         
         // Create the treasure barrel immediately
-        spawnTreasure();
+        spawnTreasure(finder);
         
         // Schedule despawn
         this.despawnTask = Bukkit.getScheduler().runTaskLater(
@@ -42,7 +44,12 @@ public class Treasure {
         );
     }
     
-    private void spawnTreasure() {
+    // Backward compatibility constructor
+    public Treasure(Location location, Rarity rarity, Biome biome) {
+        this(location, rarity, biome, null);
+    }
+    
+    private void spawnTreasure(org.bukkit.entity.Player finder) {
         // Place the barrel block
         Block block = location.getBlock();
         block.setType(Material.BARREL);
@@ -52,12 +59,13 @@ public class Treasure {
             createHologram();
         }
         
-        // Generate loot using the LootManager
-        List<ItemStack> loot = InfernalTresures.getInstance().getLootManager().generateLoot(biome, rarity);
+        // Generate loot using the LootManager with progression support
+        List<ItemStack> loot = InfernalTresures.getInstance().getLootManager().generateLoot(biome, rarity, finder);
         
         // Debug log
         if (InfernalTresures.getInstance().getConfigManager().isLootGenerationDebugEnabled()) {
-            InfernalTresures.getInstance().getLogger().info("Generated " + loot.size() + " items for " + rarity + " treasure");
+            InfernalTresures.getInstance().getLogger().info("Generated " + loot.size() + " items for " + rarity + " treasure" +
+                (finder != null ? " for player " + finder.getName() : ""));
             for (ItemStack item : loot) {
                 InfernalTresures.getInstance().getLogger().info("- " + item.getType() + " x" + item.getAmount());
             }

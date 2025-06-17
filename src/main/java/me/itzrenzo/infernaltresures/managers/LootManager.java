@@ -250,6 +250,10 @@ public class LootManager {
                 }
             }
             
+            // Parse progression requirement
+            Object requiredBlocksObj = itemMap.get("required_blocks_mined");
+            item.requiredBlocksMined = requiredBlocksObj instanceof Number ? ((Number) requiredBlocksObj).longValue() : 0;
+            
             return item;
             
         } catch (Exception e) {
@@ -258,7 +262,7 @@ public class LootManager {
         }
     }
     
-    public List<ItemStack> generateLoot(Biome biome, Rarity rarity) {
+    public List<ItemStack> generateLoot(Biome biome, Rarity rarity, org.bukkit.entity.Player player) {
         List<ItemStack> loot = new ArrayList<>();
         
         Map<Rarity, List<LootItem>> biomeLootTable = lootTables.get(biome);
@@ -273,8 +277,25 @@ public class LootManager {
             return loot;
         }
         
-        // Generate loot items based on their individual chances
+        // Get player's total blocks mined for progression check
+        long playerBlocksMined = 0;
+        if (player != null) {
+            playerBlocksMined = plugin.getStatsManager().getPlayerStats(player).totalBlocksMined;
+        }
+        
+        // Generate loot items based on their individual chances and progression requirements
         for (LootItem lootItem : rarityLoot) {
+            // Check if player meets progression requirement
+            if (lootItem.requiredBlocksMined > 0 && playerBlocksMined < lootItem.requiredBlocksMined) {
+                if (plugin.getConfigManager().isLootGenerationDebugEnabled()) {
+                    plugin.getLogger().info("Player " + (player != null ? player.getName() : "unknown") + 
+                        " doesn't meet progression requirement: " + playerBlocksMined + "/" + lootItem.requiredBlocksMined + 
+                        " blocks mined for item " + (lootItem.material != null ? lootItem.material.name() : 
+                        lootItem.isMMOItem ? lootItem.mmoType + "." + lootItem.mmoId : lootItem.executableId));
+                }
+                continue; // Skip this item
+            }
+            
             if (ThreadLocalRandom.current().nextDouble(100.0) < lootItem.chance) {
                 ItemStack itemStack = createItemStack(lootItem);
                 if (itemStack != null) {
@@ -284,6 +305,11 @@ public class LootManager {
         }
         
         return loot;
+    }
+    
+    // Keep the old method for backward compatibility (for cases where player is unknown)
+    public List<ItemStack> generateLoot(Biome biome, Rarity rarity) {
+        return generateLoot(biome, rarity, null);
     }
     
     private ItemStack createItemStack(LootItem lootItem) {
@@ -482,6 +508,9 @@ public class LootManager {
         // ExecutableItem fields
         boolean isExecutableItem;
         String executableId;
+        
+        // Progression requirement
+        long requiredBlocksMined = 0; // Default: no requirement
     }
     
     private static class EnchantmentData {
