@@ -1,6 +1,6 @@
 # InfernalTreasures
 
-A comprehensive Minecraft plugin that adds treasure hunting while mining! Find valuable treasures hidden in blocks as you mine, with biome-specific loot, multiple item system integrations, and highly customizable features.
+A comprehensive Minecraft plugin that adds treasure hunting while mining! Find valuable treasures hidden in blocks as you mine, with biome-specific loot, multiple item system integrations, customizable GUI browsers, and highly configurable features.
 
 ## 🌟 Features
 
@@ -8,14 +8,57 @@ A comprehensive Minecraft plugin that adds treasure hunting while mining! Find v
 - 🌍 **Biome-Specific Loot**: Different treasures spawn based on the biome you're mining in
 - ⭐ **Advanced Rarity System**: 5 rarity tiers (Common, Rare, Epic, Legendary, Mythic) with individual spawn chances
 - 📦 **Interactive Treasure Barrels**: Treasures spawn as barrels with scattered loot inside
+- 🖥️ **Interactive Loot GUI**: Browse all available treasures by biome and rarity with detailed information
+- 🎨 **Fully Customizable Menus**: Configure GUI titles, layouts, colors, and content through YAML files
 - 🏷️ **Custom Holograms**: Floating text above treasures (configurable per rarity tier)
 - 🔧 **Highly Configurable**: Extensive configuration options for every aspect of the plugin
 - 🎨 **Advanced Item System**: Support for enchantments, attributes, custom names, lore, and potion effects
+- 📊 **Player Progression**: Track blocks mined and gate items behind progression requirements
 - ⏰ **Smart Auto-Despawn**: Treasures automatically despawn after configurable times per rarity
 - 🎵 **Visual & Audio Effects**: Optional sound and particle effects when treasures are discovered
 - 🔗 **Plugin Integrations**: Native support for MMOItems and ExecutableItems
 - 📊 **Debug System**: Comprehensive debug logging with categorized output
 - ⚡ **Performance Optimized**: Efficient treasure spawning and management system
+
+## 🖥️ Interactive Loot Browser
+
+### GUI System Features
+- **📋 Biome Selection**: Browse all available biomes with custom icons and descriptions
+- **⭐ Rarity Browser**: View available rarities for each biome with item counts
+- **🎁 Loot Display**: See ALL possible items with detailed statistics (no random disappearing!)
+- **📊 Item Information**: View drop chances, amount ranges, progression requirements, and item types
+- **🎨 Full Customization**: Configure every aspect through YAML menu files
+
+### GUI Commands
+| Command | Permission | Description |
+|---------|------------|-------------|
+| `/lootgui` | `infernaltresures.command.use` | Open the loot browser GUI |
+| `/treasure loot gui` | `infernaltresures.command.use` | Alternative command for loot GUI |
+
+### Menu Customization
+Create your own menu themes by editing files in the `menus/` folder:
+
+**`menus/biome-selection.yml`** - Customize the biome selection screen
+**`menus/rarity-selection.yml`** - Configure rarity browsing interface  
+**`menus/loot-display.yml`** - Customize loot item display and information
+
+Example menu customization:
+```yaml
+# menus/loot-display.yml
+loot-display:
+  show-details:
+    chance: true              # Show drop percentages
+    amount-range: true        # Show min/max amounts
+    required-blocks: true     # Show progression requirements
+    item-type: true          # Show if it's MMOItem/ExecutableItem
+    biome-source: true       # Show source biome
+  
+  format:
+    chance: "&7Chance: &f{chance}%"
+    amount-range: "&7Amount: &f{min_amount} - {max_amount}"
+    required-blocks: "&7Required Blocks: &f{required_blocks}"
+    # Fully customizable with color codes!
+```
 
 ## 🔌 Plugin Integrations
 
@@ -39,6 +82,7 @@ A comprehensive Minecraft plugin that adds treasure hunting while mining! Find v
 4. *Optional*: Install [SCore](https://www.spigotmc.org/resources/score.84702/) and [ExecutableItems](https://www.spigotmc.org/resources/executableitems.77578/) for executable item support
 5. Restart your server
 6. Configure the plugin by editing the generated config files
+7. **NEW**: Customize the loot browser GUI by editing files in the `menus/` folder
 
 ## ⚙️ Configuration
 
@@ -47,12 +91,18 @@ A comprehensive Minecraft plugin that adds treasure hunting while mining! Find v
 ```yaml
 # Treasure spawn settings
 treasure:
-  spawn-chance: 15          # Base chance (0-100%) of finding treasure
   effects:
     sound: true             # Play sound when treasure is found
     particles: true         # Show particles when treasure is found
-  announce-finds: true      # Announce rare finds to server
-  hourly-limit: 50         # Max treasures per player per hour (0 = unlimited)
+  hourly-limit: 0          # Max treasures per player per hour (0 = unlimited)
+  
+  # Per-rarity announcement settings
+  announce-finds:
+    common: false           # Announce common finds
+    rare: false            # Announce rare finds  
+    epic: false            # Announce epic finds
+    legendary: true        # Announce legendary finds
+    mythic: true          # Announce mythic finds
 
 # Hologram configuration
 holograms:
@@ -65,36 +115,18 @@ holograms:
   height: 1.5              # Height above barrel (blocks)
   visible-distance: 16     # Distance players can see holograms
 
-# Mining restrictions
-mining:
-  enabled-blocks:           # Blocks that can spawn treasures
-    - STONE
-    - DEEPSLATE
-    - COAL_ORE
-    - IRON_ORE
-    # ... more blocks
-  require-pickaxe: true     # Only spawn treasures when using pickaxes
-  min-y-level: -64         # Minimum Y level for spawns
-  max-y-level: 320         # Maximum Y level for spawns
-
-# Rarity chances
+# Rarity despawn times (in seconds)
 rarity:
-  chances:
-    COMMON: 60             # Percentage chances (should add to 100%)
-    RARE: 25
-    EPIC: 10
-    LEGENDARY: 4
-    MYTHIC: 1
-  colors:                  # Color codes for display
-    COMMON: "&f"
-    RARE: "&9"
-    EPIC: "&5"
-    LEGENDARY: "&6"
-    MYTHIC: "&c"
+  despawn-times:
+    common: 300            # 5 minutes
+    rare: 420              # 7 minutes
+    epic: 600              # 10 minutes
+    legendary: 900         # 15 minutes
+    mythic: 1200           # 20 minutes
 
 # Debug system
 debug:
-  enabled: true            # Enable debug logging
+  enabled: false           # Enable debug logging
   categories:              # Specific debug categories
     loot-generation: true
     treasure-spawning: true
@@ -104,101 +136,70 @@ debug:
     biome-detection: true
 ```
 
-### Block Configuration (`blocks.yml`)
+### Player Progression System
 
-Configure block-specific treasure spawn chances:
-
-```yaml
-block-specific-chances:
-  enabled: true             # Use block-specific chances
-  fallback-chance: 1.0      # Default chance for unconfigured blocks
-  debug: false              # Block-specific debug logging
-
-blocks:
-  STONE:
-    COMMON: 2.0
-    RARE: 0.5
-    EPIC: 0.1
-    LEGENDARY: 0.02
-    MYTHIC: 0.005
-  DIAMOND_ORE:
-    COMMON: 5.0
-    RARE: 2.0
-    EPIC: 0.8
-    LEGENDARY: 0.3
-    MYTHIC: 0.1
-  # ... more blocks
-```
-
-### Biome Loot Tables (`biomes/`)
-
-Create sophisticated loot tables with multiple item types:
+Gate valuable items behind progression requirements:
 
 ```yaml
-# biomes/forest.yml
-name: "Forest"
-description: "Dense woodlands filled with natural treasures"
-
+# In any biome loot table
 loot:
-  COMMON:
-    # Regular Minecraft item
-    - material: OAK_LOG
-      min_amount: 4
-      max_amount: 12
-      chance: 85
-      display_name: "&6&lAncient Oak Log"
+  LEGENDARY:
+    - material: NETHERITE_INGOT
+      min_amount: 2
+      max_amount: 5
+      chance: 10
+      required_blocks_mined: 5000  # Player must mine 5000 blocks first
+      display_name: "&6&lNether Master's Ingot"
       lore:
-        - "&7Wood from the oldest trees"
-        - "&7in the enchanted forest."
-    
-    # ExecutableItem
-    - executable_id: FOREST_WAND
-      min_amount: 1
-      max_amount: 1
-      chance: 15
-      display_name: "&a&lNature's Wand"
-      lore:
-        - "&7A mystical wand from the forest"
-
-  RARE:
-    # MMOItem
-    - mmo_type: SWORD
-      mmo_id: LONG_SWORD
-      min_amount: 1
-      max_amount: 1
-      chance: 25
-    
-    # Advanced item with enchantments
-    - material: BOW
-      min_amount: 1
-      max_amount: 1
-      chance: 55
-      display_name: "&6&lHunter's Bow"
-      enchantments:
-        - enchant: POWER
-          level: 3
-        - enchant: INFINITY
-          level: 1
-      attributes:
-        - attribute: GENERIC_ATTACK_DAMAGE
-          value: 2.0
-          operation: ADD_NUMBER
+        - "&7Only the most experienced"
+        - "&7miners can find this treasure."
 ```
 
-### Message Configuration (`messages.yml`)
+### Menu Configuration (`menus/`)
 
-Customize all player-facing messages:
+**Full GUI Customization**: Every aspect of the loot browser can be customized!
 
 ```yaml
-treasures:
-  found: "&6You found a %rarity% treasure!"
-  despawn-warning: "&cYour treasure will despawn in 30 seconds!"
-  despawned: "&7Your treasure has despawned."
+# menus/biome-selection.yml
+gui:
+  title: "&6&lTreasure Biomes"
+  size: 54
 
-commands:
-  no-permission: "&cYou don't have permission to use this command!"
-  reload-success: "&aInfernalTreasures configuration reloaded!"
-  # ... more messages
+biome-items:
+  desert:
+    material: SAND
+    display-name: "&e&lDesert Treasures"
+    lore:
+      - "&7Hot sands hide ancient secrets"
+      - "&7Click to explore desert loot!"
+  # Configure each biome individually
+  
+navigation:
+  close:
+    material: BARRIER
+    slot: 53
+    display-name: "&c&lClose"
+    lore: ["&7Click to close this menu"]
+```
+
+```yaml
+# menus/loot-display.yml
+loot-display:
+  show-details:
+    chance: true              # Show drop chances
+    amount-range: true        # Show min/max amounts  
+    single-amount: false      # Show amount when min=max
+    required-blocks: true     # Show progression requirements
+    item-type: true          # Show MMOItem/ExecutableItem info
+    biome-source: true       # Show source biome
+
+  format:
+    chance: "&7Chance: &f{chance}%"
+    amount-range: "&7Amount: &f{min_amount} - {max_amount}"
+    required-blocks: "&7Required Blocks: &f{required_blocks}"
+    no-requirement: "&7Required Blocks: &aNone"
+    item-type: "&7Type: &f{item_type}"
+    # All formats support full color codes!
 ```
 
 ## 🎮 Commands
@@ -207,14 +208,16 @@ commands:
 |---------|------------|-------------|
 | `/treasure help` | `infernaltresures.command.use` | Show help message |
 | `/treasure spawn [rarity]` | `infernaltresures.command.spawn` | Spawn a treasure at your location |
-| `/treasure reload` | `infernaltresures.command.reload` | Reload all configurations |
+| `/treasure reload` | `infernaltresures.command.reload` | Reload all configurations and menus |
 | `/treasure info` | `infernaltresures.command.info` | Show plugin and integration status |
+| `/lootgui` | `infernaltresures.command.use` | **NEW**: Open interactive loot browser |
+| `/treasure loot gui` | `infernaltresures.command.use` | **NEW**: Alternative loot browser command |
 
 ## 🔐 Permissions
 
 | Permission | Description | Default |
 |------------|-------------|---------|
-| `infernaltresures.command.use` | Access to basic commands | `true` |
+| `infernaltresures.command.use` | Access to basic commands and loot GUI | `true` |
 | `infernaltresures.command.spawn` | Access to spawn command | `op` |
 | `infernaltresures.command.reload` | Access to reload command | `op` |
 | `infernaltresures.command.info` | Access to info command | `op` |
@@ -394,14 +397,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - ✨ **NEW**: Sound and particle effects
 - ✨ **NEW**: Message customization system
 - ✨ **NEW**: Performance-optimized treasure management
-
-## 🙏 Acknowledgments
-
-- Thanks to the **MMOItems** team for their excellent API documentation
-- Thanks to **Ssomar** for the SCore framework and ExecutableItems integration examples  
-- Thanks to the **Paper** team for their enhanced server software
-- Thanks to all beta testers and contributors
-
----
-
-**Made with ❤️ for the Minecraft community**
