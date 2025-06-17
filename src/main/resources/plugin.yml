@@ -10,9 +10,14 @@ softdepend: [SCore, MMOItems, ExecutableItems]
 commands:
   treasure:
     description: Main command for the InfernalTreasures plugin
-    usage: /<command> [spawn|reload|info|stats|help]
+    usage: /<command> [spawn|reload|info|stats|loot|help]
     permission: infernaltresures.command.use
     aliases: [treasures, tr]
+  lootgui:
+    description: Opens the loot GUI to browse biome treasures
+    usage: /<command>
+    permission: infernaltresures.command.loot.gui
+    aliases: [tloot, treasureloot]
     
 permissions:
   infernaltresures.command.use:
@@ -33,3 +38,9 @@ permissions:
   infernaltresures.command.stats.others:
     description: Allows viewing other players' treasure hunting statistics
     default: op
+  infernaltresures.command.loot:
+    description: Allows using the loot command
+    default: true
+  infernaltresures.command.loot.gui:
+    description: Allows opening the loot GUI to browse biome treasures
+    default: true

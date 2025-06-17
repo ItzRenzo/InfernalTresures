@@ -1,0 +1,87 @@
+# ========================================
+#         RARITY SELECTION GUI CONFIG
+# ========================================
+# Configuration for the rarity selection GUI
+
+# GUI Settings
+gui:
+  title: "&6&lRarities in {biome_name}"
+  size: 27  # Must be multiple of 9
+
+# Rarity Items Configuration
+rarity-items:
+  # Default settings for all rarity items
+  default:
+    lore:
+      - "&7Rarity: {rarity_display_name}"
+      - "&7Available items: &f{loot_count}"
+      - ""
+      - "&eClick to view loot items!"
+    display-name-format: "{rarity_display_name}"
+  
+  # Custom settings for specific rarities (optional)
+  common:
+    material: IRON_INGOT
+    display-name: "&f&lCommon Treasures"
+    lore:
+      - "&7Common items found frequently"
+      - "&7Available items: &f{loot_count}"
+      - ""
+      - "&eClick to view common loot!"
+  
+  rare:
+    material: GOLD_INGOT
+    display-name: "&9&lRare Treasures"
+    lore:
+      - "&9Rare items with special properties"
+      - "&7Available items: &f{loot_count}"
+      - ""
+      - "&eClick to view rare loot!"
+  
+  epic:
+    material: DIAMOND
+    display-name: "&5&lEpic Treasures"
+    lore:
+      - "&5Epic items with powerful effects"
+      - "&7Available items: &f{loot_count}"
+      - ""
+      - "&eClick to view epic loot!"
+  
+  legendary:
+    material: EMERALD
+    display-name: "&6&lLegendary Treasures"
+    lore:
+      - "&6Legendary items of immense power"
+      - "&7Available items: &f{loot_count}"
+      - ""
+      - "&eClick to view legendary loot!"
+  
+  mythic:
+    material: NETHERITE_INGOT
+    display-name: "&c&lMythic Treasures"
+    lore:
+      - "&cMythic items of unimaginable power"
+      - "&7Available items: &f{loot_count}"
+      - ""
+      - "&eClick to view mythic loot!"
+
+# Navigation Items
+navigation:
+  back:
+    material: ARROW
+    slot: 22
+    display-name: "&a&lBack to Biomes"
+    lore:
+      - "&7Return to biome selection"
+  
+  close:
+    material: BARRIER
+    slot: 26
+    display-name: "&c&lClose"
+    lore:
+      - "&7Click to close this menu"
+
+# Layout Settings
+layout:
+  rarity-start-slot: 10  # Where to start placing rarity items
+  rarity-slot-spacing: 2  # Space between rarity items (10, 12, 14, 16, 18)

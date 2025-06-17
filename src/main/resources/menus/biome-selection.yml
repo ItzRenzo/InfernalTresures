@@ -1,0 +1,72 @@
+# ========================================
+#         BIOME SELECTION GUI CONFIG
+# ========================================
+# Configuration for the main biome selection GUI
+
+# GUI Settings
+gui:
+  title: "&6&lTreasure Biomes"
+  size: 54  # Must be multiple of 9 (9, 18, 27, 36, 45, 54)
+
+# Biome Items Configuration
+biome-items:
+  # Default settings for all biome items
+  default:
+    lore:
+      - "&7Click to view treasure rarities"
+      - "&7available in this biome"
+      - ""
+      - "&eClick to explore!"
+    display-name-format: "&6&l{biome_name}"
+  
+  # Custom settings for specific biomes (optional)
+  # These override the default settings
+  forest:
+    material: OAK_LOG
+    display-name: "&2&lForest Biome"
+    lore:
+      - "&7Dense woodlands filled with"
+      - "&7natural treasures and secrets"
+      - ""
+      - "&eClick to explore the forest!"
+  
+  plains:
+    material: GRASS_BLOCK
+    display-name: "&a&lPlains Biome"
+    lore:
+      - "&7Wide open grasslands with"
+      - "&7abundant farming treasures"
+      - ""
+      - "&eClick to explore the plains!"
+  
+  desert:
+    material: SAND
+    display-name: "&e&lDesert Biome"
+    lore:
+      - "&7Hot sandy wasteland with"
+      - "&7hidden ancient treasures"
+      - ""
+      - "&eClick to explore the desert!"
+  
+  ocean:
+    material: WATER_BUCKET
+    display-name: "&9&lOcean Biome"
+    lore:
+      - "&7Deep waters containing"
+      - "&7maritime treasures"
+      - ""
+      - "&eClick to explore the ocean!"
+
+# Navigation Items
+navigation:
+  close:
+    material: BARRIER
+    slot: 53
+    display-name: "&c&lClose"
+    lore:
+      - "&7Click to close this menu"
+
+# Layout Settings
+layout:
+  biome-start-slot: 0  # Where to start placing biome items
+  max-biome-slots: 45  # Maximum slots available for biomes (leave space for navigation)

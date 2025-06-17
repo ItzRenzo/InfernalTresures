@@ -183,7 +183,7 @@ public class ConfigManager {
         plugin.reloadConfig();
         config = plugin.getConfig();
         
-        // Also reload loot tables, messages, blocks, and stats
+        // Also reload loot tables, messages, blocks, stats, and menus
         if (plugin.getLootManager() != null) {
             plugin.getLootManager().reload();
         }
@@ -200,7 +200,11 @@ public class ConfigManager {
             plugin.getStatsManager().reload();
         }
         
-        plugin.getLogger().info("Configuration, loot tables, messages, blocks, and stats reloaded.");
+        if (plugin.getMenuManager() != null) {
+            plugin.getMenuManager().reload();
+        }
+        
+        plugin.getLogger().info("Configuration, loot tables, messages, blocks, stats, and menus reloaded.");
     }
     
     public boolean isMiningEffectEnabled() {

@@ -1,0 +1,83 @@
+# ========================================
+#         LOOT DISPLAY GUI CONFIG
+# ========================================
+# Configuration for the loot display GUI
+
+# GUI Settings
+gui:
+  title: "{rarity_display_name} Loot - {biome_name}"
+  size: 54  # Must be multiple of 9
+
+# Loot Item Display Settings
+loot-display:
+  # Additional lore added to each loot item for GUI display
+  additional-lore:
+    - ""
+    - "&7This item can be found in {biome_name}"
+    - "&7Rarity: {rarity_display_name}"
+    - "&7Chance: &f{item_chance}%"
+    - "&7Amount: &f{min_amount}"
+    - "&7Max Amount: &f{max_amount}"
+    - "&7Required Blocks: &f{required_blocks}"
+  
+  # How many slots are available for loot items
+  max-loot-slots: 45  # Leave space for navigation
+  
+  # Configure what information to show in the lore
+  show-details:
+    chance: true              # Show drop chance percentage
+    amount-range: true        # Show min/max amount range
+    single-amount: false      # Show amount when min = max (if false, shows nothing when min = max)
+    required-blocks: true     # Show required blocks mined
+    item-type: true          # Show item type (Material/MMOItem/ExecutableItem)
+    biome-source: true       # Show which biome this item comes from
+  
+  # Format strings for different detail types
+  format:
+    chance: "&7Chance: &f{chance}%"
+    amount-range: "&7Amount: &f{min_amount} - {max_amount}"
+    single-amount: "&7Amount: &f{amount}"
+    required-blocks: "&7Required Blocks: &f{required_blocks}"
+    no-requirement: "&7Required Blocks: &aNone"
+    item-type: "&7Type: &f{item_type}"
+    biome-source: "&7Found in: &f{biome_name}"
+    rarity-info: "&7Rarity: {rarity_display_name}"
+
+# Navigation Items
+navigation:
+  back:
+    material: ARROW
+    slot: 45
+    display-name: "&a&lBack to Rarities"
+    lore:
+      - "&7Return to rarity selection"
+  
+  biome-info:
+    material: "{biome_material}"  # Will use the biome's material
+    slot: 49
+    display-name: "&6&lBiome: {biome_name}"
+    lore:
+      - "&7You are viewing loot for:"
+      - "&f{biome_name}"
+      - "&7Rarity: {rarity_display_name}"
+      - ""
+      - "&7Total items: &f{total_items}"
+  
+  close:
+    material: BARRIER
+    slot: 53
+    display-name: "&c&lClose"
+    lore:
+      - "&7Click to close this menu"
+
+# Layout Settings
+layout:
+  loot-start-slot: 0  # Where to start placing loot items
+  items-per-row: 9    # Items per row (standard inventory width)
+
+# Display Options
+options:
+  show-item-chances: true     # Show individual item chances in lore
+  show-progression-requirements: true  # Show required blocks mined
+  sort-by-chance: false       # Sort items by chance (highest first)
+  group-by-type: false        # Group similar item types together

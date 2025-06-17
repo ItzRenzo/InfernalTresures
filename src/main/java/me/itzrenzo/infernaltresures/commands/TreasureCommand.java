@@ -32,6 +32,11 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
     
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        // Handle the /lootgui alias
+        if (label.equalsIgnoreCase("lootgui")) {
+            return handleLootGUICommand(sender);
+        }
+        
         if (args.length == 0) {
             sendHelpMessage(sender);
             return true;
@@ -42,6 +47,7 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             case "reload" -> handleReloadCommand(sender);
             case "info" -> handleInfoCommand(sender);
             case "stats" -> handleStatsCommand(sender, args);
+            case "loot" -> handleLootCommand(sender, args);
             case "help" -> sendHelpMessage(sender);
             default -> {
                 sender.sendMessage(Component.text("Unknown command. Use /treasure help for a list of commands.")
@@ -50,6 +56,23 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             }
         }
         
+        return true;
+    }
+    
+    private boolean handleLootGUICommand(CommandSender sender) {
+        // Only players can use GUI
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("Only players can use this command.").color(NamedTextColor.RED));
+            return true;
+        }
+        
+        // Check permissions
+        if (!player.hasPermission("infernaltresures.command.loot.gui")) {
+            player.sendMessage(Component.text("You don't have permission to use this command.").color(NamedTextColor.RED));
+            return true;
+        }
+        
+        plugin.getLootGUIManager().openBiomeGUI(player);
         return true;
     }
     
@@ -258,7 +281,39 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(messageManager.getMessageComponent("help-stats"));
         }
         
+        if (sender.hasPermission("infernaltresures.command.loot.gui")) {
+            sender.sendMessage(messageManager.getMessageComponent("help-loot"));
+        }
+        
         sender.sendMessage(messageManager.getMessageComponent("help-help"));
+    }
+    
+    private void handleLootCommand(CommandSender sender, String[] args) {
+        // Only players can use GUI
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("Only players can use this command.").color(NamedTextColor.RED));
+            return;
+        }
+        
+        // Check basic loot permission
+        if (!player.hasPermission("infernaltresures.command.loot")) {
+            player.sendMessage(Component.text("You don't have permission to use this command.").color(NamedTextColor.RED));
+            return;
+        }
+        
+        // If no subcommand or "gui" subcommand, open the GUI
+        if (args.length == 1 || args[1].equalsIgnoreCase("gui")) {
+            // Check GUI permission
+            if (!player.hasPermission("infernaltresures.command.loot.gui")) {
+                player.sendMessage(Component.text("You don't have permission to use the loot GUI.").color(NamedTextColor.RED));
+                return;
+            }
+            
+            plugin.getLootGUIManager().openBiomeGUI(player);
+        } else {
+            // Future: Could add other loot subcommands here
+            player.sendMessage(Component.text("Usage: /treasure loot [gui]").color(NamedTextColor.YELLOW));
+        }
     }
     
     @Override

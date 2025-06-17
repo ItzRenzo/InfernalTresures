@@ -7,7 +7,9 @@ import me.itzrenzo.infernaltresures.listeners.MiningListener;
 import me.itzrenzo.infernaltresures.listeners.StatsListener;
 import me.itzrenzo.infernaltresures.managers.BlockManager;
 import me.itzrenzo.infernaltresures.managers.ConfigManager;
+import me.itzrenzo.infernaltresures.managers.LootGUIManager;
 import me.itzrenzo.infernaltresures.managers.LootManager;
+import me.itzrenzo.infernaltresures.managers.MenuManager;
 import me.itzrenzo.infernaltresures.managers.MessageManager;
 import me.itzrenzo.infernaltresures.managers.StatsManager;
 import me.itzrenzo.infernaltresures.managers.TreasureManager;
@@ -21,6 +23,8 @@ public final class InfernalTresures extends JavaPlugin {
     private BlockManager blockManager;
     private TreasureManager treasureManager;
     private LootManager lootManager;
+    private LootGUIManager lootGUIManager;
+    private MenuManager menuManager;
     private StatsManager statsManager;
     private MMOItemsIntegration mmoItemsIntegration;
     private ExecutableItemsIntegration executableItemsIntegration;
@@ -41,6 +45,8 @@ public final class InfernalTresures extends JavaPlugin {
         blockManager.loadBlocks();
         
         lootManager = new LootManager(this);
+        menuManager = new MenuManager(this);
+        lootGUIManager = new LootGUIManager(this);
         treasureManager = new TreasureManager(this);
         statsManager = new StatsManager(this);
         
@@ -83,6 +89,7 @@ public final class InfernalTresures extends JavaPlugin {
         
         // Register commands
         getCommand("treasure").setExecutor(new TreasureCommand(this));
+        getCommand("lootgui").setExecutor(new TreasureCommand(this));
         
         getLogger().info("InfernalTreasures has been enabled!");
     }
@@ -141,5 +148,13 @@ public final class InfernalTresures extends JavaPlugin {
     
     public ExecutableItemsIntegration getExecutableItemsIntegration() {
         return executableItemsIntegration;
+    }
+    
+    public LootGUIManager getLootGUIManager() {
+        return lootGUIManager;
+    }
+    
+    public MenuManager getMenuManager() {
+        return menuManager;
     }
 }

@@ -72,6 +72,7 @@ messages:
   help-reload: "&e/treasure reload &f- Reload the plugin configuration"
   help-info: "&e/treasure info &f- Show plugin information"
   help-stats: "&e/treasure stats [player] &f- View treasure hunting statistics"
+  help-loot: "&e/treasure loot gui &f- Browse biome loot tables (also: /lootgui)"
   help-help: "&e/treasure help &f- Show this help message"
   
   # Statistics messages

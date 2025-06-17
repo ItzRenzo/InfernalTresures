@@ -312,9 +312,174 @@ public class LootManager {
         return generateLoot(biome, rarity, null);
     }
     
+    /**
+     * Get all possible loot items for display in GUI (without applying chances or random amounts)
+     */
+    public List<LootItemDisplay> getAllLootItems(Biome biome, Rarity rarity) {
+        List<LootItemDisplay> displayItems = new ArrayList<>();
+        
+        Map<Rarity, List<LootItem>> biomeLootTable = lootTables.get(biome);
+        if (biomeLootTable == null) {
+            plugin.getLogger().warning("No loot table found for biome: " + biome.name());
+            return displayItems;
+        }
+        
+        List<LootItem> rarityLoot = biomeLootTable.get(rarity);
+        if (rarityLoot == null || rarityLoot.isEmpty()) {
+            plugin.getLogger().warning("No loot found for rarity " + rarity + " in biome " + biome.name());
+            return displayItems;
+        }
+        
+        // Create display items for each loot item
+        for (LootItem lootItem : rarityLoot) {
+            ItemStack itemStack = createDisplayItemStack(lootItem);
+            if (itemStack != null) {
+                LootItemDisplay displayItem = new LootItemDisplay(itemStack, lootItem);
+                displayItems.add(displayItem);
+            }
+        }
+        
+        return displayItems;
+    }
+    
+    /**
+     * Create an ItemStack for display purposes (no random amounts or chance application)
+     */
+    private ItemStack createDisplayItemStack(LootItem lootItem) {
+        try {
+            // Use minimum amount for display
+            int amount = lootItem.minAmount;
+            
+            // Handle ExecutableItems
+            if (lootItem.isExecutableItem) {
+                ItemStack executableItem = InfernalTresures.getInstance().getExecutableItemsIntegration()
+                    .createExecutableItem(lootItem.executableId, amount);
+                
+                if (executableItem != null) {
+                    // Apply custom display name and lore if specified
+                    if (lootItem.displayName != null || (lootItem.lore != null && !lootItem.lore.isEmpty())) {
+                        ItemBuilder builder = ItemBuilder.from(executableItem);
+                        
+                        if (lootItem.displayName != null) {
+                            builder.setDisplayName(lootItem.displayName);
+                        }
+                        
+                        if (lootItem.lore != null && !lootItem.lore.isEmpty()) {
+                            builder.setLore(lootItem.lore);
+                        }
+                        
+                        return builder.build();
+                    }
+                    
+                    return executableItem;
+                } else {
+                    plugin.getLogger().warning("Failed to create ExecutableItem for display: " + lootItem.executableId);
+                    return null;
+                }
+            }
+            
+            // Handle MMOItems
+            if (lootItem.isMMOItem) {
+                ItemStack mmoItem = InfernalTresures.getInstance().getMMOItemsIntegration()
+                    .createMMOItem(lootItem.mmoType, lootItem.mmoId, amount);
+                
+                if (mmoItem != null) {
+                    // Apply custom display name and lore if specified
+                    if (lootItem.displayName != null || (lootItem.lore != null && !lootItem.lore.isEmpty())) {
+                        ItemBuilder builder = ItemBuilder.from(mmoItem);
+                        
+                        if (lootItem.displayName != null) {
+                            builder.setDisplayName(lootItem.displayName);
+                        }
+                        
+                        if (lootItem.lore != null && !lootItem.lore.isEmpty()) {
+                            builder.setLore(lootItem.lore);
+                        }
+                        
+                        return builder.build();
+                    }
+                    
+                    return mmoItem;
+                } else {
+                    plugin.getLogger().warning("Failed to create MMOItem for display: " + lootItem.mmoType + "." + lootItem.mmoId);
+                    return null;
+                }
+            }
+            
+            // Regular Bukkit item handling (same as original createItemStack but no random amounts)
+            ItemBuilder builder = new ItemBuilder(lootItem.material, amount);
+            
+            // Set display name
+            if (lootItem.displayName != null) {
+                builder.setDisplayName(lootItem.displayName);
+            }
+            
+            // Set lore
+            if (lootItem.lore != null && !lootItem.lore.isEmpty()) {
+                builder.setLore(lootItem.lore);
+            }
+            
+            // Set unbreakable
+            if (lootItem.unbreakable) {
+                builder.setUnbreakable(true);
+            }
+            
+            // Set custom model data
+            if (lootItem.customModelData > -1) {
+                builder.setCustomModelData(lootItem.customModelData);
+            }
+            
+            // Add enchantments (use minimum levels for display)
+            if (lootItem.enchantments != null) {
+                for (EnchantmentData enchantData : lootItem.enchantments) {
+                    if ("RANDOM".equalsIgnoreCase(enchantData.enchantment)) {
+                        builder.addRandomEnchantment(enchantData.minLevel, enchantData.maxLevel);
+                    } else {
+                        Enchantment enchantment = ItemBuilder.getEnchantmentByName(enchantData.enchantment);
+                        if (enchantment != null) {
+                            int level = enchantData.minLevel; // Use minimum level for display
+                            builder.addEnchantment(enchantment, level);
+                        }
+                    }
+                }
+            }
+            
+            // Add attributes
+            if (lootItem.attributes != null) {
+                for (AttributeData attributeData : lootItem.attributes) {
+                    Attribute attribute = ItemBuilder.getAttributeByName(attributeData.attribute);
+                    if (attribute != null) {
+                        AttributeModifier.Operation operation = ItemBuilder.getOperationByName(attributeData.operation);
+                        EquipmentSlot slot = getEquipmentSlot(attributeData.slot);
+                        builder.addAttribute(attribute, attributeData.value, operation, slot);
+                    }
+                }
+            }
+            
+            // Add custom effects (for consumables)
+            if (lootItem.customEffects != null) {
+                for (CustomEffectData effectData : lootItem.customEffects) {
+                    PotionEffectType effectType = ItemBuilder.getPotionEffectByName(effectData.effect);
+                    if (effectType != null) {
+                        builder.addPotionEffect(effectType, effectData.duration, effectData.amplifier);
+                    }
+                }
+            }
+            
+            return builder.build();
+            
+        } catch (Exception e) {
+            plugin.getLogger().warning("Failed to create display ItemStack: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    /**
+     * Create an ItemStack for actual loot generation (with random amounts and full functionality)
+     */
     private ItemStack createItemStack(LootItem lootItem) {
         try {
-            // Determine amount
+            // Calculate random amount between min and max
             int amount = lootItem.minAmount;
             if (lootItem.maxAmount > lootItem.minAmount) {
                 amount = ThreadLocalRandom.current().nextInt(lootItem.minAmount, lootItem.maxAmount + 1);
@@ -356,7 +521,7 @@ public class LootManager {
                 if (mmoItem != null) {
                     // Apply custom display name and lore if specified
                     if (lootItem.displayName != null || (lootItem.lore != null && !lootItem.lore.isEmpty())) {
-                        ItemBuilder builder = ItemBuilder.from(mmoItem); // Use the static from() method
+                        ItemBuilder builder = ItemBuilder.from(mmoItem);
                         
                         if (lootItem.displayName != null) {
                             builder.setDisplayName(lootItem.displayName);
@@ -399,7 +564,7 @@ public class LootManager {
                 builder.setCustomModelData(lootItem.customModelData);
             }
             
-            // Add enchantments
+            // Add enchantments with random levels
             if (lootItem.enchantments != null) {
                 for (EnchantmentData enchantData : lootItem.enchantments) {
                     if ("RANDOM".equalsIgnoreCase(enchantData.enchantment)) {
@@ -408,9 +573,14 @@ public class LootManager {
                         Enchantment enchantment = ItemBuilder.getEnchantmentByName(enchantData.enchantment);
                         if (enchantment != null) {
                             int level = enchantData.level;
+                            
+                            // If min/max levels are specified, use random level between them
                             if (enchantData.maxLevel > enchantData.minLevel) {
                                 level = ThreadLocalRandom.current().nextInt(enchantData.minLevel, enchantData.maxLevel + 1);
+                            } else if (enchantData.minLevel > 0) {
+                                level = enchantData.minLevel;
                             }
+                            
                             builder.addEnchantment(enchantment, level);
                         }
                     }
@@ -531,5 +701,56 @@ public class LootManager {
         String effect;
         int duration;
         int amplifier;
+    }
+    
+    /**
+     * Container class for displaying loot items in GUI with their configuration data
+     */
+    public static class LootItemDisplay {
+        private final ItemStack itemStack;
+        private final LootItem lootItem;
+        
+        public LootItemDisplay(ItemStack itemStack, LootItem lootItem) {
+            this.itemStack = itemStack;
+            this.lootItem = lootItem;
+        }
+        
+        public ItemStack getItemStack() {
+            return itemStack;
+        }
+        
+        public double getChance() {
+            return lootItem.chance;
+        }
+        
+        public int getMinAmount() {
+            return lootItem.minAmount;
+        }
+        
+        public int getMaxAmount() {
+            return lootItem.maxAmount;
+        }
+        
+        public long getRequiredBlocksMined() {
+            return lootItem.requiredBlocksMined;
+        }
+        
+        public boolean isMMOItem() {
+            return lootItem.isMMOItem;
+        }
+        
+        public boolean isExecutableItem() {
+            return lootItem.isExecutableItem;
+        }
+        
+        public String getItemType() {
+            if (lootItem.isExecutableItem) {
+                return "ExecutableItem: " + lootItem.executableId;
+            } else if (lootItem.isMMOItem) {
+                return "MMOItem: " + lootItem.mmoType + "." + lootItem.mmoId;
+            } else {
+                return "Material: " + lootItem.material.name();
+            }
+        }
     }
 }
