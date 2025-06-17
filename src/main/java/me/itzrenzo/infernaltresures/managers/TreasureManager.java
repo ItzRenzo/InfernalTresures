@@ -45,21 +45,8 @@ public class TreasureManager {
         Rarity rarity = InfernalTresures.getInstance().getBlockManager().shouldSpawnTreasure(minedBlock.getType());
         
         if (rarity == null) {
-            // Check if we should fall back to global spawn chance system
-            if (!InfernalTresures.getInstance().getBlockManager().isUsingBlockSpecificChances()) {
-                // Fall back to global system
-                int chancePercent = plugin.getConfigManager().getTreasureSpawnChance();
-                
-                if (ThreadLocalRandom.current().nextInt(100) >= chancePercent) {
-                    return false;
-                }
-                
-                // Use global rarity distribution
-                rarity = getRandomRarity();
-            } else {
-                // Block-specific system determined no treasure should spawn
-                return false;
-            }
+            // No treasure should spawn based on blocks.yml configuration
+            return false;
         }
         
         // Make final variable for lambda expression

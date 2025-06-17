@@ -7,9 +7,6 @@
 #           TREASURE SETTINGS
 # ========================================
 treasure:
-  # Base chance of finding a treasure when mining (0-100%)
-  spawn-chance: 15
-  
   # Play sound and particle effects when treasures are found
   effects:
     sound: true
@@ -17,14 +14,14 @@ treasure:
     
   # Announce treasure finds to the server (per rarity)
   announce-finds:
-    common: false      # Don't announce common treasures
-    rare: false        # Don't announce rare treasures
-    epic: false        # Don't announce epic treasures
-    legendary: true    # Announce legendary treasures
-    mythic: true       # Announce mythic treasures
+    common: false      
+    rare: false        
+    epic: false        
+    legendary: true    
+    mythic: true      
   
   # Maximum treasures a player can find per hour (0 = unlimited)
-  hourly-limit: 50
+  hourly-limit: 0
 
 # ========================================
 #          HOLOGRAM SETTINGS
@@ -33,11 +30,11 @@ holograms:
   # Enable or disable holograms for specific treasure rarities
   # Set to true to show hologram, false to hide it
   enabled-rarities:
-    common: false     # No hologram for common treasures
-    rare: false       # No hologram for rare treasures  
-    epic: false       # No hologram for epic treasures
-    legendary: true   # Show hologram for legendary treasures
-    mythic: true      # Show hologram for mythic treasures
+    common: false     
+    rare: false       
+    epic: false       
+    legendary: true   
+    mythic: true      
   
   # Global hologram settings
   height: 1.5         # Height above barrel (in blocks)
@@ -47,81 +44,12 @@ holograms:
 #           MINING SETTINGS
 # ========================================
 mining:
-  # Blocks that can drop treasures when mined
-  enabled-blocks:
-    # Stone variants
-    - STONE
-    - DEEPSLATE
-    - GRANITE
-    - DIORITE
-    - ANDESITE
-    - TUFF
-    - CALCITE
-    
-    # Overworld ores
-    - COAL_ORE
-    - IRON_ORE
-    - COPPER_ORE
-    - GOLD_ORE
-    - REDSTONE_ORE
-    - LAPIS_ORE
-    - DIAMOND_ORE
-    - EMERALD_ORE
-    
-    # Deepslate ores
-    - DEEPSLATE_COAL_ORE
-    - DEEPSLATE_IRON_ORE
-    - DEEPSLATE_COPPER_ORE
-    - DEEPSLATE_GOLD_ORE
-    - DEEPSLATE_REDSTONE_ORE
-    - DEEPSLATE_LAPIS_ORE
-    - DEEPSLATE_DIAMOND_ORE
-    - DEEPSLATE_EMERALD_ORE
-    
-    # Nether blocks
-    - NETHER_GOLD_ORE
-    - NETHER_QUARTZ_ORE
-    - NETHERRACK
-    - BLACKSTONE
-    - BASALT
-    
-    # End blocks
-    - END_STONE
-  
   # Only allow treasure drops when using pickaxes
   require-pickaxe: true
   
   # Y level range for treasure spawns
   min-y-level: -64
   max-y-level: 320
-
-# ========================================
-#           RARITY SETTINGS
-# ========================================
-rarity:
-  # Percentage chance for each rarity tier (should add up to 100%)
-  chances:
-    COMMON: 60
-    RARE: 25
-    EPIC: 10
-    LEGENDARY: 4
-    MYTHIC: 1
-  
-  # Color codes for rarity display
-  colors:
-    COMMON: "&f"      # White
-    RARE: "&9"        # Blue
-    EPIC: "&5"        # Purple
-    LEGENDARY: "&6"   # Gold
-    MYTHIC: "&c"      # Red
-  
-  # Despawn times for each rarity (in seconds)
-  despawn-times:
-    common: 300       # 5 minutes
-    rare: 420         # 7 minutes  
-    epic: 600         # 10 minutes
-    legendary: 900    # 15 minutes
-    mythic: 1200      # 20 minutes
 
 # ========================================
 #          BIOME SETTINGS
@@ -159,17 +87,26 @@ player:
   save-stats: true
 
 # ========================================
+#          RARITY SETTINGS
+# ========================================
+rarity:
+  # How long each rarity of treasure stays before despawning (in seconds)
+  despawn-times:
+    common: 300       # 5 minutes
+    rare: 420         # 7 minutes  
+    epic: 600         # 10 minutes
+    legendary: 900    # 15 minutes
+    mythic: 1200      # 20 minutes
+
+# ========================================
 #           DEBUG SETTINGS
 # ========================================
 debug:
-  # Enable debug logging for troubleshooting
-  enabled: true
-  
-  # Specific debug categories (only work if debug.enabled is true)
+  enabled: false
   categories:
-    loot-generation: true     # Debug loot generation process
-    treasure-spawning: true   # Debug treasure spawning
-    mmo-items: true          # Debug MMOItems integration
-    executable-items: true   # Debug ExecutableItems integration
-    barrel-filling: true     # Debug barrel inventory filling
-    biome-detection: true    # Debug biome detection
+    loot-generation: true
+    treasure-spawning: true
+    mmo-items: true
+    executable-items: true
+    barrel-filling: true
+    biome-detection: true

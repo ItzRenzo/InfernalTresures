@@ -118,13 +118,11 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         }
         
         int treasureCount = plugin.getTreasureManager().getActiveTreasures().size();
-        int spawnChance = plugin.getConfigManager().getTreasureSpawnChance();
         
         sender.sendMessage(Component.text("=== InfernalTreasures Info ===").color(NamedTextColor.GOLD));
         sender.sendMessage(Component.text("Active treasures: ").color(NamedTextColor.YELLOW)
             .append(Component.text(treasureCount).color(NamedTextColor.WHITE)));
-        sender.sendMessage(Component.text("Spawn chance: ").color(NamedTextColor.YELLOW)
-            .append(Component.text(spawnChance + "%").color(NamedTextColor.WHITE)));
+        sender.sendMessage(Component.text("Block-specific spawn chances configured in blocks.yml").color(NamedTextColor.GRAY));
     }
     
     private void sendHelpMessage(CommandSender sender) {

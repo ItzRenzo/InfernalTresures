@@ -13,7 +13,6 @@ public class ConfigManager {
     private FileConfiguration config;
     
     // Default values
-    private static final int DEFAULT_TREASURE_SPAWN_CHANCE = 15; // 15% chance
     private static final boolean DEFAULT_MINING_EFFECT = true;
     
     // Biome files to copy
@@ -77,18 +76,16 @@ public class ConfigManager {
     }
     
     private void setDefaults() {
-        if (!config.isSet("treasure.spawn-chance")) {
-            config.set("treasure.spawn-chance", DEFAULT_TREASURE_SPAWN_CHANCE);
+        if (!config.isSet("treasure.effects.sound")) {
+            config.set("treasure.effects.sound", true);
         }
         
-        if (!config.isSet("treasure.mining-effect")) {
-            config.set("treasure.mining-effect", DEFAULT_MINING_EFFECT);
+        if (!config.isSet("treasure.effects.particles")) {
+            config.set("treasure.effects.particles", true);
         }
         
-        // Make sure this is loaded but don't set a default
-        if (!config.isSet("treasure.enabled-blocks")) {
-            config.set("treasure.enabled-blocks", new String[]{"STONE", "DEEPSLATE", "NETHERRACK", "END_STONE", 
-                "DIORITE", "ANDESITE", "GRANITE", "BLACKSTONE", "BASALT", "TUFF", "CALCITE"});
+        if (!config.isSet("treasure.hourly-limit")) {
+            config.set("treasure.hourly-limit", 0);
         }
         
         // Set debug configuration defaults
@@ -133,6 +130,21 @@ public class ConfigManager {
         // Remove old single announce-finds setting if it exists
         if (config.isSet("treasure.announce-finds") && !config.isConfigurationSection("treasure.announce-finds")) {
             config.set("treasure.announce-finds", null);
+        }
+        
+        // Remove old mining section if it exists
+        if (config.isSet("mining")) {
+            config.set("mining", null);
+        }
+        
+        // Remove old treasure.spawn-chance if it exists
+        if (config.isSet("treasure.spawn-chance")) {
+            config.set("treasure.spawn-chance", null);
+        }
+        
+        // Remove old treasure.enabled-blocks if it exists
+        if (config.isSet("treasure.enabled-blocks")) {
+            config.set("treasure.enabled-blocks", null);
         }
         
         if (!config.isSet("debug.categories.loot-generation")) {
@@ -187,16 +199,20 @@ public class ConfigManager {
         plugin.getLogger().info("Configuration, loot tables, messages, and blocks reloaded.");
     }
     
-    public int getTreasureSpawnChance() {
-        return config.getInt("treasure.spawn-chance", DEFAULT_TREASURE_SPAWN_CHANCE);
-    }
-    
     public boolean isMiningEffectEnabled() {
         return config.getBoolean("treasure.mining-effect", DEFAULT_MINING_EFFECT);
     }
     
-    public String[] getEnabledBlocks() {
-        return config.getStringList("treasure.enabled-blocks").toArray(new String[0]);
+    public boolean isSoundEffectEnabled() {
+        return config.getBoolean("treasure.effects.sound", true);
+    }
+    
+    public boolean isParticleEffectEnabled() {
+        return config.getBoolean("treasure.effects.particles", true);
+    }
+    
+    public int getHourlyLimit() {
+        return config.getInt("treasure.hourly-limit", 0);
     }
     
     // Hologram configuration methods
