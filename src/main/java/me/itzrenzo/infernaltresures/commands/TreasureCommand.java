@@ -133,8 +133,7 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
     private void handleStatsCommand(CommandSender sender, String[] args) {
         // Check basic stats permission
         if (!sender.hasPermission("infernaltresures.command.stats")) {
-            String message = plugin.getMessageManager().getMessage("no-permission");
-            sender.sendMessage(Component.text(message).color(NamedTextColor.RED));
+            sender.sendMessage(plugin.getMessageManager().getMessageComponent("no-permission"));
             return;
         }
         
@@ -144,17 +143,15 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         if (args.length >= 2) {
             // Check if sender has permission to view other players' stats
             if (!sender.hasPermission("infernaltresures.command.stats.others")) {
-                String message = plugin.getMessageManager().getMessage("no-permission-view-others");
-                sender.sendMessage(Component.text(message).color(NamedTextColor.RED));
+                sender.sendMessage(plugin.getMessageManager().getMessageComponent("no-permission-view-others"));
                 return;
             }
             
             // Try to find the target player
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
             if (!offlinePlayer.hasPlayedBefore() && !offlinePlayer.isOnline()) {
-                String message = plugin.getMessageManager().getMessage("player-not-found")
-                    .replace("{player}", args[1]);
-                sender.sendMessage(Component.text(message).color(NamedTextColor.RED));
+                sender.sendMessage(plugin.getMessageManager().getMessageComponentWithPlaceholders(
+                    "player-not-found", "{player}", args[1]));
                 return;
             }
             
@@ -163,8 +160,7 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         } else {
             // Show sender's own stats
             if (!(sender instanceof Player)) {
-                String message = plugin.getMessageManager().getMessage("console-specify-player");
-                sender.sendMessage(Component.text(message).color(NamedTextColor.RED));
+                sender.sendMessage(plugin.getMessageManager().getMessageComponent("console-specify-player"));
                 return;
             }
             targetPlayer = (Player) sender;
@@ -203,77 +199,66 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         
         MessageManager messageManager = plugin.getMessageManager();
         
-        // Display stats using configurable messages
-        String header = messageManager.getMessage("stats-header").replace("{player}", targetName);
-        sender.sendMessage(Component.text(header).color(NamedTextColor.GOLD));
+        // Display stats using configurable messages with proper color parsing
+        sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+            "stats-header", "{player}", targetName));
         
-        String blocksMessage = messageManager.getMessage("stats-total-blocks-mined")
-            .replace("{count}", String.valueOf(stats.totalBlocksMined));
-        sender.sendMessage(Component.text(blocksMessage).color(NamedTextColor.YELLOW));
+        sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+            "stats-total-blocks-mined", "{count}", String.valueOf(stats.totalBlocksMined)));
         
-        String treasuresMessage = messageManager.getMessage("stats-total-treasures-found")
-            .replace("{count}", String.valueOf(totalTreasures));
-        sender.sendMessage(Component.text(treasuresMessage).color(NamedTextColor.YELLOW));
+        sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+            "stats-total-treasures-found", "{count}", String.valueOf(totalTreasures)));
         
-        sender.sendMessage(Component.text(messageManager.getMessage("stats-treasure-breakdown")).color(NamedTextColor.AQUA));
+        sender.sendMessage(messageManager.getMessageComponent("stats-treasure-breakdown"));
         
-        String commonMessage = messageManager.getMessage("stats-common-treasures")
-            .replace("{count}", String.valueOf(stats.commonTreasuresFound));
-        sender.sendMessage(Component.text(commonMessage).color(NamedTextColor.WHITE));
+        sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+            "stats-common-treasures", "{count}", String.valueOf(stats.commonTreasuresFound)));
         
-        String rareMessage = messageManager.getMessage("stats-rare-treasures")
-            .replace("{count}", String.valueOf(stats.rareTreasuresFound));
-        sender.sendMessage(Component.text(rareMessage).color(NamedTextColor.BLUE));
+        sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+            "stats-rare-treasures", "{count}", String.valueOf(stats.rareTreasuresFound)));
         
-        String epicMessage = messageManager.getMessage("stats-epic-treasures")
-            .replace("{count}", String.valueOf(stats.epicTreasuresFound));
-        sender.sendMessage(Component.text(epicMessage).color(NamedTextColor.LIGHT_PURPLE));
+        sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+            "stats-epic-treasures", "{count}", String.valueOf(stats.epicTreasuresFound)));
         
-        String legendaryMessage = messageManager.getMessage("stats-legendary-treasures")
-            .replace("{count}", String.valueOf(stats.legendaryTreasuresFound));
-        sender.sendMessage(Component.text(legendaryMessage).color(NamedTextColor.GOLD));
+        sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+            "stats-legendary-treasures", "{count}", String.valueOf(stats.legendaryTreasuresFound)));
         
-        String mythicMessage = messageManager.getMessage("stats-mythic-treasures")
-            .replace("{count}", String.valueOf(stats.mythicTreasuresFound));
-        sender.sendMessage(Component.text(mythicMessage).color(NamedTextColor.RED));
+        sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+            "stats-mythic-treasures", "{count}", String.valueOf(stats.mythicTreasuresFound)));
         
-        String playtimeMessage = messageManager.getMessage("stats-playtime")
-            .replace("{hours}", String.valueOf(hours))
-            .replace("{minutes}", String.valueOf(minutes));
-        sender.sendMessage(Component.text(playtimeMessage).color(NamedTextColor.YELLOW));
+        sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+            "stats-playtime", "{hours}", String.valueOf(hours), "{minutes}", String.valueOf(minutes)));
         
         if (targetPlayer != null && targetPlayer.isOnline()) {
             long sessionMinutes = plugin.getStatsManager().getCurrentSessionMinutes(targetPlayer);
             long sessionHours = sessionMinutes / 60;
             long sessionMins = sessionMinutes % 60;
-            String sessionMessage = messageManager.getMessage("stats-current-session")
-                .replace("{hours}", String.valueOf(sessionHours))
-                .replace("{minutes}", String.valueOf(sessionMins));
-            sender.sendMessage(Component.text(sessionMessage).color(NamedTextColor.GRAY));
+            sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+                "stats-current-session", "{hours}", String.valueOf(sessionHours), "{minutes}", String.valueOf(sessionMins)));
         }
     }
     
     private void sendHelpMessage(CommandSender sender) {
         MessageManager messageManager = plugin.getMessageManager();
-        sender.sendMessage(Component.text(messageManager.getMessage("help-header")).color(NamedTextColor.GOLD));
+        sender.sendMessage(messageManager.getMessageComponent("help-header"));
         
         if (sender.hasPermission("infernaltresures.command.spawn")) {
-            sender.sendMessage(Component.text(messageManager.getMessage("help-spawn")).color(NamedTextColor.YELLOW));
+            sender.sendMessage(messageManager.getMessageComponent("help-spawn"));
         }
         
         if (sender.hasPermission("infernaltresures.command.reload")) {
-            sender.sendMessage(Component.text(messageManager.getMessage("help-reload")).color(NamedTextColor.YELLOW));
+            sender.sendMessage(messageManager.getMessageComponent("help-reload"));
         }
         
         if (sender.hasPermission("infernaltresures.command.info")) {
-            sender.sendMessage(Component.text(messageManager.getMessage("help-info")).color(NamedTextColor.YELLOW));
+            sender.sendMessage(messageManager.getMessageComponent("help-info"));
         }
         
         if (sender.hasPermission("infernaltresures.command.stats")) {
-            sender.sendMessage(Component.text(messageManager.getMessage("help-stats")).color(NamedTextColor.YELLOW));
+            sender.sendMessage(messageManager.getMessageComponent("help-stats"));
         }
         
-        sender.sendMessage(Component.text(messageManager.getMessage("help-help")).color(NamedTextColor.YELLOW));
+        sender.sendMessage(messageManager.getMessageComponent("help-help"));
     }
     
     @Override

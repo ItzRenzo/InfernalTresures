@@ -210,4 +210,24 @@ public class MessageManager {
         String message = getMessage(messagePath);
         return message.replace("{chance}", String.valueOf(chance));
     }
+    
+    // Helper method to get a message as a Component with color code parsing
+    public Component getMessageComponent(String path) {
+        String message = getMessage(path);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
+    }
+    
+    // Helper method to get a message with placeholder replacement as a Component
+    public Component getMessageComponentWithPlaceholders(String path, String... replacements) {
+        String message = getMessage(path);
+        
+        // Apply placeholder replacements in pairs (placeholder, value)
+        for (int i = 0; i < replacements.length - 1; i += 2) {
+            String placeholder = replacements[i];
+            String value = replacements[i + 1];
+            message = message.replace(placeholder, value);
+        }
+        
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
+    }
 }
