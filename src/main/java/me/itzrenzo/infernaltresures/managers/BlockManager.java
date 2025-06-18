@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,22 +102,31 @@ public class BlockManager {
     /**
      * Check if a treasure should spawn for the given block and return the rarity
      * @param material The block material that was mined
+     * @param player The player who mined the block (for luck calculation)
      * @return The rarity of treasure to spawn, or null if no treasure should spawn
      */
-    public Rarity shouldSpawnTreasure(Material material) {
+    public Rarity shouldSpawnTreasure(Material material, Player player) {
         if (!useBlockSpecificChances) {
             // Fall back to global spawn chance system
             return null; // Let the existing system handle it
+        }
+        
+        // Get player's luck multiplier
+        double luckMultiplier = 1.0;
+        if (player != null) {
+            luckMultiplier = plugin.getStatsManager().getLuckMultiplier(player);
         }
         
         Map<Rarity, Double> chances = blockChances.get(material);
         if (chances == null) {
             // Block not configured, use fallback chance
             if (debugBlockChances) {
-                plugin.getLogger().info("Block " + material + " not configured, using fallback chance: " + fallbackChance + "%");
+                plugin.getLogger().info("Block " + material + " not configured, using fallback chance: " + fallbackChance + "%" +
+                    (luckMultiplier > 1.0 ? " (luck: " + String.format("%.1fx", luckMultiplier) + ")" : ""));
             }
             
-            if (ThreadLocalRandom.current().nextDouble(100.0) < fallbackChance) {
+            double effectiveChance = fallbackChance * luckMultiplier;
+            if (ThreadLocalRandom.current().nextDouble(100.0) < effectiveChance) {
                 // Use global rarity distribution
                 return plugin.getTreasureManager().getRandomRarity();
             }
@@ -125,23 +135,34 @@ public class BlockManager {
         
         // Check each rarity in order (starting with highest)
         for (Rarity rarity : new Rarity[]{Rarity.MYTHIC, Rarity.LEGENDARY, Rarity.EPIC, Rarity.RARE, Rarity.COMMON}) {
-            double chance = chances.get(rarity);
+            double baseChance = chances.get(rarity);
+            double effectiveChance = baseChance * luckMultiplier;
             double roll = ThreadLocalRandom.current().nextDouble(100.0);
             
             if (debugBlockChances) {
                 plugin.getLogger().info("Block " + material + " " + rarity + " check: rolled " + 
-                    String.format("%.4f", roll) + " vs " + chance + "%");
+                    String.format("%.4f", roll) + " vs " + String.format("%.4f", effectiveChance) + "%" +
+                    " (base: " + baseChance + "%" + 
+                    (luckMultiplier > 1.0 ? ", luck: " + String.format("%.1fx", luckMultiplier) + ")" : ")"));
             }
             
-            if (roll < chance) {
+            if (roll < effectiveChance) {
                 if (debugBlockChances) {
-                    plugin.getLogger().info("Block " + material + " triggered " + rarity + " treasure!");
+                    plugin.getLogger().info("Block " + material + " triggered " + rarity + " treasure!" +
+                        (luckMultiplier > 1.0 ? " (boosted by luck)" : ""));
                 }
                 return rarity;
             }
         }
         
         return null; // No treasure spawned
+    }
+    
+    /**
+     * Backward compatibility method - calls the new method with null player
+     */
+    public Rarity shouldSpawnTreasure(Material material) {
+        return shouldSpawnTreasure(material, null);
     }
     
     /**

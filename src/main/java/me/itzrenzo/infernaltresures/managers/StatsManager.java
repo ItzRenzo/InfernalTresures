@@ -184,6 +184,35 @@ public class StatsManager {
         plugin.getLogger().info("Statistics reloaded");
     }
     
+    /**
+     * Give luck to a player for a specified duration
+     * @param player The player to give luck to
+     * @param durationSeconds How long the luck should last in seconds
+     * @param multiplier The luck multiplier (e.g., 2.0 = double spawn rate)
+     */
+    public void giveLuck(Player player, long durationSeconds, double multiplier) {
+        PlayerStats stats = getPlayerStats(player);
+        stats.luckEndTime = System.currentTimeMillis() + (durationSeconds * 1000);
+        stats.luckMultiplier = multiplier;
+    }
+    
+    /**
+     * Remove luck from a player
+     */
+    public void removeLuck(Player player) {
+        PlayerStats stats = getPlayerStats(player);
+        stats.luckEndTime = 0;
+        stats.luckMultiplier = 1.0;
+    }
+    
+    /**
+     * Get the effective treasure spawn rate multiplier for a player
+     */
+    public double getLuckMultiplier(Player player) {
+        PlayerStats stats = getPlayerStats(player);
+        return stats.getEffectiveLuckMultiplier();
+    }
+
     public static class PlayerStats {
         public long totalBlocksMined = 0;
         public long commonTreasuresFound = 0;
@@ -193,6 +222,10 @@ public class StatsManager {
         public long mythicTreasuresFound = 0;
         public long minutesPlayed = 0;
         
+        // Luck system
+        public long luckEndTime = 0; // When luck expires (System.currentTimeMillis())
+        public double luckMultiplier = 1.0; // Default 1.0 = no luck bonus
+        
         public long getTreasuresByRarity(Rarity rarity) {
             return switch (rarity) {
                 case COMMON -> commonTreasuresFound;
@@ -201,6 +234,30 @@ public class StatsManager {
                 case LEGENDARY -> legendaryTreasuresFound;
                 case MYTHIC -> mythicTreasuresFound;
             };
+        }
+        
+        /**
+         * Check if player currently has active luck
+         */
+        public boolean hasActiveLuck() {
+            return System.currentTimeMillis() < luckEndTime;
+        }
+        
+        /**
+         * Get remaining luck time in seconds
+         */
+        public long getRemainingLuckSeconds() {
+            if (!hasActiveLuck()) {
+                return 0;
+            }
+            return (luckEndTime - System.currentTimeMillis()) / 1000;
+        }
+        
+        /**
+         * Get effective luck multiplier (1.0 if no active luck)
+         */
+        public double getEffectiveLuckMultiplier() {
+            return hasActiveLuck() ? luckMultiplier : 1.0;
         }
     }
 }

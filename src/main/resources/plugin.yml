@@ -44,3 +44,6 @@ permissions:
   infernaltresures.command.loot.gui:
     description: Allows opening the loot GUI to browse biome treasures
     default: true
+  infernaltresures.command.luck:
+    description: Allows giving treasure luck to players
+    default: op

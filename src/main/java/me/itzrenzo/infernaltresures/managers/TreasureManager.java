@@ -41,8 +41,8 @@ public class TreasureManager {
     }
     
     public boolean trySpawnTreasure(Block minedBlock, Player player) {
-        // Use BlockManager to determine if treasure should spawn and what rarity
-        Rarity rarity = InfernalTresures.getInstance().getBlockManager().shouldSpawnTreasure(minedBlock.getType());
+        // Use BlockManager to determine if treasure should spawn and what rarity (with luck applied)
+        Rarity rarity = InfernalTresures.getInstance().getBlockManager().shouldSpawnTreasure(minedBlock.getType(), player);
         
         if (rarity == null) {
             // No treasure should spawn based on blocks.yml configuration
