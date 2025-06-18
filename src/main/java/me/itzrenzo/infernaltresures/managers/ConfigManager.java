@@ -17,10 +17,23 @@ public class ConfigManager {
     
     // Biome files to copy
     private static final String[] BIOME_FILES = {
+        "badlands.yml",
+        "basalt_deltas.yml", 
+        "crimson_forest.yml",
         "desert.yml",
+        "end.yml",
         "forest.yml",
+        "jungle.yml",
+        "mountains.yml",
+        "nether.yml",
+        "nether_wastes.yml",
         "ocean.yml",
-        "plains.yml"
+        "plains.yml",
+        "savanna.yml",
+        "soul_sand_valley.yml",
+        "swamp.yml",
+        "taiga.yml",
+        "warped_forest.yml"
     };
     
     public ConfigManager(InfernalTresures plugin) {

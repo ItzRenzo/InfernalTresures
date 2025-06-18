@@ -1,6 +1,15 @@
 # Ocean Biome Treasure Loot Tables
 name: "Ocean"
 description: "Deep waters hiding aquatic treasures"
+material: WATER_BUCKET # This is for the GUI
+biomes:
+  - ocean
+  - deep_ocean
+  - cold_ocean
+  - frozen_ocean
+  - warm_ocean
+  - lukewarm_ocean
+
 
 loot:
   COMMON:

@@ -1,6 +1,15 @@
 # Forest Biome Treasure Loot Tables
 name: "Forest"
 description: "Dense woodlands filled with natural treasures"
+material: OAK_LOG # This is for the GUI
+biomes:
+  - forest
+  - birch_forest
+  - dark_forest
+  - flower_forest
+  - old_growth_birch_forest
+  - old_growth_pine_taiga
+  - old_growth_spruce_taiga
 
 loot:
   COMMON:

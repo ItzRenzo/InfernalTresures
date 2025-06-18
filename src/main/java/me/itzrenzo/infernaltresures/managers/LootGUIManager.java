@@ -2,6 +2,7 @@ package me.itzrenzo.infernaltresures.managers;
 
 import me.itzrenzo.infernaltresures.InfernalTresures;
 import me.itzrenzo.infernaltresures.models.Rarity;
+import me.itzrenzo.infernaltresures.models.BiomeCategory;
 import me.itzrenzo.infernaltresures.utils.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -30,24 +31,6 @@ public class LootGUIManager implements Listener {
     private final InfernalTresures plugin;
     private final Map<UUID, GUISession> activeSessions = new HashMap<>();
     
-    // Biome display materials
-    private static final Map<Biome, Material> BIOME_MATERIALS = new HashMap<>();
-    
-    static {
-        BIOME_MATERIALS.put(Biome.PLAINS, Material.GRASS_BLOCK);
-        BIOME_MATERIALS.put(Biome.DESERT, Material.SAND);
-        BIOME_MATERIALS.put(Biome.FOREST, Material.OAK_LOG);
-        BIOME_MATERIALS.put(Biome.OCEAN, Material.WATER_BUCKET);
-        BIOME_MATERIALS.put(Biome.TAIGA, Material.SPRUCE_LOG);
-        BIOME_MATERIALS.put(Biome.SWAMP, Material.LILY_PAD);
-        BIOME_MATERIALS.put(Biome.JUNGLE, Material.JUNGLE_LOG);
-        BIOME_MATERIALS.put(Biome.SAVANNA, Material.ACACIA_LOG);
-        BIOME_MATERIALS.put(Biome.BADLANDS, Material.TERRACOTTA);
-        BIOME_MATERIALS.put(Biome.WINDSWEPT_HILLS, Material.STONE);
-        BIOME_MATERIALS.put(Biome.NETHER_WASTES, Material.NETHERRACK);
-        BIOME_MATERIALS.put(Biome.THE_END, Material.END_STONE);
-    }
-    
     public LootGUIManager(InfernalTresures plugin) {
         this.plugin = plugin;
         Bukkit.getPluginManager().registerEvents(this, plugin);
@@ -59,24 +42,38 @@ public class LootGUIManager implements Listener {
         Inventory gui = Bukkit.createInventory(null, menuManager.getBiomeSelectionSize(), 
             menuManager.getBiomeSelectionTitle());
         
-        // Get all available biomes from the biomes folder
-        Set<Biome> availableBiomes = getAvailableBiomes();
+        // Get all available biome categories
+        Collection<BiomeCategory> biomeCategories = plugin.getLootManager().getBiomeCategories();
         
         int slot = 0;
-        for (Biome biome : availableBiomes) {
+        for (BiomeCategory category : biomeCategories) {
             if (slot >= menuManager.getMaxLootSlots()) break; // Use configurable max slots
             
-            String biomeName = getFileNameFromBiome(biome);
-            Material biomeMaterial = menuManager.getBiomeMaterial(biomeName);
-            String displayName = menuManager.getBiomeDisplayName(biomeName);
-            List<String> lore = menuManager.getBiomeLore(biomeName);
+            String categoryFileName = category.getFileName();
+            Material categoryMaterial = category.getMaterial();
+            String displayName = category.getName();
             
-            ItemStack biomeItem = new ItemBuilder(biomeMaterial)
-                .setDisplayName(displayName)
+            // Build lore with category description and biomes list
+            List<String> lore = new ArrayList<>();
+            if (category.getDescription() != null && !category.getDescription().isEmpty()) {
+                lore.add("&7" + category.getDescription());
+                lore.add("");
+            }
+            
+            // Add biomes in this category
+            lore.add("&7Contains biomes:");
+            for (Biome biome : category.getBiomes()) {
+                lore.add("&8• " + formatBiomeName(biome));
+            }
+            lore.add("");
+            lore.add("&eClick to explore!");
+            
+            ItemStack categoryItem = new ItemBuilder(categoryMaterial)
+                .setDisplayName("&6&l" + displayName)
                 .setLore(lore)
                 .build();
             
-            gui.setItem(slot, biomeItem);
+            gui.setItem(slot, categoryItem);
             slot++;
         }
         
@@ -93,75 +90,88 @@ public class LootGUIManager implements Listener {
         gui.setItem(closeSlot, closeItem);
         
         // Store session
-        activeSessions.put(player.getUniqueId(), new GUISession(GUIType.BIOME_SELECTION, null, null));
+        activeSessions.put(player.getUniqueId(), new GUISession(GUIType.BIOME_SELECTION, null, null, null));
         
         player.openInventory(gui);
     }
     
-    public void openRarityGUI(Player player, Biome biome) {
-        Inventory gui = Bukkit.createInventory(null, 27, 
-            Component.text("Rarities in " + formatBiomeName(biome)).color(NamedTextColor.GOLD).decorate(TextDecoration.BOLD));
+    public void openRarityGUI(Player player, BiomeCategory category) {
+        MenuManager menuManager = plugin.getMenuManager();
         
-        // Get available rarities for this biome
-        Set<Rarity> availableRarities = getAvailableRarities(biome);
+        Inventory gui = Bukkit.createInventory(null, menuManager.getRaritySelectionSize(), 
+            menuManager.getRaritySelectionTitle(category.getName()));
+        
+        // Get available rarities for this category (check first biome as they all share the same loot table)
+        Biome representativeBiome = category.getBiomes().get(0);
+        Set<Rarity> availableRarities = getAvailableRarities(representativeBiome);
         
         // Store slot to rarity mapping for this session
         Map<Integer, Rarity> slotToRarityMap = new HashMap<>();
         
-        int slot = 10; // Start at a nice position
+        int startSlot = menuManager.getRarityStartSlot();
+        int spacing = menuManager.getRaritySlotSpacing();
+        int slot = startSlot;
+        
         for (Rarity rarity : Rarity.values()) {
             if (!availableRarities.contains(rarity)) continue;
             
-            Material rarityMaterial = getRarityMaterial(rarity);
+            Material rarityMaterial = menuManager.getRarityMaterial(rarity);
             
             // Get loot count for this rarity
-            int lootCount = getLootCount(biome, rarity);
+            int lootCount = getLootCount(representativeBiome, rarity);
+            
+            String displayName = menuManager.getRarityDisplayName(rarity);
+            List<String> lore = menuManager.getRarityLore(rarity, lootCount);
             
             ItemStack rarityItem = new ItemBuilder(rarityMaterial)
-                .setDisplayName(rarity.getDisplayName())
-                .setLore(Arrays.asList(
-                    "&7Rarity: " + rarity.getDisplayName(),
-                    "&7Available items: &f" + lootCount,
-                    "",
-                    "&eClick to view loot items!"
-                ))
+                .setDisplayName(displayName)
+                .setLore(lore)
                 .build();
             
             gui.setItem(slot, rarityItem);
             slotToRarityMap.put(slot, rarity); // Store the mapping
-            slot += 2; // Space them out nicely
+            slot += spacing; // Space them out according to config
         }
         
-        // Add back button
-        ItemStack backItem = new ItemBuilder(Material.ARROW)
-            .setDisplayName("&a&lBack to Biomes")
-            .setLore(Arrays.asList("&7Return to biome selection"))
-            .build();
-        gui.setItem(22, backItem);
+        // Add navigation buttons using menu config
+        Material backMaterial = menuManager.getNavigationMaterial("rarity-selection", "back");
+        int backSlot = menuManager.getNavigationSlot("rarity-selection", "back");
+        String backDisplayName = menuManager.getNavigationDisplayName("rarity-selection", "back");
+        List<String> backLore = menuManager.getNavigationLore("rarity-selection", "back");
         
-        // Add close button
-        ItemStack closeItem = new ItemBuilder(Material.BARRIER)
-            .setDisplayName("&c&lClose")
-            .setLore(Arrays.asList("&7Click to close this menu"))
+        ItemStack backItem = new ItemBuilder(backMaterial)
+            .setDisplayName(backDisplayName)
+            .setLore(backLore)
             .build();
-        gui.setItem(26, closeItem);
+        gui.setItem(backSlot, backItem);
+        
+        Material closeMaterial = menuManager.getNavigationMaterial("rarity-selection", "close");
+        int closeSlot = menuManager.getNavigationSlot("rarity-selection", "close");
+        String closeDisplayName = menuManager.getNavigationDisplayName("rarity-selection", "close");
+        List<String> closeLore = menuManager.getNavigationLore("rarity-selection", "close");
+        
+        ItemStack closeItem = new ItemBuilder(closeMaterial)
+            .setDisplayName(closeDisplayName)
+            .setLore(closeLore)
+            .build();
+        gui.setItem(closeSlot, closeItem);
         
         // Store session with slot mapping
-        RarityGUISession raritySession = new RarityGUISession(GUIType.RARITY_SELECTION, biome, null, slotToRarityMap);
+        RarityGUISession raritySession = new RarityGUISession(GUIType.RARITY_SELECTION, null, null, category, slotToRarityMap);
         activeSessions.put(player.getUniqueId(), raritySession);
         
         player.openInventory(gui);
     }
     
-    public void openLootGUI(Player player, Biome biome, Rarity rarity) {
+    public void openLootGUI(Player player, BiomeCategory category, Rarity rarity) {
         MenuManager menuManager = plugin.getMenuManager();
-        String biomeName = getFileNameFromBiome(biome);
         
         Inventory gui = Bukkit.createInventory(null, menuManager.getLootDisplaySize(), 
-            menuManager.getLootDisplayTitle(biomeName, rarity.getDisplayName()));
+            menuManager.getLootDisplayTitle(category.getName(), rarity.getDisplayName()));
         
-        // Get all loot items for this biome and rarity (without applying chances)
-        List<LootManager.LootItemDisplay> lootItems = plugin.getLootManager().getAllLootItems(biome, rarity);
+        // Get all loot items for this category and rarity (use first biome as they share the same loot table)
+        Biome representativeBiome = category.getBiomes().get(0);
+        List<LootManager.LootItemDisplay> lootItems = plugin.getLootManager().getAllLootItems(representativeBiome, rarity);
         
         // Fill the GUI with loot items
         int slot = 0;
@@ -180,7 +190,7 @@ public class LootGUIManager implements Listener {
                 lore.add(Component.empty());
                 
                 // Add configurable detail information
-                addConfigurableLore(lore, lootDisplay, biome, rarity, menuManager);
+                addConfigurableLore(lore, lootDisplay, category, rarity, menuManager);
                 
                 meta.lore(lore);
                 displayItem.setItemMeta(meta);
@@ -202,25 +212,25 @@ public class LootGUIManager implements Listener {
             .build();
         gui.setItem(backSlot, backItem);
         
-        // Biome info item
-        Material biomeInfoMaterial = menuManager.getBiomeMaterial(biomeName);
-        int biomeInfoSlot = menuManager.getNavigationSlot("loot-display", "biome-info");
-        String biomeInfoDisplayName = menuManager.getNavigationDisplayName("loot-display", "biome-info");
-        List<String> biomeInfoLore = menuManager.getNavigationLore("loot-display", "biome-info");
+        // Category info item
+        Material categoryInfoMaterial = category.getMaterial();
+        int categoryInfoSlot = menuManager.getNavigationSlot("loot-display", "biome-info");
+        String categoryInfoDisplayName = menuManager.getNavigationDisplayName("loot-display", "biome-info");
+        List<String> categoryInfoLore = menuManager.getNavigationLore("loot-display", "biome-info");
         
-        // Replace placeholders in biome info
-        biomeInfoDisplayName = biomeInfoDisplayName.replace("{biome_name}", formatBiomeName(biome));
-        biomeInfoLore = biomeInfoLore.stream()
-            .map(line -> line.replace("{biome_name}", formatBiomeName(biome)))
+        // Replace placeholders in category info
+        categoryInfoDisplayName = categoryInfoDisplayName.replace("{biome_name}", category.getName());
+        categoryInfoLore = categoryInfoLore.stream()
+            .map(line -> line.replace("{biome_name}", category.getName()))
             .map(line -> line.replace("{rarity_display_name}", rarity.getDisplayName()))
             .map(line -> line.replace("{total_items}", String.valueOf(lootItems.size())))
             .toList();
         
-        ItemStack biomeItem = new ItemBuilder(biomeInfoMaterial)
-            .setDisplayName(biomeInfoDisplayName)
-            .setLore(biomeInfoLore)
+        ItemStack categoryItem = new ItemBuilder(categoryInfoMaterial)
+            .setDisplayName(categoryInfoDisplayName)
+            .setLore(categoryInfoLore)
             .build();
-        gui.setItem(biomeInfoSlot, biomeItem);
+        gui.setItem(categoryInfoSlot, categoryItem);
         
         // Close button
         Material closeMaterial = menuManager.getNavigationMaterial("loot-display", "close");
@@ -235,7 +245,7 @@ public class LootGUIManager implements Listener {
         gui.setItem(closeSlot, closeItem);
         
         // Store session
-        activeSessions.put(player.getUniqueId(), new GUISession(GUIType.LOOT_DISPLAY, biome, rarity));
+        activeSessions.put(player.getUniqueId(), new GUISession(GUIType.LOOT_DISPLAY, null, rarity, category));
         
         player.openInventory(gui);
     }
@@ -244,12 +254,12 @@ public class LootGUIManager implements Listener {
      * Add configurable lore to loot items based on menu configuration
      */
     private void addConfigurableLore(List<Component> lore, LootManager.LootItemDisplay lootDisplay, 
-                                   Biome biome, Rarity rarity, MenuManager menuManager) {
+                                   BiomeCategory category, Rarity rarity, MenuManager menuManager) {
         
-        // Add biome source info
+        // Add category source info
         if (menuManager.shouldShowBiomeSource()) {
             String format = menuManager.getBiomeSourceFormat();
-            format = format.replace("{biome_name}", formatBiomeName(biome));
+            format = format.replace("{biome_name}", category.getName());
             lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format));
         }
         
@@ -497,8 +507,8 @@ public class LootGUIManager implements Listener {
         
         switch (session.type) {
             case BIOME_SELECTION -> handleBiomeSelection(player, event.getSlot(), displayName);
-            case RARITY_SELECTION -> handleRaritySelection(player, event.getSlot(), displayName, session.biome);
-            case LOOT_DISPLAY -> handleLootDisplay(player, event.getSlot(), displayName, session.biome, session.rarity);
+            case RARITY_SELECTION -> handleRaritySelection(player, event.getSlot(), displayName, session.category);
+            case LOOT_DISPLAY -> handleLootDisplay(player, event.getSlot(), displayName, session.category, session.rarity);
         }
     }
     
@@ -508,17 +518,17 @@ public class LootGUIManager implements Listener {
             return;
         }
         
-        // Find the biome based on slot
-        Set<Biome> availableBiomes = getAvailableBiomes();
-        List<Biome> biomeList = new ArrayList<>(availableBiomes);
+        // Find the biome category based on slot
+        Collection<BiomeCategory> biomeCategories = plugin.getLootManager().getBiomeCategories();
+        List<BiomeCategory> categoryList = new ArrayList<>(biomeCategories);
         
-        if (slot < biomeList.size()) {
-            Biome selectedBiome = biomeList.get(slot);
-            openRarityGUI(player, selectedBiome);
+        if (slot < categoryList.size()) {
+            BiomeCategory selectedCategory = categoryList.get(slot);
+            openRarityGUI(player, selectedCategory);
         }
     }
     
-    private void handleRaritySelection(Player player, int slot, String displayName, Biome biome) {
+    private void handleRaritySelection(Player player, int slot, String displayName, BiomeCategory category) {
         if (displayName.contains("Close")) {
             player.closeInventory();
             return;
@@ -535,20 +545,20 @@ public class LootGUIManager implements Listener {
             // Use the stored slot-to-rarity mapping
             Rarity selectedRarity = raritySession.slotToRarityMap.get(slot);
             
-            if (selectedRarity != null && getAvailableRarities(biome).contains(selectedRarity)) {
-                openLootGUI(player, biome, selectedRarity);
+            if (selectedRarity != null && getAvailableRarities(category.getBiomes().get(0)).contains(selectedRarity)) {
+                openLootGUI(player, category, selectedRarity);
             }
         }
     }
     
-    private void handleLootDisplay(Player player, int slot, String displayName, Biome biome, Rarity rarity) {
+    private void handleLootDisplay(Player player, int slot, String displayName, BiomeCategory category, Rarity rarity) {
         if (displayName.contains("Close")) {
             player.closeInventory();
             return;
         }
         
         if (displayName.contains("Back")) {
-            openRarityGUI(player, biome);
+            openRarityGUI(player, category);
             return;
         }
         
@@ -573,13 +583,15 @@ public class LootGUIManager implements Listener {
     
     private static class GUISession {
         final GUIType type;
-        final Biome biome;
+        final Biome biome; // Keep for backward compatibility
         final Rarity rarity;
+        final BiomeCategory category;
         
-        GUISession(GUIType type, Biome biome, Rarity rarity) {
+        GUISession(GUIType type, Biome biome, Rarity rarity, BiomeCategory category) {
             this.type = type;
             this.biome = biome;
             this.rarity = rarity;
+            this.category = category;
         }
     }
     
@@ -592,8 +604,8 @@ public class LootGUIManager implements Listener {
     private static class RarityGUISession extends GUISession {
         final Map<Integer, Rarity> slotToRarityMap;
         
-        RarityGUISession(GUIType type, Biome biome, Rarity rarity, Map<Integer, Rarity> slotToRarityMap) {
-            super(type, biome, rarity);
+        RarityGUISession(GUIType type, Biome biome, Rarity rarity, BiomeCategory category, Map<Integer, Rarity> slotToRarityMap) {
+            super(type, biome, rarity, category);
             this.slotToRarityMap = slotToRarityMap;
         }
     }

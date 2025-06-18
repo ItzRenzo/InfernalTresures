@@ -1,0 +1,152 @@
+name: "Soul Sand Valley"
+description: "Desolate valleys filled with soul sand and the echoes of the damned"
+material: SOUL_SAND # This is for the GUI
+biomes:
+  - soul_sand_valley
+
+loot:
+  COMMON:
+    - material: SOUL_SAND
+      min_amount: 12
+      max_amount: 24
+      chance: 80
+      display_name: "&f&lSouls of the Valley"
+      lore:
+        - "&7Sand infused with countless"
+        - "&7trapped souls from ages past."
+    
+    - material: SOUL_SOIL
+      min_amount: 8
+      max_amount: 16
+      chance: 70
+      display_name: "&f&lSoul-touched Earth"
+      lore:
+        - "&7Soil corrupted by the essence"
+        - "&7of lost souls."
+    
+    - material: BONE
+      min_amount: 6
+      max_amount: 12
+      chance: 60
+      display_name: "&f&lBones of the Forgotten"
+      lore:
+        - "&7Remains of those who perished"
+        - "&7in the soul sand valleys."
+
+  RARE:
+    - material: SOUL_TORCH
+      min_amount: 4
+      max_amount: 8
+      chance: 45
+      display_name: "&9&lSoul Fire Torch"
+      lore:
+        - "&7A torch that burns with the"
+        - "&7blue flames of soul fire."
+    
+    - material: GHAST_TEAR
+      min_amount: 2
+      max_amount: 4
+      chance: 35
+      display_name: "&9&lTears of the Lost"
+      lore:
+        - "&7Crystallized sorrow from the"
+        - "&7ghasts of the soul valleys."
+    
+    - material: BONE_MEAL
+      min_amount: 8
+      max_amount: 16
+      chance: 40
+      display_name: "&9&lPowdered Remains"
+      lore:
+        - "&7Ground bones from ancient"
+        - "&7skeletons of the valley."
+
+  EPIC:
+    - material: WITHER_SKELETON_SKULL
+      min_amount: 1
+      max_amount: 2
+      chance: 15
+      display_name: "&5&lSkull of the Valley Guardian"
+      lore:
+        - "&7The skull of a wither skeleton"
+        - "&7that once guarded the valley."
+    
+    - material: SOUL_LANTERN
+      min_amount: 2
+      max_amount: 4
+      chance: 12
+      display_name: "&5&lLantern of Lost Souls"
+      lore:
+        - "&7A lantern that glows with the"
+        - "&7light of captured souls."
+    
+    - material: ENCHANTED_BOOK
+      min_amount: 1
+      max_amount: 1
+      chance: 10
+      display_name: "&5&lTome of Soul Magic"
+      lore:
+        - "&7Ancient knowledge written"
+        - "&7by the souls of the valley."
+      enchantments:
+        - enchant: SOUL_SPEED
+          min_level: 2
+          max_level: 3
+
+  LEGENDARY:
+    - material: NETHERITE_BOOTS
+      min_amount: 1
+      max_amount: 1
+      chance: 5
+      display_name: "&6&lSoulwalker Boots"
+      lore:
+        - "&7Boots that allow you to walk"
+        - "&7swiftly across soul sand."
+      enchantments:
+        - enchant: SOUL_SPEED
+          level: 3
+        - enchant: UNBREAKING
+          level: 3
+        - enchant: PROTECTION
+          level: 4
+    
+    - material: TOTEM_OF_UNDYING
+      min_amount: 1
+      max_amount: 1
+      chance: 3
+      display_name: "&6&lTotem of Soul Protection"
+      lore:
+        - "&7A totem blessed by the souls"
+        - "&7of the valley to prevent death."
+
+  MYTHIC:
+    - material: BEACON
+      min_amount: 1
+      max_amount: 1
+      chance: 1
+      display_name: "&c&lBeacon of Eternal Souls"
+      lore:
+        - "&7A beacon that channels the power"
+        - "&7of all souls in the valley."
+        - ""
+        - "&c⚡ MYTHIC TREASURE"
+    
+    - material: NETHERITE_SWORD
+      min_amount: 1
+      max_amount: 1
+      chance: 0.5
+      display_name: "&c&lSoulrender Blade"
+      lore:
+        - "&7A sword forged from the essence"
+        - "&7of trapped souls in the valley."
+        - ""
+        - "&c⚡ MYTHIC TREASURE"
+      enchantments:
+        - enchant: SHARPNESS
+          level: 5
+        - enchant: SMITE
+          level: 5
+        - enchant: LOOTING
+          level: 3
+        - enchant: UNBREAKING
+          level: 3

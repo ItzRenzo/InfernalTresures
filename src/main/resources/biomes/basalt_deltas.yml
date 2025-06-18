@@ -1,0 +1,164 @@
+name: "Basalt Deltas"
+description: "Volcanic deltas with towering basalt columns and magma cubes"
+material: BASALT # This is for the GUI
+biomes:
+  - basalt_deltas
+
+loot:
+  COMMON:
+    - material: BASALT
+      min_amount: 16
+      max_amount: 32
+      chance: 80
+      display_name: "&f&lVolcanic Basalt"
+      lore:
+        - "&7Dark volcanic rock formed"
+        - "&7from ancient lava flows."
+    
+    - material: BLACKSTONE
+      min_amount: 8
+      max_amount: 16
+      chance: 70
+      display_name: "&f&lDelta Blackstone"
+      lore:
+        - "&7Black stone forged in the"
+        - "&7heat of basalt deltas."
+    
+    - material: MAGMA_BLOCK
+      min_amount: 4
+      max_amount: 8
+      chance: 65
+      display_name: "&f&lMolten Magma"
+      lore:
+        - "&7Blocks of solidified magma"
+        - "&7that still burn hot."
+
+  RARE:
+    - material: MAGMA_CREAM
+      min_amount: 4
+      max_amount: 8
+      chance: 50
+      display_name: "&9&lMagma Cube Essence"
+      lore:
+        - "&7Creamy essence extracted from"
+        - "&7the delta's magma cubes."
+    
+    - material: FIRE_CHARGE
+      min_amount: 6
+      max_amount: 12
+      chance: 45
+      display_name: "&9&lVolcanic Fire Charge"
+      lore:
+        - "&7Concentrated fire from the"
+        - "&7volcanic eruptions."
+    
+    - material: LAVA_BUCKET
+      min_amount: 2
+      max_amount: 4
+      chance: 40
+      display_name: "&9&lDelta Lava"
+      lore:
+        - "&7Pure lava from the basalt"
+        - "&7delta's molten pools."
+
+  EPIC:
+    - material: NETHERITE_SCRAP
+      min_amount: 1
+      max_amount: 3
+      chance: 20
+      display_name: "&5&lAncient Debris Fragment"
+      lore:
+        - "&7Fragments of ancient debris"
+        - "&7exposed by volcanic activity."
+    
+    - material: ENCHANTED_BOOK
+      min_amount: 1
+      max_amount: 1
+      chance: 15
+      display_name: "&5&lTome of Fire Magic"
+      lore:
+        - "&7Knowledge of fire magic"
+        - "&7written on basalt tablets."
+      enchantments:
+        - enchant: FIRE_PROTECTION
+          min_level: 3
+          max_level: 4
+    
+    - material: FLINT_AND_STEEL
+      min_amount: 1
+      max_amount: 1
+      chance: 12
+      display_name: "&5&lVolcanic Igniter"
+      lore:
+        - "&7A fire starter blessed by"
+        - "&7the delta's eternal flames."
+      enchantments:
+        - enchant: UNBREAKING
+          level: 3
+
+  LEGENDARY:
+    - material: NETHERITE_LEGGINGS
+      min_amount: 1
+      max_amount: 1
+      chance: 8
+      display_name: "&6&lMagma Walker's Greaves"
+      lore:
+        - "&7Leggings that protect against"
+        - "&7the delta's molten hazards."
+      enchantments:
+        - enchant: FIRE_PROTECTION
+          level: 4
+        - enchant: PROTECTION
+          level: 3
+        - enchant: UNBREAKING
+          level: 3
+    
+    - material: BEACON
+      min_amount: 1
+      max_amount: 1
+      chance: 5
+      display_name: "&6&lBasalt Beacon"
+      lore:
+        - "&7A beacon powered by the"
+        - "&7volcanic energy of the deltas."
+    
+    - material: RESPAWN_ANCHOR
+      min_amount: 1
+      max_amount: 1
+      chance: 4
+      display_name: "&6&lVolcanic Anchor"
+      lore:
+        - "&7An anchor charged with the"
+        - "&7power of volcanic eruptions."
+
+  MYTHIC:
+    - material: NETHERITE_PICKAXE
+      min_amount: 1
+      max_amount: 1
+      chance: 1
+      display_name: "&c&lBasalt Breaker"
+      lore:
+        - "&7The ultimate tool for mining"
+        - "&7the hardest basalt columns."
+        - ""
+        - "&c⚡ MYTHIC TREASURE"
+      enchantments:
+        - enchant: EFFICIENCY
+          level: 5
+        - enchant: FORTUNE
+          level: 3
+        - enchant: UNBREAKING
+          level: 3
+        - enchant: MENDING
+          level: 1
+    
+    - material: NETHER_STAR
+      min_amount: 1
+      max_amount: 1
+      chance: 0.5
+      display_name: "&c&lStar of the Volcanic Heart"
+      lore:
+        - "&7A star born from the core"
+        - "&7of the basalt delta's volcano."
+        - ""
+        - "&c⚡ MYTHIC TREASURE"

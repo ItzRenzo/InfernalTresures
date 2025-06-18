@@ -2,6 +2,7 @@ package me.itzrenzo.infernaltresures.managers;
 
 import me.itzrenzo.infernaltresures.InfernalTresures;
 import me.itzrenzo.infernaltresures.models.Rarity;
+import me.itzrenzo.infernaltresures.models.BiomeCategory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -96,6 +98,13 @@ public class MenuManager {
     }
     
     public Material getBiomeMaterial(String biomeName) {
+        // First try to get material from biome category
+        BiomeCategory category = plugin.getLootManager().getBiomeCategoryByFileName(biomeName);
+        if (category != null && category.getMaterial() != null) {
+            return category.getMaterial();
+        }
+        
+        // Fallback to menu configuration
         ConfigurationSection biomeItems = biomeSelectionConfig.getConfigurationSection("biome-items");
         if (biomeItems != null && biomeItems.contains(biomeName.toLowerCase() + ".material")) {
             String materialName = biomeItems.getString(biomeName.toLowerCase() + ".material");
@@ -111,24 +120,44 @@ public class MenuManager {
     }
     
     public String getBiomeDisplayName(String biomeName) {
+        // First try to get name from biome category
+        BiomeCategory category = plugin.getLootManager().getBiomeCategoryByFileName(biomeName);
+        if (category != null && category.getName() != null) {
+            return category.getName();
+        }
+        
+        // Fallback to menu configuration
         ConfigurationSection biomeItems = biomeSelectionConfig.getConfigurationSection("biome-items");
         if (biomeItems != null && biomeItems.contains(biomeName.toLowerCase() + ".display-name")) {
             return biomeItems.getString(biomeName.toLowerCase() + ".display-name");
         }
         
         // Use default format
-        String format = biomeItems.getString("default.display-name-format", "&6&l{biome_name}");
+        String format = biomeItems != null ? biomeItems.getString("default.display-name-format", "&6&l{biome_name}") 
+                                            : "&6&l{biome_name}";
         return format.replace("{biome_name}", formatBiomeName(biomeName));
     }
     
     public List<String> getBiomeLore(String biomeName) {
-        ConfigurationSection biomeItems = biomeSelectionConfig.getConfigurationSection("biome-items");
-        if (biomeItems != null && biomeItems.contains(biomeName.toLowerCase() + ".lore")) {
-            return biomeItems.getStringList(biomeName.toLowerCase() + ".lore");
+        // First try to get description from biome category
+        BiomeCategory category = plugin.getLootManager().getBiomeCategoryByFileName(biomeName);
+        List<String> lore = new ArrayList<>();
+        
+        if (category != null && category.getDescription() != null && !category.getDescription().isEmpty()) {
+            lore.add("&7" + category.getDescription());
+            lore.add("");
         }
         
-        // Use default lore
-        return biomeItems.getStringList("default.lore");
+        // Add menu configuration lore
+        ConfigurationSection biomeItems = biomeSelectionConfig.getConfigurationSection("biome-items");
+        if (biomeItems != null && biomeItems.contains(biomeName.toLowerCase() + ".lore")) {
+            lore.addAll(biomeItems.getStringList(biomeName.toLowerCase() + ".lore"));
+        } else if (biomeItems != null) {
+            // Use default lore
+            lore.addAll(biomeItems.getStringList("default.lore"));
+        }
+        
+        return lore;
     }
     
     // Rarity Selection Menu Methods

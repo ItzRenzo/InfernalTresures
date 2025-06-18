@@ -1,0 +1,149 @@
+name: "End"
+description: "Otherworldly void dimension with cosmic treasures and ancient relics"
+
+loot:
+  COMMON:
+    - material: END_STONE
+      min_amount: 12
+      max_amount: 24
+      chance: 70
+      display_name: "&f&lVoid Stone"
+      lore:
+        - "&7Pale stone from the endless"
+        - "&7void of the End dimension."
+    
+    - material: CHORUS_FRUIT
+      min_amount: 4
+      max_amount: 8
+      chance: 60
+      display_name: "&f&lVoid Fruit"
+      lore:
+        - "&7Strange fruit that grows in"
+        - "&7the emptiness of space."
+    
+    - material: CHORUS_FLOWER
+      min_amount: 2
+      max_amount: 5
+      chance: 45
+      display_name: "&f&lCosmic Blossom"
+      lore:
+        - "&7Ethereal flowers that bloom"
+        - "&7in the void between worlds."
+
+  RARE:
+    - material: ENDER_PEARL
+      min_amount: 3
+      max_amount: 6
+      chance: 40
+      display_name: "&9&lVoid Pearl"
+      lore:
+        - "&7A pearl that can bend"
+        - "&7space and time itself."
+    
+    - material: ENDERMAN_SPAWN_EGG
+      min_amount: 1
+      max_amount: 1
+      chance: 25
+      display_name: "&9&lEnderman Essence"
+      lore:
+        - "&7The essence of mysterious"
+        - "&7void dwellers."
+    
+    - material: SHULKER_SHELL
+      min_amount: 2
+      max_amount: 4
+      chance: 30
+      display_name: "&9&lVoid Shell"
+      lore:
+        - "&7Protective shells from the"
+        - "&7guardians of End cities."
+
+  EPIC:
+    - material: ELYTRA
+      min_amount: 1
+      max_amount: 1
+      chance: 15
+      display_name: "&5&lWings of the Void"
+      lore:
+        - "&7Wings that allow flight"
+        - "&7through the endless void."
+    
+    - material: SHULKER_BOX
+      min_amount: 1
+      max_amount: 1
+      chance: 12
+      display_name: "&5&lVoid Storage"
+      lore:
+        - "&7A box that defies the laws"
+        - "&7of space and dimension."
+    
+    - material: ENCHANTED_BOOK
+      min_amount: 1
+      max_amount: 1
+      chance: 18
+      display_name: "&5&lCosmic Codex"
+      lore:
+        - "&7Ancient knowledge from"
+        - "&7beyond the stars."
+      enchantments:
+        - enchant: RANDOM
+          min_level: 3
+          max_level: 5
+
+  LEGENDARY:
+    - material: DRAGON_HEAD
+      min_amount: 1
+      max_amount: 1
+      chance: 6
+      display_name: "&6&lDragon's Crown"
+      lore:
+        - "&7The head of the mighty"
+        - "&7Ender Dragon itself."
+    
+    - material: DRAGON_BREATH
+      min_amount: 3
+      max_amount: 6
+      chance: 4
+      display_name: "&6&lDragon's Essence"
+      lore:
+        - "&7Bottled breath of the"
+        - "&7ruler of the End."
+    
+    - material: END_CRYSTAL
+      min_amount: 1
+      max_amount: 2
+      chance: 5
+      display_name: "&6&lVoid Crystal"
+      lore:
+        - "&7A crystal that channels"
+        - "&7the power of the void."
+
+  MYTHIC:
+    - material: DRAGON_EGG
+      min_amount: 1
+      max_amount: 1
+      chance: 1
+      display_name: "&c&lEgg of Creation"
+      lore:
+        - "&7The legendary egg that holds"
+        - "&7the power to create worlds."
+        - ""
+        - "&c⚡ MYTHIC TREASURE"
+    
+    - material: NETHERITE_CHESTPLATE
+      min_amount: 1
+      max_amount: 1
+      chance: 0.5
+      display_name: "&c&lArmor of the Void Walker"
+      lore:
+        - "&7Legendary armor worn by those"
+        - "&7who master the End dimension."
+        - ""
+        - "&c⚡ MYTHIC TREASURE"
+      enchantments:
+        - enchant: PROTECTION
+          level: 4
+        - enchant: UNBREAKING
+          level: 3
+        - enchant: MENDING
+          level: 1

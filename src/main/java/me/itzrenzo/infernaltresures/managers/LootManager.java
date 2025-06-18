@@ -2,6 +2,7 @@ package me.itzrenzo.infernaltresures.managers;
 
 import me.itzrenzo.infernaltresures.InfernalTresures;
 import me.itzrenzo.infernaltresures.models.Rarity;
+import me.itzrenzo.infernaltresures.models.BiomeCategory;
 import me.itzrenzo.infernaltresures.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
@@ -23,6 +24,8 @@ public class LootManager {
     
     private final InfernalTresures plugin;
     private final Map<Biome, Map<Rarity, List<LootItem>>> lootTables = new HashMap<>();
+    private final Map<String, BiomeCategory> biomeCategories = new HashMap<>();
+    private final Map<Biome, BiomeCategory> biomeToCategory = new HashMap<>();
     
     public LootManager(InfernalTresures plugin) {
         this.plugin = plugin;
@@ -43,25 +46,81 @@ public class LootManager {
             return;
         }
         
+        // Clear existing data
+        lootTables.clear();
+        biomeCategories.clear();
+        biomeToCategory.clear();
+        
         for (File biomeFile : biomeFiles) {
             loadBiomeLootTable(biomeFile);
         }
         
-        plugin.getLogger().info("Loaded loot tables for " + lootTables.size() + " biomes");
+        plugin.getLogger().info("Loaded " + biomeCategories.size() + " biome categories with loot tables for " + lootTables.size() + " biomes");
     }
     
     private void loadBiomeLootTable(File biomeFile) {
         FileConfiguration config = YamlConfiguration.loadConfiguration(biomeFile);
         
-        // Get biome name from file name (remove .yml extension)
-        String fileName = biomeFile.getName().replace(".yml", "");
-        Biome biome = getBiomeFromFileName(fileName);
+        // Get category information from the config
+        String categoryName = config.getString("name");
+        String description = config.getString("description", "");
+        String materialName = config.getString("material");
+        List<String> biomeNames = config.getStringList("biomes");
         
-        if (biome == null) {
-            plugin.getLogger().warning("Could not determine biome from file: " + fileName);
+        if (categoryName == null) {
+            plugin.getLogger().warning("Missing 'name' field in biome file: " + biomeFile.getName());
             return;
         }
         
+        // Parse material
+        Material material = null;
+        if (materialName != null) {
+            try {
+                material = Material.valueOf(materialName.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("Invalid material '" + materialName + "' in biome file: " + biomeFile.getName());
+                material = getDefaultBiomeMaterial(categoryName);
+            }
+        } else {
+            material = getDefaultBiomeMaterial(categoryName);
+        }
+        
+        // Parse biomes list
+        List<Biome> biomes = new ArrayList<>();
+        if (biomeNames != null && !biomeNames.isEmpty()) {
+            for (String biomeName : biomeNames) {
+                try {
+                    Biome biome = Biome.valueOf(biomeName.toUpperCase());
+                    biomes.add(biome);
+                } catch (IllegalArgumentException e) {
+                    plugin.getLogger().warning("Invalid biome '" + biomeName + "' in biome file: " + biomeFile.getName());
+                }
+            }
+        } else {
+            // Fallback to old system - try to get biome from filename
+            String fileName = biomeFile.getName().replace(".yml", "");
+            Biome biome = getBiomeFromFileName(fileName);
+            if (biome != null) {
+                biomes.add(biome);
+            }
+        }
+        
+        if (biomes.isEmpty()) {
+            plugin.getLogger().warning("No valid biomes found in biome file: " + biomeFile.getName());
+            return;
+        }
+        
+        // Create biome category
+        String fileName = biomeFile.getName().replace(".yml", "");
+        BiomeCategory category = new BiomeCategory(categoryName, description, material, biomes, fileName);
+        biomeCategories.put(fileName, category);
+        
+        // Map each biome to this category
+        for (Biome biome : biomes) {
+            biomeToCategory.put(biome, category);
+        }
+        
+        // Load loot tables
         Map<Rarity, List<LootItem>> biomeLootTable = new HashMap<>();
         
         ConfigurationSection lootSection = config.getConfigurationSection("loot");
@@ -84,9 +143,55 @@ public class LootManager {
             }
         }
         
-        lootTables.put(biome, biomeLootTable);
-        plugin.getLogger().info("Loaded loot table for biome: " + biome.name() + " with " + 
+        // Apply the same loot table to all biomes in this category
+        for (Biome biome : biomes) {
+            lootTables.put(biome, biomeLootTable);
+        }
+        
+        plugin.getLogger().info("Loaded biome category '" + categoryName + "' for " + biomes.size() + " biomes with " + 
             biomeLootTable.values().stream().mapToInt(List::size).sum() + " total items");
+    }
+    
+    /**
+     * Get the biome category for a given biome
+     */
+    public BiomeCategory getBiomeCategory(Biome biome) {
+        return biomeToCategory.get(biome);
+    }
+    
+    /**
+     * Get all biome categories
+     */
+    public Collection<BiomeCategory> getBiomeCategories() {
+        return biomeCategories.values();
+    }
+    
+    /**
+     * Get biome category by file name
+     */
+    public BiomeCategory getBiomeCategoryByFileName(String fileName) {
+        return biomeCategories.get(fileName);
+    }
+    
+    /**
+     * Get default material for a biome category based on its name
+     */
+    private Material getDefaultBiomeMaterial(String categoryName) {
+        return switch (categoryName.toLowerCase()) {
+            case "plains" -> Material.GRASS_BLOCK;
+            case "desert" -> Material.SAND;
+            case "forest" -> Material.OAK_LOG;
+            case "ocean" -> Material.WATER_BUCKET;
+            case "taiga" -> Material.SPRUCE_LOG;
+            case "swamp" -> Material.LILY_PAD;
+            case "jungle" -> Material.JUNGLE_LOG;
+            case "savanna" -> Material.ACACIA_LOG;
+            case "badlands" -> Material.TERRACOTTA;
+            case "mountains", "windswept" -> Material.STONE;
+            case "nether" -> Material.NETHERRACK;
+            case "end" -> Material.END_STONE;
+            default -> Material.GRASS_BLOCK;
+        };
     }
     
     private LootItem parseLootItemFromMap(Map<?, ?> itemMap) {

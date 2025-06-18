@@ -1,0 +1,164 @@
+name: "Badlands"
+description: "Arid mesa landscape with desert mining equipment and ancient artifacts"
+
+loot:
+  COMMON:
+    - material: TERRACOTTA
+      min_amount: 8
+      max_amount: 16
+      chance: 70
+      display_name: "&f&lWeathered Clay"
+      lore:
+        - "&7Hardened clay baked by"
+        - "&7centuries of desert sun."
+    
+    - material: RED_SAND
+      min_amount: 12
+      max_amount: 24
+      chance: 65
+      display_name: "&f&lRed Desert Sand"
+      lore:
+        - "&7Fine sand with an iron-rich"
+        - "&7red coloration."
+    
+    - material: DEAD_BUSH
+      min_amount: 4
+      max_amount: 8
+      chance: 50
+      display_name: "&f&lDried Shrub"
+      lore:
+        - "&7Remnants of vegetation that"
+        - "&7once thrived in this land."
+
+  RARE:
+    - material: GOLD_NUGGET
+      min_amount: 6
+      max_amount: 12
+      chance: 40
+      display_name: "&9&lGold Dust"
+      lore:
+        - "&7Tiny gold particles found"
+        - "&7in badlands mineral deposits."
+    
+    - material: IRON_SHOVEL
+      min_amount: 1
+      max_amount: 1
+      chance: 30
+      display_name: "&9&lMiner's Spade"
+      lore:
+        - "&7A sturdy shovel used by"
+        - "&7badlands prospectors."
+      enchantments:
+        - enchant: EFFICIENCY
+          level: 3
+        - enchant: UNBREAKING
+          level: 2
+    
+    - material: CACTUS
+      min_amount: 3
+      max_amount: 7
+      chance: 35
+      display_name: "&9&lDesert Cactus"
+      lore:
+        - "&7Hardy desert plants that"
+        - "&7thrive in harsh conditions."
+
+  EPIC:
+    - material: GOLDEN_PICKAXE
+      min_amount: 1
+      max_amount: 1
+      chance: 15
+      display_name: "&5&lProspector's Pick"
+      lore:
+        - "&7A golden pickaxe favored"
+        - "&7by wealthy mine owners."
+      enchantments:
+        - enchant: EFFICIENCY
+          level: 5
+        - enchant: FORTUNE
+          level: 2
+    
+    - material: TNT
+      min_amount: 4
+      max_amount: 8
+      chance: 12
+      display_name: "&5&lMining Explosives"
+      lore:
+        - "&7Dynamite used for large-scale"
+        - "&7badlands excavation projects."
+    
+    - material: MINECART
+      min_amount: 1
+      max_amount: 2
+      chance: 10
+      display_name: "&5&lMine Cart"
+      lore:
+        - "&7Transport carts from the"
+        - "&7old badlands mining operations."
+
+  LEGENDARY:
+    - material: DIAMOND_PICKAXE
+      min_amount: 1
+      max_amount: 1
+      chance: 6
+      display_name: "&6&lMaster Miner's Pick"
+      lore:
+        - "&7The legendary tool of the"
+        - "&7greatest badlands miner."
+      enchantments:
+        - enchant: EFFICIENCY
+          level: 5
+        - enchant: FORTUNE
+          level: 3
+        - enchant: UNBREAKING
+          level: 3
+    
+    - material: GOLD_BLOCK
+      min_amount: 2
+      max_amount: 4
+      chance: 4
+      display_name: "&6&lStrike Gold"
+      lore:
+        - "&7Pure gold blocks from a"
+        - "&7legendary mining strike."
+    
+    - material: SHULKER_BOX
+      min_amount: 1
+      max_amount: 1
+      chance: 3
+      display_name: "&6&lMiner's Storage"
+      lore:
+        - "&7An advanced storage container"
+        - "&7used by master miners."
+
+  MYTHIC:
+    - material: NETHERITE_PICKAXE
+      min_amount: 1
+      max_amount: 1
+      chance: 1
+      display_name: "&c&lEternal Excavator"
+      lore:
+        - "&7The ultimate mining tool that"
+        - "&7can break through any material."
+        - ""
+        - "&c⚡ MYTHIC TREASURE"
+      enchantments:
+        - enchant: EFFICIENCY
+          level: 5
+        - enchant: FORTUNE
+          level: 3
+        - enchant: UNBREAKING
+          level: 3
+        - enchant: MENDING
+          level: 1
+    
+    - material: DIAMOND_BLOCK
+      min_amount: 3
+      max_amount: 5
+      chance: 0.5
+      display_name: "&c&lMother Lode"
+      lore:
+        - "&7The legendary diamond deposit"
+        - "&7that started the badlands rush."
+        - ""
+        - "&c⚡ MYTHIC TREASURE"
