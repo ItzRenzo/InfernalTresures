@@ -83,5 +83,5 @@ navigation:
 
 # Layout Settings
 layout:
-  rarity-start-slot: 10  # Where to start placing rarity items
-  rarity-slot-spacing: 2  # Space between rarity items (10, 12, 14, 16, 18)
+  rarity-start-slot: 11  # Where to start placing rarity items
+  rarity-slot-spacing: 1  # Space between rarity items (10, 12, 14, 16, 18)

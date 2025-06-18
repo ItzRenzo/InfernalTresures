@@ -57,6 +57,9 @@ public class TreasureManager {
         // Track treasure found statistics
         plugin.getStatsManager().onTreasureFound(player, rarity);
         
+        // Play rarity-specific sound and particle effects
+        playTreasureEffects(player, rarity, minedBlock.getLocation());
+        
         // Make final variable for lambda expression
         final Rarity finalRarity = rarity;
         
@@ -82,6 +85,58 @@ public class TreasureManager {
         }
         
         return true;
+    }
+    
+    /**
+     * Play rarity-specific sound and particle effects
+     */
+    private void playTreasureEffects(Player player, Rarity rarity, Location location) {
+        // Check if this rarity has effects enabled
+        if (!plugin.getConfigManager().isRarityEffectEnabled(rarity)) {
+            return;
+        }
+        
+        // Play sound effect if global sound is enabled
+        if (plugin.getConfigManager().isSoundEffectEnabled()) {
+            try {
+                String soundName = plugin.getConfigManager().getRaritySound(rarity);
+                float volume = plugin.getConfigManager().getRaritySoundVolume(rarity);
+                float pitch = plugin.getConfigManager().getRaritySoundPitch(rarity);
+                
+                org.bukkit.Sound sound = org.bukkit.Sound.valueOf(soundName);
+                player.playSound(player.getLocation(), sound, volume, pitch);
+                
+                if (plugin.getConfigManager().isTreasureSpawningDebugEnabled()) {
+                    plugin.getLogger().info("Played " + rarity + " sound: " + soundName + 
+                        " (volume: " + volume + ", pitch: " + pitch + ")");
+                }
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("Invalid sound for " + rarity + " rarity: " + 
+                    plugin.getConfigManager().getRaritySound(rarity));
+            }
+        }
+        
+        // Play particle effect if global particles are enabled
+        if (plugin.getConfigManager().isParticleEffectEnabled()) {
+            try {
+                String particleName = plugin.getConfigManager().getRarityParticle(rarity);
+                int count = plugin.getConfigManager().getRarityParticleCount(rarity);
+                double offset = plugin.getConfigManager().getRarityParticleOffset(rarity);
+                
+                org.bukkit.Particle particle = org.bukkit.Particle.valueOf(particleName);
+                Location effectLocation = location.clone().add(0.5, 0.5, 0.5); // Center of block
+                
+                player.getWorld().spawnParticle(particle, effectLocation, count, offset, offset, offset, 0);
+                
+                if (plugin.getConfigManager().isTreasureSpawningDebugEnabled()) {
+                    plugin.getLogger().info("Spawned " + rarity + " particles: " + particleName + 
+                        " (count: " + count + ", offset: " + offset + ")");
+                }
+            } catch (IllegalArgumentException e) {
+                plugin.getLogger().warning("Invalid particle for " + rarity + " rarity: " + 
+                    plugin.getConfigManager().getRarityParticle(rarity));
+            }
+        }
     }
     
     /**

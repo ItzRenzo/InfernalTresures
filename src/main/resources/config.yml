@@ -7,10 +7,67 @@
 #           TREASURE SETTINGS
 # ========================================
 treasure:
-  # Play sound and particle effects when treasures are found
+  # Global effects toggle (master switch)
   effects:
     sound: true
     particles: true
+    
+  # Per-rarity sound and particle effects
+  rarity-effects:
+    common:
+      enabled: true
+      sound:
+        type: ENTITY_EXPERIENCE_ORB_PICKUP
+        volume: 0.8
+        pitch: 1.0
+      particles:
+        type: VILLAGER_HAPPY
+        count: 15
+        offset: 0.5
+    
+    rare:
+      enabled: true
+      sound:
+        type: ENTITY_PLAYER_LEVELUP
+        volume: 1.0
+        pitch: 1.2
+      particles:
+        type: ENCHANTMENT_TABLE
+        count: 25
+        offset: 0.8
+    
+    epic:
+      enabled: true
+      sound:
+        type: ENTITY_ENDER_EYE_LAUNCH
+        volume: 1.2
+        pitch: 0.8
+      particles:
+        type: PORTAL
+        count: 35
+        offset: 1.0
+    
+    legendary:
+      enabled: true
+      sound:
+        type: ENTITY_WITHER_SPAWN
+        volume: 1.5
+        pitch: 1.5
+      particles:
+        type: DRAGON_BREATH
+        count: 50
+        offset: 1.2
+    
+    mythic:
+      enabled: true
+      sound:
+        type: ENTITY_ENDER_DRAGON_DEATH
+        volume: 2.0
+        pitch: 0.5
+      particles:
+        type: END_ROD
+        count: 75
+        offset: 1.5
     
   # Announce treasure finds to the server (per rarity)
   announce-finds:

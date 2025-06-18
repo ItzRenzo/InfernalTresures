@@ -314,4 +314,92 @@ public class ConfigManager {
         
         return config.getInt("rarity.despawn-times." + rarity.name().toLowerCase(), defaultTime);
     }
+    
+    // Per-rarity effect configuration methods
+    public boolean isRarityEffectEnabled(me.itzrenzo.infernaltresures.models.Rarity rarity) {
+        // Check global effects first
+        if (!isSoundEffectEnabled() && !isParticleEffectEnabled()) {
+            return false;
+        }
+        
+        return config.getBoolean("treasure.rarity-effects." + rarity.name().toLowerCase() + ".enabled", true);
+    }
+    
+    public String getRaritySound(me.itzrenzo.infernaltresures.models.Rarity rarity) {
+        // Default sounds for each rarity
+        String defaultSound = switch (rarity) {
+            case COMMON -> "ENTITY_EXPERIENCE_ORB_PICKUP";
+            case RARE -> "ENTITY_PLAYER_LEVELUP";
+            case EPIC -> "ENTITY_ENDER_EYE_LAUNCH";
+            case LEGENDARY -> "ENTITY_WITHER_SPAWN";
+            case MYTHIC -> "ENTITY_ENDER_DRAGON_DEATH";
+        };
+        
+        return config.getString("treasure.rarity-effects." + rarity.name().toLowerCase() + ".sound.type", defaultSound);
+    }
+    
+    public float getRaritySoundVolume(me.itzrenzo.infernaltresures.models.Rarity rarity) {
+        // Default volumes for each rarity
+        float defaultVolume = switch (rarity) {
+            case COMMON -> 0.8f;
+            case RARE -> 1.0f;
+            case EPIC -> 1.2f;
+            case LEGENDARY -> 1.5f;
+            case MYTHIC -> 2.0f;
+        };
+        
+        return (float) config.getDouble("treasure.rarity-effects." + rarity.name().toLowerCase() + ".sound.volume", defaultVolume);
+    }
+    
+    public float getRaritySoundPitch(me.itzrenzo.infernaltresures.models.Rarity rarity) {
+        // Default pitches for each rarity
+        float defaultPitch = switch (rarity) {
+            case COMMON -> 1.0f;
+            case RARE -> 1.2f;
+            case EPIC -> 0.8f;
+            case LEGENDARY -> 1.5f;
+            case MYTHIC -> 0.5f;
+        };
+        
+        return (float) config.getDouble("treasure.rarity-effects." + rarity.name().toLowerCase() + ".sound.pitch", defaultPitch);
+    }
+    
+    public String getRarityParticle(me.itzrenzo.infernaltresures.models.Rarity rarity) {
+        // Default particles for each rarity
+        String defaultParticle = switch (rarity) {
+            case COMMON -> "VILLAGER_HAPPY";
+            case RARE -> "ENCHANTMENT_TABLE";
+            case EPIC -> "PORTAL";
+            case LEGENDARY -> "DRAGON_BREATH";
+            case MYTHIC -> "END_ROD";
+        };
+        
+        return config.getString("treasure.rarity-effects." + rarity.name().toLowerCase() + ".particles.type", defaultParticle);
+    }
+    
+    public int getRarityParticleCount(me.itzrenzo.infernaltresures.models.Rarity rarity) {
+        // Default particle counts for each rarity
+        int defaultCount = switch (rarity) {
+            case COMMON -> 15;
+            case RARE -> 25;
+            case EPIC -> 35;
+            case LEGENDARY -> 50;
+            case MYTHIC -> 75;
+        };
+        
+        return config.getInt("treasure.rarity-effects." + rarity.name().toLowerCase() + ".particles.count", defaultCount);
+    }
+    
+    public double getRarityParticleOffset(me.itzrenzo.infernaltresures.models.Rarity rarity) {
+        // Default particle offsets for each rarity
+        double defaultOffset = switch (rarity) {
+            case COMMON -> 0.5;
+            case RARE -> 0.8;
+            case EPIC -> 1.0;
+            case LEGENDARY -> 1.2;
+            case MYTHIC -> 1.5;
+        };
+        
+        return config.getDouble("treasure.rarity-effects." + rarity.name().toLowerCase() + ".particles.offset", defaultOffset);
+    }
 }
