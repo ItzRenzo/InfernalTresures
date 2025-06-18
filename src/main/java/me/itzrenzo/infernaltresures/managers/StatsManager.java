@@ -212,6 +212,37 @@ public class StatsManager {
         PlayerStats stats = getPlayerStats(player);
         return stats.getEffectiveLuckMultiplier();
     }
+    
+    /**
+     * Toggle treasure spawning for a player
+     * @param player The player to toggle treasure spawning for
+     * @return The new state (true = enabled, false = disabled)
+     */
+    public boolean toggleTreasureSpawning(Player player) {
+        PlayerStats stats = getPlayerStats(player);
+        stats.treasureSpawningEnabled = !stats.treasureSpawningEnabled;
+        return stats.treasureSpawningEnabled;
+    }
+    
+    /**
+     * Set treasure spawning state for a player
+     * @param player The player to set treasure spawning for
+     * @param enabled Whether treasure spawning should be enabled
+     */
+    public void setTreasureSpawning(Player player, boolean enabled) {
+        PlayerStats stats = getPlayerStats(player);
+        stats.treasureSpawningEnabled = enabled;
+    }
+    
+    /**
+     * Check if treasure spawning is enabled for a player
+     * @param player The player to check
+     * @return True if treasure spawning is enabled for this player
+     */
+    public boolean isTreasureSpawningEnabled(Player player) {
+        PlayerStats stats = getPlayerStats(player);
+        return stats.treasureSpawningEnabled;
+    }
 
     public static class PlayerStats {
         public long totalBlocksMined = 0;
@@ -225,6 +256,9 @@ public class StatsManager {
         // Luck system
         public long luckEndTime = 0; // When luck expires (System.currentTimeMillis())
         public double luckMultiplier = 1.0; // Default 1.0 = no luck bonus
+        
+        // Treasure spawning toggle
+        public boolean treasureSpawningEnabled = true; // Default enabled
         
         public long getTreasuresByRarity(Rarity rarity) {
             return switch (rarity) {

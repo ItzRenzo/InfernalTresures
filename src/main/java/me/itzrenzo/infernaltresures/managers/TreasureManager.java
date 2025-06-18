@@ -41,6 +41,11 @@ public class TreasureManager {
     }
     
     public boolean trySpawnTreasure(Block minedBlock, Player player) {
+        // Check if player has treasure spawning enabled
+        if (!plugin.getStatsManager().isTreasureSpawningEnabled(player)) {
+            return false; // Player has disabled treasure spawning
+        }
+        
         // Use BlockManager to determine if treasure should spawn and what rarity (with luck applied)
         Rarity rarity = InfernalTresures.getInstance().getBlockManager().shouldSpawnTreasure(minedBlock.getType(), player);
         

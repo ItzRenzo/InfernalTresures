@@ -7,6 +7,7 @@ import me.itzrenzo.infernaltresures.models.Rarity;
 import me.itzrenzo.infernaltresures.models.Treasure;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -49,6 +50,7 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             case "stats" -> handleStatsCommand(sender, args);
             case "loot" -> handleLootCommand(sender, args);
             case "luck" -> handleLuckCommand(sender, args);
+            case "toggle" -> handleToggleCommand(sender, args);
             case "help" -> sendHelpMessage(sender);
             default -> {
                 sender.sendMessage(Component.text("Unknown command. Use /treasure help for a list of commands.")
@@ -269,6 +271,12 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(Component.text("🍀 Treasure Luck: ").color(NamedTextColor.GREEN)
                     .append(Component.text("INACTIVE").color(NamedTextColor.GRAY)));
             }
+            
+            // Show treasure spawning status
+            boolean spawningEnabled = plugin.getStatsManager().isTreasureSpawningEnabled(targetPlayer);
+            sender.sendMessage(Component.text("⚙️ Treasure Spawning: ").color(NamedTextColor.BLUE)
+                .append(Component.text(spawningEnabled ? "ENABLED" : "DISABLED")
+                    .color(spawningEnabled ? NamedTextColor.GREEN : NamedTextColor.RED)));
         }
         
         if (targetPlayer != null && targetPlayer.isOnline()) {
@@ -306,6 +314,10 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         
         if (sender.hasPermission("infernaltresures.command.luck")) {
             sender.sendMessage(Component.text("/treasure luck <seconds> <player> [multiplier] - Give treasure luck").color(NamedTextColor.YELLOW));
+        }
+        
+        if (sender.hasPermission("infernaltresures.command.toggle")) {
+            sender.sendMessage(Component.text("/treasure toggle - Toggle treasure spawning on/off for yourself").color(NamedTextColor.YELLOW));
         }
         
         sender.sendMessage(messageManager.getMessageComponent("help-help"));
@@ -415,6 +427,36 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             .append(Component.text(String.format("%.1fx", multiplier)).color(NamedTextColor.GOLD)));
     }
     
+    private void handleToggleCommand(CommandSender sender, String[] args) {
+        // Only players can toggle their own treasure spawning
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("Only players can use this command.").color(NamedTextColor.RED));
+            return;
+        }
+        
+        // Check permissions
+        if (!player.hasPermission("infernaltresures.command.toggle")) {
+            player.sendMessage(Component.text("You don't have permission to use this command.").color(NamedTextColor.RED));
+            return;
+        }
+        
+        // Toggle treasure spawning for the player
+        boolean newState = plugin.getStatsManager().toggleTreasureSpawning(player);
+        
+        // Send feedback message
+        if (newState) {
+            player.sendMessage(Component.text("✅ Treasure spawning has been ")
+                .color(NamedTextColor.GREEN)
+                .append(Component.text("ENABLED").color(NamedTextColor.GREEN).decorate(TextDecoration.BOLD))
+                .append(Component.text("! You will now find treasures while mining.").color(NamedTextColor.GREEN)));
+        } else {
+            player.sendMessage(Component.text("❌ Treasure spawning has been ")
+                .color(NamedTextColor.YELLOW)
+                .append(Component.text("DISABLED").color(NamedTextColor.RED).decorate(TextDecoration.BOLD))
+                .append(Component.text("! You will no longer find treasures while mining.").color(NamedTextColor.YELLOW)));
+        }
+    }
+    
     /**
      * Format duration in seconds to a readable string
      */
@@ -468,6 +510,10 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             
             if (sender.hasPermission("infernaltresures.command.luck")) {
                 subcommands.add("luck");
+            }
+            
+            if (sender.hasPermission("infernaltresures.command.toggle")) {
+                subcommands.add("toggle");
             }
             
             subcommands.add("help");

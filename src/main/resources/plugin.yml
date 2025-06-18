@@ -47,3 +47,6 @@ permissions:
   infernaltresures.command.luck:
     description: Allows giving treasure luck to players
     default: op
+  infernaltresures.command.toggle:
+    description: Allows toggling treasure spawning on/off for yourself
+    default: true
