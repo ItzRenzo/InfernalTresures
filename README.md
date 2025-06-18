@@ -1,6 +1,6 @@
 # InfernalTreasures
 
-A comprehensive Minecraft plugin that adds treasure hunting while mining! Find valuable treasures hidden in blocks as you mine, with biome-specific loot, multiple item system integrations, customizable GUI browsers, and highly configurable features.
+A comprehensive Minecraft plugin that adds treasure hunting while mining! Find valuable treasures hidden in blocks as you mine, with biome-specific loot, multiple item system integrations, customizable GUI browsers, player luck system, and highly configurable features.
 
 ## 🌟 Features
 
@@ -11,6 +11,9 @@ A comprehensive Minecraft plugin that adds treasure hunting while mining! Find v
 - 🖥️ **Interactive Loot GUI**: Browse all available treasures by biome and rarity with detailed information
 - 🎨 **Fully Customizable Menus**: Configure GUI titles, layouts, colors, and content through YAML files
 - 🏷️ **Custom Holograms**: Floating text above treasures (configurable per rarity tier)
+- 🍀 **Treasure Luck System**: Admin command to boost player treasure spawn rates temporarily
+- ⚙️ **Player Toggle Control**: Players can enable/disable treasure spawning for themselves
+- 📊 **Comprehensive Statistics**: Track blocks mined, treasures found, playtime, and luck status
 - 🔧 **Highly Configurable**: Extensive configuration options for every aspect of the plugin
 - 🎨 **Advanced Item System**: Support for enchantments, attributes, custom names, lore, and potion effects
 - 📊 **Player Progression**: Track blocks mined and gate items behind progression requirements
@@ -210,36 +213,110 @@ loot-display:
 | `/treasure spawn [rarity]` | `infernaltresures.command.spawn` | Spawn a treasure at your location |
 | `/treasure reload` | `infernaltresures.command.reload` | Reload all configurations and menus |
 | `/treasure info` | `infernaltresures.command.info` | Show plugin and integration status |
-| `/lootgui` | `infernaltresures.command.use` | **NEW**: Open interactive loot browser |
-| `/treasure loot gui` | `infernaltresures.command.use` | **NEW**: Alternative loot browser command |
+| `/treasure stats [player]` | `infernaltresures.command.stats` | View treasure hunting statistics |
+| `/treasure luck <seconds> <player> [multiplier]` | `infernaltresures.command.luck` | Give temporary treasure luck to a player |
+| `/treasure toggle` | `infernaltresures.command.toggle` | Toggle treasure spawning on/off for yourself |
+| `/lootgui` | `infernaltresures.command.loot.gui` | Open interactive loot browser |
+| `/treasure loot gui` | `infernaltresures.command.loot` | Alternative loot browser command |
+
+### 🍀 Treasure Luck System
+
+Administrators can grant temporary treasure luck to players, significantly boosting their treasure spawn rates:
+
+```bash
+# Give Steve 2x treasure spawn rate for 5 minutes
+/treasure luck 300 Steve 2.0
+
+# Give Alice 3x treasure spawn rate for 30 minutes  
+/treasure luck 1800 Alice 3.0
+
+# Default multiplier is 2.0 if not specified
+/treasure luck 600 Bob
+```
+
+**Features:**
+- **Multiplier Range**: 1.0x to 10.0x spawn rate boost
+- **Duration**: Any time in seconds (60s = 1min, 3600s = 1hr)
+- **Real-time Application**: Affects all treasure spawning immediately
+- **Stats Integration**: Shows active luck and remaining time in `/treasure stats`
+- **Debug Logging**: See luck calculations in debug mode
+
+### ⚙️ Player Control System
+
+Players have full control over their treasure hunting experience:
+
+```bash
+# Toggle treasure spawning on/off for yourself
+/treasure toggle
+```
+
+**Benefits:**
+- **No Interruptions**: Mine without treasures spawning when you don't want them
+- **Building Projects**: Focus on gathering blocks without treasure distractions  
+- **Personal Preference**: Some players prefer traditional mining
+- **Persistent Setting**: Choice is saved across sessions
+
+## 📊 Statistics System
+
+Track detailed treasure hunting progress with `/treasure stats`:
+
+**Player Statistics Include:**
+- 🔨 **Total Blocks Mined**: Lifetime mining progress
+- 💎 **Treasures Found**: Breakdown by rarity (Common, Rare, Epic, Legendary, Mythic)
+- ⏱️ **Playtime**: Total and current session time
+- 🍀 **Active Luck**: Current luck multiplier and remaining duration
+- ⚙️ **Treasure Toggle**: Current treasure spawning preference
+
+**Admin Features:**
+- View any player's statistics with `/treasure stats <player>`
+- Monitor server-wide treasure activity
+- Track player engagement and progression
 
 ## 🔐 Permissions
 
 | Permission | Description | Default |
 |------------|-------------|---------|
-| `infernaltresures.command.use` | Access to basic commands and loot GUI | `true` |
+| `infernaltresures.command.use` | Access to basic commands | `true` |
 | `infernaltresures.command.spawn` | Access to spawn command | `op` |
 | `infernaltresures.command.reload` | Access to reload command | `op` |
 | `infernaltresures.command.info` | Access to info command | `op` |
+| `infernaltresures.command.stats` | View your own statistics | `true` |
+| `infernaltresures.command.stats.others` | View other players' statistics | `op` |
+| `infernaltresures.command.luck` | Give treasure luck to players | `op` |
+| `infernaltresures.command.toggle` | Toggle treasure spawning for yourself | `true` |
+| `infernaltresures.command.loot` | Access to loot commands | `true` |
+| `infernaltresures.command.loot.gui` | Access to loot browser GUI | `true` |
 
 ## 🌍 Supported Biomes
 
-The plugin includes pre-configured biome loot tables for:
+The plugin includes pre-configured biome loot tables for **17 biomes**:
 
+### Overworld Biomes
 - **Desert** - Sand dune treasures and oasis artifacts
 - **Forest** - Nature-themed items and druidic equipment  
 - **Ocean** - Aquatic treasures and maritime artifacts
 - **Plains** - Pastoral items and farming equipment
-- **Mountains** (Windswept Hills) - Alpine treasures
-- **Swamp** - Mystical bog artifacts
-- **Jungle** - Tropical treasures and ancient artifacts
-- **Taiga** - Cold-weather survival gear
-- **Savanna** - Tribal artifacts and wildlife items
-- **Badlands** - Desert mining equipment
-- **Nether** (Nether Wastes) - Infernal artifacts
-- **End** (The End) - Otherworldly treasures
+- **Mountains** (Windswept Hills) - Alpine treasures and mining equipment
+- **Swamp** - Mystical bog artifacts and witch brewing supplies
+- **Jungle** - Tropical treasures and ancient jungle artifacts
+- **Taiga** - Cold-weather survival gear and forestry items
+- **Savanna** - Tribal artifacts and wildlife equipment
+- **Badlands** - Desert mining equipment and geological specimens
 
-*Custom biome configurations can be added by creating new YAML files in the `biomes/` folder.*
+### Nether Biomes
+- **Nether Wastes** - Classic infernal artifacts and fire-resistant gear
+- **Soul Sand Valley** - Soul-themed items and undead artifacts
+- **Crimson Forest** - Crimson fungus materials and hoglin gear
+- **Warped Forest** - Warped fungus materials and enderman artifacts
+- **Basalt Deltas** - Volcanic treasures and heat-resistant equipment
+
+### End Biomes
+- **The End** - Otherworldly treasures and dragon-themed artifacts
+
+### Legacy Support
+- **Nether** (General) - Broad nether treasures for compatibility
+
+*Custom biome configurations can be added by creating new YAML files in the `biomes/` folder. The system automatically detects and loads new biome files!*
 
 ## ⭐ Rarity System
 
@@ -384,16 +461,22 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ### Version 1.0.0
 - ✨ **NEW**: Initial release with core treasure hunting system
-- ✨ **NEW**: Biome-specific loot tables (Desert, Forest, Ocean, Plains)
-- ✨ **NEW**: Advanced rarity system with 5 tiers
-- ✨ **NEW**: MMOItems integration support
-- ✨ **NEW**: ExecutableItems integration support
+- ✨ **NEW**: 17 biome-specific loot tables with unique themes
+- ✨ **NEW**: Advanced rarity system with 5 tiers and custom despawn times
+- ✨ **NEW**: Interactive loot browser GUI with full customization
+- ✨ **NEW**: Treasure luck system for temporary spawn rate boosts
+- ✨ **NEW**: Player toggle system for treasure spawning control
+- ✨ **NEW**: Comprehensive statistics tracking with luck integration
+- ✨ **NEW**: MMOItems integration with dynamic detection
+- ✨ **NEW**: ExecutableItems integration with SCore API
 - ✨ **NEW**: Custom hologram system with per-rarity configuration
-- ✨ **NEW**: Comprehensive command system with permissions
-- ✨ **NEW**: Block-specific spawn chance configuration
+- ✨ **NEW**: Advanced command system with full tab completion
+- ✨ **NEW**: Block-specific spawn chance configuration with luck multipliers
 - ✨ **NEW**: Advanced item customization (enchantments, attributes, effects)
-- ✨ **NEW**: Debug system with categorized logging
-- ✨ **NEW**: Auto-despawn system with configurable timers
-- ✨ **NEW**: Sound and particle effects
-- ✨ **NEW**: Message customization system
+- ✨ **NEW**: Debug system with categorized logging and luck calculations
+- ✨ **NEW**: Auto-despawn system with configurable timers per rarity
+- ✨ **NEW**: Sound and particle effects with toggle options
+- ✨ **NEW**: Message customization system with color code support
 - ✨ **NEW**: Performance-optimized treasure management
+- ✨ **NEW**: Automatic biome file detection and loading
+- ✨ **NEW**: Player progression system with blocks mined requirements
