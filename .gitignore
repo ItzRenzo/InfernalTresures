@@ -1,3 +1,68 @@
-/.idea
-/InfernalTresures.iml
-/target
+# IDE Files
+/.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# Build Directories
+/target/
+/build/
+/out/
+
+# Gradle Files
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# Maven Files
+dependency-reduced-pom.xml
+
+# Compiled Class Files
+*.class
+
+# JAR Files (exclude dependency JARs but keep them in resources if needed)
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+!src/main/resources/*.jar
+
+# Log Files
+*.log
+
+# Temporary Files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+hs_err_pid*
+
+# Gradle Wrapper (keep these)
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# Keep dependency JARs in resources (for SCore, etc.)
+!src/main/resources/*.jar

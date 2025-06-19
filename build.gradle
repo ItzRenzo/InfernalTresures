@@ -1,0 +1,78 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'me.itzrenzo'
+version = '1.0'
+description = 'InfernalTreasures'
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'papermc-repo'
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+    maven {
+        name = 'phoenix'
+        url = 'https://nexus.phoenixdevt.fr/repository/maven-public/'
+    }
+    maven {
+        name = 'jitpack'
+        url = 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    // Paper API
+    compileOnly 'io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT'
+    
+    // Optional integrations
+    compileOnly 'io.lumine:MythicLib-dist:1.6.2-SNAPSHOT'
+    compileOnly 'net.Indyuce:MMOItems-API:6.10-SNAPSHOT'
+    
+    // SCore - use local JAR file since it's not in public repositories
+    compileOnly files('src/main/resources/SCore-5.25.6.14.jar')
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+    
+    // Exclude JAR files from being copied to resources to reduce final JAR size
+    exclude '**/*.jar'
+}
+
+shadowJar {
+    // Don't shade any dependencies - keep the JAR lightweight
+    dependencies {
+        // Exclude all dependencies from being bundled (they should be provided by server)
+        exclude(dependency('.*:.*'))
+    }
+    
+    archiveClassifier = ''
+}
+
+// Make shadowJar the default jar task
+jar.enabled = false
+build.dependsOn shadowJar
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-parameters']
+}
+
+// Configure source and target compatibility
+compileJava.options.release = 21
