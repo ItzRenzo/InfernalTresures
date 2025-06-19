@@ -4,6 +4,7 @@ import me.itzrenzo.infernaltresures.InfernalTresures;
 import me.itzrenzo.infernaltresures.models.Rarity;
 import me.itzrenzo.infernaltresures.models.BiomeCategory;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
@@ -164,7 +165,8 @@ public class MenuManager {
     public Component getRaritySelectionTitle(String biomeName) {
         String title = raritySelectionConfig.getString("gui.title", "&6&lRarities in {biome_name}");
         title = title.replace("{biome_name}", formatBiomeName(biomeName));
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(title);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(title)
+            .decoration(TextDecoration.ITALIC, false);
     }
     
     public int getRaritySelectionSize() {
@@ -228,7 +230,8 @@ public class MenuManager {
         String title = lootDisplayConfig.getString("gui.title", "{rarity_display_name} Loot - {biome_name}");
         title = title.replace("{biome_name}", formatBiomeName(biomeName))
                     .replace("{rarity_display_name}", rarityDisplayName);
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(title);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(title)
+            .decoration(TextDecoration.ITALIC, false);
     }
     
     public int getLootDisplaySize() {

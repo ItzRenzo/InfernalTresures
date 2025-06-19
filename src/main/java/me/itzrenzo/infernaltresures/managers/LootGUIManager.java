@@ -260,19 +260,22 @@ public class LootGUIManager implements Listener {
         if (menuManager.shouldShowBiomeSource()) {
             String format = menuManager.getBiomeSourceFormat();
             format = format.replace("{biome_name}", category.getName());
-            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format));
+            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format)
+                .decoration(TextDecoration.ITALIC, false));
         }
         
         // Add rarity info
         String rarityFormat = menuManager.getRarityInfoFormat();
         rarityFormat = rarityFormat.replace("{rarity_display_name}", rarity.getDisplayName());
-        lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(rarityFormat));
+        lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(rarityFormat)
+            .decoration(TextDecoration.ITALIC, false));
         
         // Add chance info
         if (menuManager.shouldShowChance()) {
             String format = menuManager.getChanceFormat();
             format = format.replace("{chance}", String.format("%.1f", lootDisplay.getChance()));
-            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format));
+            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format)
+                .decoration(TextDecoration.ITALIC, false));
         }
         
         // Add amount info
@@ -281,7 +284,8 @@ public class LootGUIManager implements Listener {
             if (menuManager.shouldShowSingleAmount()) {
                 String format = menuManager.getSingleAmountFormat();
                 format = format.replace("{amount}", String.valueOf(lootDisplay.getMinAmount()));
-                lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format));
+                lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format)
+                    .decoration(TextDecoration.ITALIC, false));
             }
         } else {
             // Amount range
@@ -289,7 +293,8 @@ public class LootGUIManager implements Listener {
                 String format = menuManager.getAmountRangeFormat();
                 format = format.replace("{min_amount}", String.valueOf(lootDisplay.getMinAmount()));
                 format = format.replace("{max_amount}", String.valueOf(lootDisplay.getMaxAmount()));
-                lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format));
+                lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format)
+                    .decoration(TextDecoration.ITALIC, false));
             }
         }
         
@@ -298,10 +303,12 @@ public class LootGUIManager implements Listener {
             if (lootDisplay.getRequiredBlocksMined() > 0) {
                 String format = menuManager.getRequiredBlocksFormat();
                 format = format.replace("{required_blocks}", String.valueOf(lootDisplay.getRequiredBlocksMined()));
-                lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format));
+                lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format)
+                    .decoration(TextDecoration.ITALIC, false));
             } else {
                 String format = menuManager.getNoRequirementFormat();
-                lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format));
+                lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format)
+                    .decoration(TextDecoration.ITALIC, false));
             }
         }
         
@@ -309,7 +316,8 @@ public class LootGUIManager implements Listener {
         if (menuManager.shouldShowItemType()) {
             String format = menuManager.getItemTypeFormat();
             format = format.replace("{item_type}", lootDisplay.getItemType());
-            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format));
+            lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format)
+                .decoration(TextDecoration.ITALIC, false));
         }
     }
     

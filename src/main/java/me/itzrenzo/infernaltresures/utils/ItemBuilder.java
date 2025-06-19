@@ -2,6 +2,7 @@ package me.itzrenzo.infernaltresures.utils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -37,7 +38,8 @@ public class ItemBuilder {
      */
     public ItemBuilder setDisplayName(String displayName) {
         if (displayName != null && itemMeta != null) {
-            Component nameComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(displayName);
+            Component nameComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(displayName)
+                .decoration(TextDecoration.ITALIC, false);
             itemMeta.displayName(nameComponent);
         }
         return this;
@@ -50,7 +52,8 @@ public class ItemBuilder {
         if (lore != null && itemMeta != null) {
             List<Component> loreComponents = new ArrayList<>();
             for (String line : lore) {
-                Component loreComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(line);
+                Component loreComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(line)
+                    .decoration(TextDecoration.ITALIC, false);
                 loreComponents.add(loreComponent);
             }
             itemMeta.lore(loreComponents);

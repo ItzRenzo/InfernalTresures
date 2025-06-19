@@ -3,6 +3,7 @@ package me.itzrenzo.infernaltresures.managers;
 import me.itzrenzo.infernaltresures.InfernalTresures;
 import me.itzrenzo.infernaltresures.models.Rarity;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -79,7 +80,8 @@ public class MessageManager {
     
     public Component getTreasureNameComponent(Rarity rarity, Biome biome) {
         String name = getTreasureName(rarity, biome);
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(name);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(name)
+            .decoration(TextDecoration.ITALIC, false);
     }
     
     public Component getHologramText(Rarity rarity, Biome biome) {
@@ -88,12 +90,13 @@ public class MessageManager {
                 "&{rarity_color}{rarity} {biome} Treasure".replace("{rarity_color}", getRarityColor(rarity))
                     .replace("{rarity}", rarity.getDisplayName())
                     .replace("{biome}", formatBiomeName(biome))
-            );
+            ).decoration(TextDecoration.ITALIC, false);
         }
         
         String template = messagesConfig.getString("hologram.text", "&{rarity_color}{rarity} {biome} Treasure");
         String hologramText = replacePlaceholders(template, rarity, biome, null, null);
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(hologramText);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(hologramText)
+            .decoration(TextDecoration.ITALIC, false);
     }
     
     public String getFormattedMessage(String messagePath, Rarity rarity, Biome biome, Player player, Integer despawnTime) {
@@ -103,7 +106,8 @@ public class MessageManager {
     
     public Component getFormattedMessageComponent(String messagePath, Rarity rarity, Biome biome, Player player, Integer despawnTime) {
         String message = getFormattedMessage(messagePath, rarity, biome, player, despawnTime);
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(message)
+            .decoration(TextDecoration.ITALIC, false);
     }
     
     private String replacePlaceholders(String text, Rarity rarity, Biome biome, Player player, Integer despawnTime) {
@@ -194,7 +198,8 @@ public class MessageManager {
                                 .replace("{rarity_color}", getRarityColor(rarity))
                                 .replace("{rarity}", rarity.getDisplayName())
                                 .replace("{biome}", formatBiomeName(biome));
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(message)
+            .decoration(TextDecoration.ITALIC, false);
     }
     
     public String getBiomeDisplayName(Biome biome) {
@@ -214,7 +219,8 @@ public class MessageManager {
     // Helper method to get a message as a Component with color code parsing
     public Component getMessageComponent(String path) {
         String message = getMessage(path);
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(message)
+            .decoration(TextDecoration.ITALIC, false);
     }
     
     // Helper method to get a message with placeholder replacement as a Component
@@ -228,6 +234,7 @@ public class MessageManager {
             message = message.replace(placeholder, value);
         }
         
-        return LegacyComponentSerializer.legacyAmpersand().deserialize(message);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(message)
+            .decoration(TextDecoration.ITALIC, false);
     }
 }
