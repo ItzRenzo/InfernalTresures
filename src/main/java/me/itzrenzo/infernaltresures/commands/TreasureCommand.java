@@ -51,6 +51,7 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             case "loot" -> handleLootCommand(sender, args);
             case "luck" -> handleLuckCommand(sender, args);
             case "toggle" -> handleToggleCommand(sender, args);
+            case "progression" -> handleProgressionCommand(sender, args);
             case "help" -> sendHelpMessage(sender);
             default -> {
                 sender.sendMessage(Component.text("Unknown command. Use /treasure help for a list of commands.")
@@ -320,6 +321,10 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(Component.text("/treasure toggle - Toggle treasure spawning on/off for yourself").color(NamedTextColor.YELLOW));
         }
         
+        if (sender.hasPermission("infernaltresures.command.progression")) {
+            sender.sendMessage(Component.text("/treasure progression [info|set <level>|debug <on|off>] - Manage loot progression").color(NamedTextColor.YELLOW));
+        }
+        
         sender.sendMessage(messageManager.getMessageComponent("help-help"));
     }
     
@@ -457,6 +462,133 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         }
     }
     
+    private void handleProgressionCommand(CommandSender sender, String[] args) {
+        // Check permissions
+        if (!sender.hasPermission("infernaltresures.command.progression")) {
+            sender.sendMessage(Component.text("You don't have permission to use this command.").color(NamedTextColor.RED));
+            return;
+        }
+        
+        // Usage: /treasure progression [info|set <level>|debug <on|off>]
+        if (args.length == 1) {
+            // Show current progression info
+            showProgressionInfo(sender);
+            return;
+        }
+        
+        String subcommand = args[1].toLowerCase();
+        
+        switch (subcommand) {
+            case "info" -> showProgressionInfo(sender);
+            case "set" -> {
+                if (args.length < 3) {
+                    sender.sendMessage(Component.text("Usage: /treasure progression set <level>").color(NamedTextColor.YELLOW));
+                    sender.sendMessage(Component.text("Valid levels: 1, 2, 3, 4").color(NamedTextColor.GRAY));
+                    return;
+                }
+                
+                try {
+                    int level = Integer.parseInt(args[2]);
+                    if (level < 1 || level > 4) {
+                        sender.sendMessage(Component.text("Invalid level. Must be between 1 and 4.").color(NamedTextColor.RED));
+                        return;
+                    }
+                    
+                    int oldLevel = plugin.getConfigManager().getCurrentProgressionLevel();
+                    plugin.getConfigManager().setCurrentProgressionLevel(level);
+                    
+                    sender.sendMessage(Component.text("✅ Progression level changed from ")
+                        .color(NamedTextColor.GREEN)
+                        .append(Component.text(oldLevel).color(NamedTextColor.YELLOW))
+                        .append(Component.text(" to ").color(NamedTextColor.GREEN))
+                        .append(Component.text(level).color(NamedTextColor.YELLOW))
+                        .append(Component.text("!").color(NamedTextColor.GREEN)));
+                    
+                    showProgressionInfo(sender);
+                    
+                } catch (NumberFormatException e) {
+                    sender.sendMessage(Component.text("Invalid level. Please enter a number between 1 and 4.").color(NamedTextColor.RED));
+                }
+            }
+            case "debug" -> {
+                if (args.length < 3) {
+                    sender.sendMessage(Component.text("Usage: /treasure progression debug <on|off>").color(NamedTextColor.YELLOW));
+                    return;
+                }
+                
+                String debugState = args[2].toLowerCase();
+                if (!debugState.equals("on") && !debugState.equals("off")) {
+                    sender.sendMessage(Component.text("Debug state must be 'on' or 'off'.").color(NamedTextColor.RED));
+                    return;
+                }
+                
+                boolean enable = debugState.equals("on");
+                plugin.getConfig().set("treasure.loot-progression.debug", enable);
+                plugin.saveConfig();
+                
+                sender.sendMessage(Component.text("🔧 Progression debug logging ")
+                    .color(NamedTextColor.BLUE)
+                    .append(Component.text(enable ? "ENABLED" : "DISABLED")
+                        .color(enable ? NamedTextColor.GREEN : NamedTextColor.RED))
+                    .append(Component.text("!").color(NamedTextColor.BLUE)));
+            }
+            default -> {
+                sender.sendMessage(Component.text("Usage: /treasure progression [info|set <level>|debug <on|off>]").color(NamedTextColor.YELLOW));
+                sender.sendMessage(Component.text("Examples:").color(NamedTextColor.GRAY));
+                sender.sendMessage(Component.text("  /treasure progression info - Show current settings").color(NamedTextColor.GRAY));
+                sender.sendMessage(Component.text("  /treasure progression set 3 - Set to level 3").color(NamedTextColor.GRAY));
+                sender.sendMessage(Component.text("  /treasure progression debug on - Enable debug logging").color(NamedTextColor.GRAY));
+            }
+        }
+    }
+    
+    private void showProgressionInfo(CommandSender sender) {
+        int currentLevel = plugin.getConfigManager().getCurrentProgressionLevel();
+        int currentSlots = plugin.getConfigManager().getCurrentProgressionSlots();
+        String levelName = plugin.getConfigManager().getProgressionLevelName(currentLevel);
+        String levelDescription = plugin.getConfigManager().getProgressionLevelDescription(currentLevel);
+        boolean debugEnabled = plugin.getConfigManager().isProgressionDebugEnabled();
+        
+        sender.sendMessage(Component.text("=== Loot Progression System ===").color(NamedTextColor.GOLD));
+        sender.sendMessage(Component.text("Current Level: ").color(NamedTextColor.YELLOW)
+            .append(Component.text(currentLevel).color(NamedTextColor.WHITE))
+            .append(Component.text(" (").color(NamedTextColor.GRAY))
+            .append(Component.text(levelName).color(NamedTextColor.AQUA))
+            .append(Component.text(")").color(NamedTextColor.GRAY)));
+        
+        sender.sendMessage(Component.text("Description: ").color(NamedTextColor.YELLOW)
+            .append(Component.text(levelDescription).color(NamedTextColor.WHITE)));
+        
+        sender.sendMessage(Component.text("Barrel Slots Filled: ").color(NamedTextColor.YELLOW)
+            .append(Component.text(currentSlots).color(NamedTextColor.WHITE))
+            .append(Component.text("/27 slots").color(NamedTextColor.GRAY)));
+        
+        // Show all level options
+        sender.sendMessage(Component.text("Available Levels:").color(NamedTextColor.AQUA));
+        for (int level = 1; level <= 4; level++) {
+            int slots = plugin.getConfigManager().getProgressionSlots(level);
+            String name = plugin.getConfigManager().getProgressionLevelName(level);
+            
+            Component levelLine = Component.text("  ")
+                .append(Component.text(level).color(level == currentLevel ? NamedTextColor.GREEN : NamedTextColor.WHITE))
+                .append(Component.text(": ").color(NamedTextColor.GRAY))
+                .append(Component.text(name).color(NamedTextColor.AQUA))
+                .append(Component.text(" (").color(NamedTextColor.GRAY))
+                .append(Component.text(slots + " slots").color(NamedTextColor.YELLOW))
+                .append(Component.text(")").color(NamedTextColor.GRAY));
+            
+            if (level == currentLevel) {
+                levelLine = levelLine.append(Component.text(" ← CURRENT").color(NamedTextColor.GREEN));
+            }
+            
+            sender.sendMessage(levelLine);
+        }
+        
+        sender.sendMessage(Component.text("Debug Logging: ").color(NamedTextColor.BLUE)
+            .append(Component.text(debugEnabled ? "ENABLED" : "DISABLED")
+                .color(debugEnabled ? NamedTextColor.GREEN : NamedTextColor.RED)));
+    }
+    
     /**
      * Format duration in seconds to a readable string
      */
@@ -516,6 +648,10 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                 subcommands.add("toggle");
             }
             
+            if (sender.hasPermission("infernaltresures.command.progression")) {
+                subcommands.add("progression");
+            }
+            
             subcommands.add("help");
             
             for (String subcommand : subcommands) {
@@ -548,6 +684,14 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                         completions.add(duration);
                     }
                 }
+            } else if (args[0].equalsIgnoreCase("progression") && sender.hasPermission("infernaltresures.command.progression")) {
+                // Second argument of progression command: subcommands
+                List<String> progressionSubcommands = List.of("info", "set", "debug");
+                for (String subcommand : progressionSubcommands) {
+                    if (subcommand.startsWith(args[1].toLowerCase())) {
+                        completions.add(subcommand);
+                    }
+                }
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("luck") && sender.hasPermission("infernaltresures.command.luck")) {
@@ -556,6 +700,24 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                     String playerName = onlinePlayer.getName();
                     if (playerName.toLowerCase().startsWith(args[2].toLowerCase())) {
                         completions.add(playerName);
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("progression") && sender.hasPermission("infernaltresures.command.progression")) {
+                // Third argument of progression command: level (1-4) if setting level
+                if (args[1].equalsIgnoreCase("set")) {
+                    List<String> levels = List.of("1", "2", "3", "4");
+                    for (String level : levels) {
+                        if (level.startsWith(args[2])) {
+                            completions.add(level);
+                        }
+                    }
+                } else if (args[1].equalsIgnoreCase("debug")) {
+                    // Third argument of debug subcommand: on/off
+                    List<String> debugStates = List.of("on", "off");
+                    for (String state : debugStates) {
+                        if (state.startsWith(args[2].toLowerCase())) {
+                            completions.add(state);
+                        }
                     }
                 }
             }

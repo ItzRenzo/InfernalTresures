@@ -388,11 +388,22 @@ public class LootManager {
             playerBlocksMined = plugin.getStatsManager().getPlayerStats(player).totalBlocksMined;
         }
         
-        // Generate loot items based on their individual chances and progression requirements
+        // Get current progression level and slot count
+        int maxSlots = plugin.getConfigManager().getCurrentProgressionSlots();
+        
+        if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+            plugin.getLogger().info("=== LOOT PROGRESSION DEBUG ===");
+            plugin.getLogger().info("Current progression level: " + plugin.getConfigManager().getCurrentProgressionLevel());
+            plugin.getLogger().info("Max slots to fill: " + maxSlots);
+            plugin.getLogger().info("Available loot items for " + rarity + ": " + rarityLoot.size());
+        }
+        
+        // Filter items based on progression requirements
+        List<LootItem> availableItems = new ArrayList<>();
         for (LootItem lootItem : rarityLoot) {
             // Check if player meets progression requirement
             if (lootItem.requiredBlocksMined > 0 && playerBlocksMined < lootItem.requiredBlocksMined) {
-                if (plugin.getConfigManager().isLootGenerationDebugEnabled()) {
+                if (plugin.getConfigManager().isProgressionDebugEnabled()) {
                     plugin.getLogger().info("Player " + (player != null ? player.getName() : "unknown") + 
                         " doesn't meet progression requirement: " + playerBlocksMined + "/" + lootItem.requiredBlocksMined + 
                         " blocks mined for item " + (lootItem.material != null ? lootItem.material.name() : 
@@ -400,13 +411,46 @@ public class LootManager {
                 }
                 continue; // Skip this item
             }
+            availableItems.add(lootItem);
+        }
+        
+        if (availableItems.isEmpty()) {
+            if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+                plugin.getLogger().info("No available items after progression filtering");
+            }
+            return loot;
+        }
+        
+        // Roll for each slot
+        for (int slot = 0; slot < maxSlots; slot++) {
+            // Randomly select an item from available items
+            LootItem selectedItem = availableItems.get(ThreadLocalRandom.current().nextInt(availableItems.size()));
             
-            if (ThreadLocalRandom.current().nextDouble(100.0) < lootItem.chance) {
-                ItemStack itemStack = createItemStack(lootItem);
+            // Apply the item's individual chance
+            if (ThreadLocalRandom.current().nextDouble(100.0) < selectedItem.chance) {
+                ItemStack itemStack = createItemStack(selectedItem);
                 if (itemStack != null) {
                     loot.add(itemStack);
+                    
+                    if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+                        plugin.getLogger().info("Slot " + (slot + 1) + ": Added " + itemStack.getType() + 
+                            " x" + itemStack.getAmount() + " (chance: " + selectedItem.chance + "%)");
+                    }
+                } else {
+                    if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+                        plugin.getLogger().info("Slot " + (slot + 1) + ": Failed to create item");
+                    }
+                }
+            } else {
+                if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+                    plugin.getLogger().info("Slot " + (slot + 1) + ": No item (chance missed: " + selectedItem.chance + "%)");
                 }
             }
+        }
+        
+        if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+            plugin.getLogger().info("Final loot count: " + loot.size() + "/" + maxSlots + " slots filled");
+            plugin.getLogger().info("=== END LOOT PROGRESSION DEBUG ===");
         }
         
         return loot;

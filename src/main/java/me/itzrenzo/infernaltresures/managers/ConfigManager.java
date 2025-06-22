@@ -292,6 +292,42 @@ public class ConfigManager {
             rarity == me.itzrenzo.infernaltresures.models.Rarity.MYTHIC);
     }
     
+    // Loot progression configuration methods
+    public int getCurrentProgressionLevel() {
+        return config.getInt("treasure.loot-progression.current-level", 1);
+    }
+    
+    public void setCurrentProgressionLevel(int level) {
+        if (level < 1 || level > 4) {
+            throw new IllegalArgumentException("Progression level must be between 1 and 4");
+        }
+        config.set("treasure.loot-progression.current-level", level);
+        plugin.saveConfig();
+    }
+    
+    public int getProgressionSlots(int level) {
+        return config.getInt("treasure.loot-progression.levels." + level + ".slots", 
+            level == 1 ? 7 : level == 2 ? 14 : level == 3 ? 21 : 27);
+    }
+    
+    public int getCurrentProgressionSlots() {
+        return getProgressionSlots(getCurrentProgressionLevel());
+    }
+    
+    public String getProgressionLevelName(int level) {
+        return config.getString("treasure.loot-progression.levels." + level + ".name", 
+            level == 1 ? "Beginner" : level == 2 ? "Intermediate" : level == 3 ? "Advanced" : "Master");
+    }
+    
+    public String getProgressionLevelDescription(int level) {
+        return config.getString("treasure.loot-progression.levels." + level + ".description",
+            "Progression level " + level);
+    }
+    
+    public boolean isProgressionDebugEnabled() {
+        return config.getBoolean("treasure.loot-progression.debug", false);
+    }
+
     // Backward compatibility - check if any rarity has announcements enabled
     public boolean isTreasureAnnouncementEnabled() {
         return isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity.COMMON) ||

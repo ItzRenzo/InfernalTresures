@@ -12,6 +12,34 @@ treasure:
     sound: true
     particles: true
     
+  # Loot progression system
+  # Controls how many slots in the barrel are filled (barrel has 27 slots total)
+  loot-progression:
+    # Current progression level (1-4)
+    current-level: 1
+    
+    # Slot configuration for each level
+    levels:
+      1:
+        slots: 7     # Level 1: Only 7 slots are filled
+        name: "Beginner"
+        description: "Basic treasure progression"
+      2:
+        slots: 14    # Level 2: 14 slots are filled
+        name: "Intermediate" 
+        description: "Improved treasure progression"
+      3:
+        slots: 21    # Level 3: 21 slots are filled
+        name: "Advanced"
+        description: "Enhanced treasure progression"
+      4:
+        slots: 27    # Level 4: All 27 slots are filled (fastest progression)
+        name: "Master"
+        description: "Maximum treasure progression"
+    
+    # Enable debug logging for progression system
+    debug: false
+
   # Per-rarity sound and particle effects
   rarity-effects:
     common:
