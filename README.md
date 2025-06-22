@@ -365,4 +365,256 @@ Track detailed treasure hunting progress with `/treasure stats`:
 /treasure stats Alice set raretreasures 50
 /treasure stats Alice set epictreasures 20
 /treasure stats Alice set legendarytreasures 10
-/treasure stats Alice set mythictr
+/treasure stats Alice set mythictreasures 5
+```
+
+**Available Stat Types:**
+- `blocksmined` - Total blocks mined by the player
+- `totaltreasuresfound` - Total treasures found (automatically calculated from rarity counts)
+- `commontreasures` - Number of common treasures found
+- `raretreasures` - Number of rare treasures found  
+- `epictreasures` - Number of epic treasures found
+- `legendarytreasures` - Number of legendary treasures found
+- `mythictreasures` - Number of mythic treasures found
+
+**Features:**
+- **Instant Updates**: Changes are applied immediately and saved to disk
+- **Player Notification**: Online players are notified when their stats are modified
+- **Admin Feedback**: Confirmation messages show exactly what was changed
+- **Data Validation**: Values must be positive numbers, with helpful error messages
+- **Tab Completion**: Full tab completion support for all stat types and values
+- **Permission Control**: Requires `infernaltresures.command.stats.set` permission
+
+**Use Cases:**
+- **Event Rewards**: Grant players treasure finds for participating in events
+- **Migration**: Transfer stats from other plugins or previous systems
+- **Testing**: Set specific values for testing progression features
+- **Corrections**: Fix incorrect stats due to bugs or data issues
+- **Competitions**: Reset or adjust stats for treasure hunting competitions
+
+**Example Admin Workflow:**
+```bash
+# Check current stats
+/treasure stats ItzRenzo
+
+# Set mining progress for new VIP player
+/treasure stats ItzRenzo set blocksmined 5000
+
+# Grant event participation rewards
+/treasure stats ItzRenzo set legendarytreasures 10
+/treasure stats ItzRenzo set mythictreasures 2
+
+# Verify changes
+/treasure stats ItzRenzo
+```
+
+## 🔐 Permissions
+
+| Permission | Description | Default |
+|------------|-------------|---------|
+| `infernaltresures.command.use` | Access to basic commands | `true` |
+| `infernaltresures.command.spawn` | Access to spawn command | `op` |
+| `infernaltresures.command.reload` | Access to reload command | `op` |
+| `infernaltresures.command.info` | Access to info command | `op` |
+| `infernaltresures.command.stats` | View your own statistics | `true` |
+| `infernaltresures.command.stats.others` | View other players' statistics | `op` |
+| `infernaltresures.command.stats.set` | Set/modify player statistics | `op` |
+| `infernaltresures.command.luck` | Give treasure luck to players | `op` |
+| `infernaltresures.command.toggle` | Toggle treasure spawning for yourself | `true` |
+| `infernaltresures.command.progression` | Manage loot progression system | `op` |
+| `infernaltresures.command.loot` | Access to loot commands | `true` |
+| `infernaltresures.command.loot.gui` | Access to loot browser GUI | `true` |
+
+## 🌍 Supported Biomes
+
+The plugin includes pre-configured biome loot tables for **17 biomes**:
+
+### Overworld Biomes
+- **Desert** - Sand dune treasures and oasis artifacts
+- **Forest** - Nature-themed items and druidic equipment  
+- **Ocean** - Aquatic treasures and maritime artifacts
+- **Plains** - Pastoral items and farming equipment
+- **Mountains** (Windswept Hills) - Alpine treasures and mining equipment
+- **Swamp** - Mystical bog artifacts and witch brewing supplies
+- **Jungle** - Tropical treasures and ancient jungle artifacts
+- **Taiga** - Cold-weather survival gear and forestry items
+- **Savanna** - Tribal artifacts and wildlife equipment
+- **Badlands** - Desert mining equipment and geological specimens
+
+### Nether Biomes
+- **Nether Wastes** - Classic infernal artifacts and fire-resistant gear
+- **Soul Sand Valley** - Soul-themed items and undead artifacts
+- **Crimson Forest** - Crimson fungus materials and hoglin gear
+- **Warped Forest** - Warped fungus materials and enderman artifacts
+- **Basalt Deltas** - Volcanic treasures and heat-resistant equipment
+
+### End Biomes
+- **The End** - Otherworldly treasures and dragon-themed artifacts
+
+### Legacy Support
+- **Nether** (General) - Broad nether treasures for compatibility
+
+*Custom biome configurations can be added by creating new YAML files in the `biomes/` folder. The system automatically detects and loads new biome files!*
+
+## ⭐ Rarity System
+
+| Rarity | Color | Default Chance | Hologram | Despawn Time |
+|--------|-------|----------------|----------|--------------|
+| **Common** | &f(White) | 60% | Hidden | 5 minutes |
+| **Rare** | &9(Blue) | 25% | Hidden | 7 minutes |
+| **Epic** | &5(Purple) | 10% | Hidden | 10 minutes |
+| **Legendary** | &6(Gold) | 4% | Visible | 15 minutes |
+| **Mythic** | &c(Red) | 1% | Visible | 20 minutes |
+
+## 🎨 Advanced Item Features
+
+### Supported Item Types
+- **Regular Minecraft Items** - Use `material` field
+- **MMOItems** - Use `mmo_type` and `mmo_id` fields
+- **ExecutableItems** - Use `executable_id` field
+
+### Item Customization Options
+- **Enchantments** - Custom enchantments with level ranges or random enchants
+- **Attributes** - Modify item attributes (damage, speed, health, etc.)
+- **Potion Effects** - Add potion effects to consumable items
+- **Display Names** - Custom item names with color codes and formatting
+- **Lore** - Multi-line item descriptions with color support
+- **Unbreakable** - Make items unbreakable
+- **Custom Model Data** - Support for resource pack models
+
+### Example Advanced Item Configuration
+
+```yaml
+- material: NETHERITE_SWORD
+  min_amount: 1
+  max_amount: 1
+  chance: 5
+  display_name: "&c&lBlade of the Nether King"
+  lore:
+    - "&7Forged in the depths of the Nether"
+    - "&7by ancient demonic smiths."
+    - ""
+    - "&c⚔ Legendary Weapon"
+  enchantments:
+    - enchant: SHARPNESS
+      level: 7
+    - enchant: FIRE_ASPECT
+      level: 3
+  attributes:
+    - attribute: GENERIC_ATTACK_DAMAGE
+      value: 15.0
+      operation: ADD_NUMBER
+    - attribute: GENERIC_ATTACK_SPEED
+      value: -2.0
+      operation: ADD_NUMBER
+  unbreakable: true
+  custom_model_data: 1001
+```
+
+## 🔧 Building from Source
+
+### Prerequisites
+- Java 21 or higher
+- Maven 3.6 or higher
+- Git
+
+### Build Steps
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/InfernalTreasures.git
+cd InfernalTreasures
+
+# Compile and package
+mvn clean package
+
+# The compiled JAR will be in the target/ folder
+```
+
+## 📋 Requirements
+
+- **Minecraft Server**: 1.21+ (Paper/Spigot)
+- **Java**: 21 or higher
+- **Optional Dependencies**:
+  - MMOItems 6.10+ (for MMOItems integration)
+  - SCore 5.25+ (required for ExecutableItems)
+  - ExecutableItems 7.25+ (for ExecutableItems integration)
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**ExecutableItems not working:**
+1. Ensure SCore is installed and enabled
+2. Check that ExecutableItems loaded properly
+3. Enable debug logging: `debug.categories.executable-items: true`
+4. Verify your ExecutableItem IDs exist in ExecutableItems config
+
+**MMOItems not working:**
+1. Ensure MMOItems is installed and enabled  
+2. Enable debug logging: `debug.categories.mmo-items: true`
+3. Verify your MMOItem types and IDs exist
+
+**Treasures not spawning:**
+1. Check your `mining.enabled-blocks` configuration
+2. Verify you're mining with a pickaxe (if `require-pickaxe: true`)
+3. Enable debug logging: `debug.categories.treasure-spawning: true`
+
+## 📞 Support
+
+If you encounter issues or have suggestions:
+
+1. **Check the [Wiki](../../wiki)** for detailed configuration guides
+2. **Search [Issues](../../issues)** for existing solutions
+3. **Create a new issue** with:
+   - Plugin version
+   - Server version (Paper/Spigot)
+   - Error logs (with debug enabled)
+   - Configuration files
+4. **Join our Discord** (link if available)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### Development Guidelines
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes and test thoroughly
+4. Follow the existing code style and conventions
+5. Add/update documentation as needed
+6. Submit a pull request with a clear description
+
+### Code Style
+- Use 4 spaces for indentation
+- Follow Java naming conventions
+- Add JavaDoc comments for public methods
+- Keep methods focused and reasonably sized
+- Use meaningful variable and method names
+
+## 📈 Changelog
+
+### Version 1.0.0
+- ✨ **NEW**: Initial release with core treasure hunting system
+- ✨ **NEW**: 17 biome-specific loot tables with unique themes
+- ✨ **NEW**: Advanced rarity system with 5 tiers and custom despawn times
+- ✨ **NEW**: Interactive loot browser GUI with full customization
+- ✨ **NEW**: Treasure luck system for temporary spawn rate boosts
+- ✨ **NEW**: Player toggle system for treasure spawning control
+- ✨ **NEW**: Comprehensive statistics tracking with luck integration
+- ✨ **NEW**: MMOItems integration with dynamic detection
+- ✨ **NEW**: ExecutableItems integration with SCore API
+- ✨ **NEW**: Custom hologram system with per-rarity configuration
+- ✨ **NEW**: Advanced command system with full tab completion
+- ✨ **NEW**: Block-specific spawn chance configuration with luck multipliers
+- ✨ **NEW**: Advanced item customization (enchantments, attributes, effects)
+- ✨ **NEW**: Debug system with categorized logging and luck calculations
+- ✨ **NEW**: Auto-despawn system with configurable timers per rarity
+- ✨ **NEW**: Sound and particle effects with toggle options
+- ✨ **NEW**: Message customization system with color code support
+- ✨ **NEW**: Performance-optimized treasure management
+- ✨ **NEW**: Automatic biome file detection and loading
+- ✨ **NEW**: Player progression system with blocks mined requirements
