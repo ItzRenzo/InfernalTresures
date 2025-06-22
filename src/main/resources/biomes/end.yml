@@ -117,33 +117,18 @@ loot:
       lore:
         - "&7A crystal that channels"
         - "&7the power of the void."
-
-  MYTHIC:
-    - material: DRAGON_EGG
-      min_amount: 1
-      max_amount: 1
-      chance: 1
-      display_name: "&c&lEgg of Creation"
-      lore:
-        - "&7The legendary egg that holds"
-        - "&7the power to create worlds."
-        - ""
-        - "&c⚡ MYTHIC TREASURE"
     
-    - material: NETHERITE_CHESTPLATE
+    - material: POTION
       min_amount: 1
-      max_amount: 1
-      chance: 0.5
-      display_name: "&c&lArmor of the Void Walker"
+      max_amount: 3
+      chance: 8
+      display_name: "&6&lPotion of Void Walking"
       lore:
-        - "&7Legendary armor worn by those"
-        - "&7who master the End dimension."
+        - "&7A mystical potion that grants"
+        - "&7temporary immunity to void damage."
         - ""
-        - "&c⚡ MYTHIC TREASURE"
-      enchantments:
-        - enchant: PROTECTION
-          level: 4
-        - enchant: UNBREAKING
-          level: 3
-        - enchant: MENDING
-          level: 1
+        - "&9Effects: Slow Falling II (5:00)"
+      custom_effects:
+        - effect: SLOW_FALLING
+          duration: 6000  # 5 minutes (in ticks: 20 ticks = 1 second)
+          amplifier: 1    # Level 2 (amplifier 0 = level 1, amplifier 1 = level 2)

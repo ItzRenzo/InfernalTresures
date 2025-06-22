@@ -1,34 +1,122 @@
 name: "Badlands"
-description: "Arid mesa landscape with desert mining equipment and ancient artifacts"
-
+description: "Treasures found within the abandoned mineshafts of the badlands."
+biomes:
+  - badlands
+  - wooded_badlands
+  - eroded_badlands
+  
 loot:
   COMMON:
-    - material: TERRACOTTA
-      min_amount: 8
-      max_amount: 16
-      chance: 70
-      display_name: "&f&lWeathered Clay"
-      lore:
-        - "&7Hardened clay baked by"
-        - "&7centuries of desert sun."
-    
-    - material: RED_SAND
-      min_amount: 12
-      max_amount: 24
+    - executable_id: common_charm
+      min_amount: 1
+      max_amount: 1
+      chance: 10
+  
+    - material: RAW_GOLD
+      min_amount: 1
+      max_amount: 3
       chance: 65
-      display_name: "&f&lRed Desert Sand"
+      required_blocks_mined: "0-99999"
+        
+    - material: GOLD_NUGGET
+      min_amount: 3
+      max_amount: 6
+      chance: 60
+      required_blocks_mined: "0-29999"
+
+    - material: RAW_COPPER
+      min_amount: 1
+      max_amount: 3
+      chance: 70
+      max_required_blocks_mined: "0-49999"
+
+    - material: RAIL
+      min_amount: 1
+      max_amount: 3
+      chance: 55
+      max_required_blocks_mined: "0-49999"
+
+    - material: COBWEB
+      min_amount: 1
+      max_amount: 3
+      chance: 40
+
+    - material: EXPERIENCE_BOTTLE
+      min_amount: 3
+      max_amount: 7
+      chance: 30
+        
+    - material: FIREWORK_ROCKET
+      min_amount: 1
+      max_amount: 1
+      chance: 20
+      max_required_blocks_mined: "0-99999"
+
+    - material: GOLD_INGOT
+      min_amount: 1
+      max_amount: 3
+      chance: 25
+      required_blocks_mined: 50000
+        
+    - material: POWERED_RAIL
+      min_amount: 1
+      max_amount: 3
+      chance: 22
+      min_required_blocks_mined: 50000
+
+    - material: REPEATER
+      min_amount: 1
+      max_amount: 3
+      chance: 18
+        
+    - material: POTION
+      min_amount: 1
+      max_amount: 1
+      chance: 16
+      display_name: "&bAbsorption Potion"
       lore:
-        - "&7Fine sand with an iron-rich"
-        - "&7red coloration."
-    
-    - material: DEAD_BUSH
-      min_amount: 4
-      max_amount: 8
-      chance: 50
-      display_name: "&f&lDried Shrub"
+        - "&9Effects:"
+        - "&9• Absorption II (2:00)"
+      custom_effects:
+        - effect: ABSORPTION
+          duration: 300
+          amplifier: 2
+        
+    - material: GOLDEN_HOE
+      min_amount: 1
+      max_amount: 1
+      chance: 15
+      required_blocks_mined: "0-99999"
+      display_name: "&b&lRare Golden Hoe"
       lore:
-        - "&7Remnants of vegetation that"
-        - "&7once thrived in this land."
+        - "&7A surprisingly sturdy and efficient tool,"
+        - "&7enchanted by a forgotten prospector."
+      enchantments:
+        - enchant: "efficiency"
+          min_level: 1
+          max_level: 4
+        - enchant: "silk_touch"
+          min_level: 0
+          max_level: 1
+        - enchant: "unbreaking"
+          min_level: 5
+          max_level: 10
+          
+    - material: GOLD_BLOCK
+      min_amount: 1
+      max_amount: 1
+      chance: 10
+        
+    - material: COPPER_BLOCK
+      min_amount: 1
+      max_amount: 1
+      chance: 8
+
+    - material: WITHER_ROSE
+      min_amount: 1
+      max_amount: 2
+      chance: 5
+      required_blocks_mined: 100000
 
   RARE:
     - material: GOLD_NUGGET

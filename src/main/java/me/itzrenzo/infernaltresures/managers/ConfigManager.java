@@ -347,8 +347,15 @@ public class ConfigManager {
             case LEGENDARY -> 900;  // 15 minutes
             case MYTHIC -> 1200;    // 20 minutes
         };
-        
+
         return config.getInt("rarity.despawn-times." + rarity.name().toLowerCase(), defaultTime);
+    }
+    
+    /**
+     * Check if items should drop when barrel despawns
+     */
+    public boolean shouldDropItemsOnDespawn() {
+        return config.getBoolean("treasure.despawn.drop-items-on-despawn", true);
     }
     
     // Per-rarity effect configuration methods

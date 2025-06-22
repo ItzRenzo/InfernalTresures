@@ -234,6 +234,11 @@ public class Treasure {
     
     public void despawn() {
         if (!claimed && location.getBlock().getType() == Material.BARREL) {
+            // Check if items should drop when barrel despawns
+            if (InfernalTresures.getInstance().getConfigManager().shouldDropItemsOnDespawn()) {
+                dropBarrelContents();
+            }
+            
             location.getBlock().setType(Material.AIR);
             InfernalTresures.getInstance().getTreasureManager().removeTreasure(this);
         }
@@ -245,6 +250,43 @@ public class Treasure {
         
         if (despawnTask != null && !despawnTask.isCancelled()) {
             despawnTask.cancel();
+        }
+    }
+    
+    /**
+     * Drop all items from the barrel inventory when it despawns
+     */
+    private void dropBarrelContents() {
+        try {
+            Block barrelBlock = location.getBlock();
+            if (barrelBlock.getType() == Material.BARREL && 
+                barrelBlock.getState() instanceof org.bukkit.block.Barrel barrel) {
+                
+                org.bukkit.inventory.Inventory inventory = barrel.getInventory();
+                Location dropLocation = location.clone().add(0.5, 1.0, 0.5); // Drop above barrel center
+                
+                int droppedItems = 0;
+                
+                // Drop all non-null items from the barrel
+                for (ItemStack item : inventory.getContents()) {
+                    if (item != null && item.getType() != Material.AIR) {
+                        location.getWorld().dropItemNaturally(dropLocation, item);
+                        droppedItems++;
+                    }
+                }
+                
+                // Clear the inventory to prevent duplication
+                inventory.clear();
+                
+                // Debug logging
+                if (InfernalTresures.getInstance().getConfigManager().isTreasureSpawningDebugEnabled()) {
+                    InfernalTresures.getInstance().getLogger().info(
+                        "Dropped " + droppedItems + " items from despawning " + rarity + " treasure barrel");
+                }
+            }
+        } catch (Exception e) {
+            InfernalTresures.getInstance().getLogger().warning(
+                "Failed to drop items from despawning barrel: " + e.getMessage());
         }
     }
     

@@ -300,9 +300,10 @@ public class LootGUIManager implements Listener {
         
         // Add required blocks info
         if (menuManager.shouldShowRequiredBlocks()) {
-            if (lootDisplay.getRequiredBlocksMined() > 0) {
+            String rangeDisplay = lootDisplay.getRequiredBlocksMinedRange();
+            if (rangeDisplay != null && !rangeDisplay.equals("0+")) {
                 String format = menuManager.getRequiredBlocksFormat();
-                format = format.replace("{required_blocks}", String.valueOf(lootDisplay.getRequiredBlocksMined()));
+                format = format.replace("{required_blocks}", rangeDisplay);
                 lore.add(LegacyComponentSerializer.legacyAmpersand().deserialize(format)
                     .decoration(TextDecoration.ITALIC, false));
             } else {

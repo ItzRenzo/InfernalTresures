@@ -12,6 +12,11 @@ treasure:
     sound: true
     particles: true
     
+  # Barrel despawn behavior
+  despawn:
+    # Whether items should drop when barrel despawns (this might cause lag if many items are dropped)
+    drop-items-on-despawn: false
+    
   # Loot progression system
   # Controls how many slots in the barrel are filled (barrel has 27 slots total)
   loot-progression:

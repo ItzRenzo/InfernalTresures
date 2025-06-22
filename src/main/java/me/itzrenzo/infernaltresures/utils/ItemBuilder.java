@@ -9,6 +9,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -117,16 +118,34 @@ public class ItemBuilder {
      */
     public ItemBuilder addAttribute(Attribute attribute, double amount, AttributeModifier.Operation operation, EquipmentSlot slot) {
         if (attribute != null && itemMeta != null) {
+            // Use the constructor that takes NamespacedKey and EquipmentSlotGroup
+            // Convert EquipmentSlot to EquipmentSlotGroup
+            EquipmentSlotGroup slotGroup = convertToSlotGroup(slot);
+            NamespacedKey key = NamespacedKey.minecraft(attribute.getKey().getKey() + "_modifier");
             AttributeModifier modifier = new AttributeModifier(
-                UUID.randomUUID(),
-                attribute.getKey().getKey(),
+                key,
                 amount,
                 operation,
-                slot
+                slotGroup
             );
             itemMeta.addAttributeModifier(attribute, modifier);
         }
         return this;
+    }
+    
+    /**
+     * Convert EquipmentSlot to EquipmentSlotGroup for the newer API
+     */
+    private EquipmentSlotGroup convertToSlotGroup(EquipmentSlot slot) {
+        return switch (slot) {
+            case HAND, OFF_HAND -> EquipmentSlotGroup.HAND;
+            case FEET -> EquipmentSlotGroup.FEET;
+            case LEGS -> EquipmentSlotGroup.LEGS;
+            case CHEST -> EquipmentSlotGroup.CHEST;
+            case HEAD -> EquipmentSlotGroup.HEAD;
+            case BODY -> EquipmentSlotGroup.BODY;
+            default -> EquipmentSlotGroup.ANY;
+        };
     }
     
     /**

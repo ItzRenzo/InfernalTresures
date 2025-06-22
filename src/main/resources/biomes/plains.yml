@@ -24,15 +24,25 @@ loot:
       lore:
         - "&7Made from the finest plains wheat"
     
+    - material: CARROT
+      min_amount: 3
+      max_amount: 6
+      chance: 45.0
+      display_name: "&fFresh Carrots"
+      required_blocks_mined: "0-500"  # Beginner item, disappears after 500 blocks
+      lore:
+        - "&7Sweet carrots from the plains"
+        - "&6Available: 0-500 blocks mined"
+    
     - material: LEATHER
       min_amount: 2
       max_amount: 5
       chance: 50.0
       display_name: "&fPlains Leather"
-      required_blocks_mined: 100  # Unlocked after mining 100 blocks
+      required_blocks_mined: "100-999"  # Only available for players with 100-999 blocks mined
       lore:
         - "&7From cattle that graze the plains"
-        - "&6Requires: 100 blocks mined"
+        - "&6Requires: 100-999 blocks mined"
 
   # Rare rarity items
   RARE:
@@ -49,7 +59,7 @@ loot:
       max_amount: 2
       chance: 30.0
       display_name: "&9Plains Diamond"
-      required_blocks_mined: 500  # Unlocked after mining 500 blocks
+      required_blocks_mined: 500
       lore:
         - "&7A rare gem from the plains depths"
         - "&6Requires: 500 blocks mined"

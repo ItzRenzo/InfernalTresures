@@ -256,28 +256,43 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
             "stats-playtime", "{hours}", String.valueOf(hours), "{minutes}", String.valueOf(minutes)));
         
-        // Show luck information if player is online
+        // Show enhanced luck information if player is online
         if (targetPlayer != null && targetPlayer.isOnline()) {
             if (stats.hasActiveLuck()) {
                 long remainingSeconds = stats.getRemainingLuckSeconds();
                 String luckDuration = formatDuration(remainingSeconds);
-                sender.sendMessage(Component.text("🍀 Treasure Luck: ").color(NamedTextColor.GREEN)
-                    .append(Component.text("ACTIVE").color(NamedTextColor.GOLD))
-                    .append(Component.text(" (").color(NamedTextColor.GRAY))
-                    .append(Component.text(String.format("%.1fx", stats.luckMultiplier)).color(NamedTextColor.YELLOW))
+                sender.sendMessage(Component.text("🍀 Active Luck: ").color(NamedTextColor.GREEN)
+                    .append(Component.text(String.format("%.1fx", stats.luckMultiplier)).color(NamedTextColor.GOLD))
                     .append(Component.text(" for ").color(NamedTextColor.GRAY))
-                    .append(Component.text(luckDuration).color(NamedTextColor.WHITE))
-                    .append(Component.text(")").color(NamedTextColor.GRAY)));
+                    .append(Component.text(luckDuration).color(NamedTextColor.WHITE)));
+                
+                // Show queued luck if it exists
+                if (stats.hasQueuedLuck()) {
+                    long queuedSeconds = stats.getQueuedLuckRemainingSeconds();
+                    String queuedDuration = formatDuration(queuedSeconds);
+                    sender.sendMessage(Component.text("📋 Queued Luck: ").color(NamedTextColor.YELLOW)
+                        .append(Component.text(String.format("%.1fx", stats.queuedLuckMultiplier)).color(NamedTextColor.GOLD))
+                        .append(Component.text(" for ").color(NamedTextColor.GRAY))
+                        .append(Component.text(queuedDuration).color(NamedTextColor.WHITE))
+                        .append(Component.text(" (activates when current expires)").color(NamedTextColor.GRAY)));
+                }
             } else {
-                sender.sendMessage(Component.text("🍀 Treasure Luck: ").color(NamedTextColor.GREEN)
-                    .append(Component.text("INACTIVE").color(NamedTextColor.GRAY)));
+                // Check if there's queued luck that might activate
+                if (stats.hasQueuedLuck()) {
+                    long queuedSeconds = stats.getQueuedLuckRemainingSeconds();
+                    String queuedDuration = formatDuration(queuedSeconds);
+                    sender.sendMessage(Component.text("🍀 Treasure Luck: ").color(NamedTextColor.GREEN)
+                        .append(Component.text("INACTIVE").color(NamedTextColor.GRAY)));
+                    sender.sendMessage(Component.text("📋 Queued Luck: ").color(NamedTextColor.YELLOW)
+                        .append(Component.text(String.format("%.1fx", stats.queuedLuckMultiplier)).color(NamedTextColor.GOLD))
+                        .append(Component.text(" for ").color(NamedTextColor.GRAY))
+                        .append(Component.text(queuedDuration).color(NamedTextColor.WHITE))
+                        .append(Component.text(" (will activate soon)").color(NamedTextColor.GRAY)));
+                } else {
+                    sender.sendMessage(Component.text("🍀 Treasure Luck: ").color(NamedTextColor.GREEN)
+                        .append(Component.text("INACTIVE").color(NamedTextColor.GRAY)));
+                }
             }
-            
-            // Show treasure spawning status
-            boolean spawningEnabled = plugin.getStatsManager().isTreasureSpawningEnabled(targetPlayer);
-            sender.sendMessage(Component.text("⚙️ Treasure Spawning: ").color(NamedTextColor.BLUE)
-                .append(Component.text(spawningEnabled ? "ENABLED" : "DISABLED")
-                    .color(spawningEnabled ? NamedTextColor.GREEN : NamedTextColor.RED)));
         }
         
         if (targetPlayer != null && targetPlayer.isOnline()) {

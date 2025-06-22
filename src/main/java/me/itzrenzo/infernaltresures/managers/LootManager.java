@@ -357,7 +357,48 @@ public class LootManager {
             
             // Parse progression requirement
             Object requiredBlocksObj = itemMap.get("required_blocks_mined");
-            item.requiredBlocksMined = requiredBlocksObj instanceof Number ? ((Number) requiredBlocksObj).longValue() : 0;
+            if (requiredBlocksObj instanceof Number) {
+                // Old format: single number (backward compatibility)
+                long requiredBlocks = ((Number) requiredBlocksObj).longValue();
+                item.minRequiredBlocksMined = requiredBlocks;
+                item.maxRequiredBlocksMined = Long.MAX_VALUE;
+                item.requiredBlocksMinedRange = String.valueOf(requiredBlocks) + "+";
+            } else if (requiredBlocksObj instanceof String) {
+                // New format: range string like "0-999" or "1000-4999"
+                String rangeStr = (String) requiredBlocksObj;
+                item.requiredBlocksMinedRange = rangeStr;
+                
+                if (rangeStr.contains("-")) {
+                    String[] parts = rangeStr.split("-", 2);
+                    try {
+                        item.minRequiredBlocksMined = Long.parseLong(parts[0].trim());
+                        item.maxRequiredBlocksMined = Long.parseLong(parts[1].trim());
+                    } catch (NumberFormatException e) {
+                        plugin.getLogger().warning("Invalid required_blocks_mined range format: " + rangeStr + ". Expected format: 'min-max' (e.g., '0-999')");
+                        item.minRequiredBlocksMined = 0;
+                        item.maxRequiredBlocksMined = Long.MAX_VALUE;
+                        item.requiredBlocksMinedRange = "0+";
+                    }
+                } else {
+                    // Single number as string
+                    try {
+                        long requiredBlocks = Long.parseLong(rangeStr);
+                        item.minRequiredBlocksMined = requiredBlocks;
+                        item.maxRequiredBlocksMined = Long.MAX_VALUE;
+                        item.requiredBlocksMinedRange = requiredBlocks + "+";
+                    } catch (NumberFormatException e) {
+                        plugin.getLogger().warning("Invalid required_blocks_mined format: " + rangeStr);
+                        item.minRequiredBlocksMined = 0;
+                        item.maxRequiredBlocksMined = Long.MAX_VALUE;
+                        item.requiredBlocksMinedRange = "0+";
+                    }
+                }
+            } else {
+                // Default: no requirement
+                item.minRequiredBlocksMined = 0;
+                item.maxRequiredBlocksMined = Long.MAX_VALUE;
+                item.requiredBlocksMinedRange = "0+";
+            }
             
             return item;
             
@@ -401,12 +442,12 @@ public class LootManager {
         // Filter items based on progression requirements
         List<LootItem> availableItems = new ArrayList<>();
         for (LootItem lootItem : rarityLoot) {
-            // Check if player meets progression requirement
-            if (lootItem.requiredBlocksMined > 0 && playerBlocksMined < lootItem.requiredBlocksMined) {
+            // Check if player is within the required blocks mined range
+            if (playerBlocksMined < lootItem.minRequiredBlocksMined || playerBlocksMined > lootItem.maxRequiredBlocksMined) {
                 if (plugin.getConfigManager().isProgressionDebugEnabled()) {
                     plugin.getLogger().info("Player " + (player != null ? player.getName() : "unknown") + 
-                        " doesn't meet progression requirement: " + playerBlocksMined + "/" + lootItem.requiredBlocksMined + 
-                        " blocks mined for item " + (lootItem.material != null ? lootItem.material.name() : 
+                        " doesn't meet progression requirement: " + playerBlocksMined + " blocks mined not in range " + 
+                        lootItem.requiredBlocksMinedRange + " for item " + (lootItem.material != null ? lootItem.material.name() : 
                         lootItem.isMMOItem ? lootItem.mmoType + "." + lootItem.mmoId : lootItem.executableId));
                 }
                 continue; // Skip this item
@@ -828,8 +869,10 @@ public class LootManager {
         boolean isExecutableItem;
         String executableId;
         
-        // Progression requirement
-        long requiredBlocksMined = 0; // Default: no requirement
+        // Progression requirement - now supports ranges
+        long minRequiredBlocksMined = 0; // Minimum blocks required (inclusive)
+        long maxRequiredBlocksMined = Long.MAX_VALUE; // Maximum blocks allowed (inclusive)
+        String requiredBlocksMinedRange = null; // Original string representation for display
     }
     
     private static class EnchantmentData {
@@ -881,7 +924,11 @@ public class LootManager {
         }
         
         public long getRequiredBlocksMined() {
-            return lootItem.requiredBlocksMined;
+            return lootItem.minRequiredBlocksMined;
+        }
+        
+        public String getRequiredBlocksMinedRange() {
+            return lootItem.requiredBlocksMinedRange;
         }
         
         public boolean isMMOItem() {

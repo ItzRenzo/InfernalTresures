@@ -185,15 +185,92 @@ public class StatsManager {
     }
     
     /**
-     * Give luck to a player for a specified duration
+     * Enhanced luck system with stacking support
      * @param player The player to give luck to
      * @param durationSeconds How long the luck should last in seconds
      * @param multiplier The luck multiplier (e.g., 2.0 = double spawn rate)
      */
     public void giveLuck(Player player, long durationSeconds, double multiplier) {
         PlayerStats stats = getPlayerStats(player);
-        stats.luckEndTime = System.currentTimeMillis() + (durationSeconds * 1000);
-        stats.luckMultiplier = multiplier;
+        long currentTime = System.currentTimeMillis();
+        long newDuration = durationSeconds * 1000; // Convert to milliseconds
+        
+        // Check if player has active luck
+        if (stats.hasActiveLuck()) {
+            // Player has active luck - apply stacking logic
+            
+            if (Math.abs(stats.luckMultiplier - multiplier) < 0.01) {
+                // Same multiplier (within 0.01 tolerance) - add time to existing luck
+                stats.luckEndTime += newDuration;
+                
+                plugin.getLogger().info("Player " + player.getName() + " received additional " + 
+                    formatDuration(durationSeconds) + " of " + String.format("%.1fx", multiplier) + 
+                    " luck (same multiplier, time accumulated)");
+                
+            } else if (multiplier > stats.luckMultiplier) {
+                // Higher multiplier - override current luck and save it for later
+                long remainingTime = stats.luckEndTime - currentTime;
+                
+                // Save current luck as queued luck
+                stats.queuedLuckEndTime = currentTime + newDuration + remainingTime;
+                stats.queuedLuckMultiplier = stats.luckMultiplier;
+                
+                // Apply new higher luck immediately
+                stats.luckEndTime = currentTime + newDuration;
+                stats.luckMultiplier = multiplier;
+                
+                plugin.getLogger().info("Player " + player.getName() + " received " + 
+                    String.format("%.1fx", multiplier) + " luck for " + formatDuration(durationSeconds) + 
+                    " (higher multiplier overriding " + String.format("%.1fx", stats.queuedLuckMultiplier) + 
+                    ", saved for later)");
+                
+            } else {
+                // Lower multiplier - queue it to activate after current luck expires
+                if (stats.queuedLuckMultiplier < multiplier || stats.queuedLuckEndTime <= stats.luckEndTime) {
+                    // Replace queued luck if new one is better or no queue exists
+                    stats.queuedLuckEndTime = stats.luckEndTime + newDuration;
+                    stats.queuedLuckMultiplier = multiplier;
+                    
+                    plugin.getLogger().info("Player " + player.getName() + " received " + 
+                        String.format("%.1fx", multiplier) + " luck queued for " + formatDuration(durationSeconds) + 
+                        " (will activate after current " + String.format("%.1fx", stats.luckMultiplier) + " expires)");
+                } else {
+                    // Add time to existing queue if same multiplier
+                    if (Math.abs(stats.queuedLuckMultiplier - multiplier) < 0.01) {
+                        stats.queuedLuckEndTime += newDuration;
+                        
+                        plugin.getLogger().info("Player " + player.getName() + " received additional " + 
+                            formatDuration(durationSeconds) + " added to queued " + String.format("%.1fx", multiplier) + " luck");
+                    } else {
+                        plugin.getLogger().info("Player " + player.getName() + " already has better luck queued, " +
+                            String.format("%.1fx", multiplier) + " luck ignored");
+                    }
+                }
+            }
+        } else {
+            // No active luck - check if queued luck should activate
+            stats.processLuckQueue();
+            
+            // Apply new luck directly
+            stats.luckEndTime = currentTime + newDuration;
+            stats.luckMultiplier = multiplier;
+            
+            plugin.getLogger().info("Player " + player.getName() + " received " + 
+                String.format("%.1fx", multiplier) + " luck for " + formatDuration(durationSeconds));
+        }
+    }
+    
+    /**
+     * Helper method to format duration for logging
+     */
+    private String formatDuration(long seconds) {
+        if (seconds < 60) {
+            return seconds + "s";
+        } else if (seconds < 3600) {
+            return (seconds / 60) + "m " + (seconds % 60) + "s";
+        } else {
+            return (seconds / 3600) + "h " + ((seconds % 3600) / 60) + "m";
+        }
     }
     
     /**
@@ -253,9 +330,13 @@ public class StatsManager {
         public long mythicTreasuresFound = 0;
         public long minutesPlayed = 0;
         
-        // Luck system
-        public long luckEndTime = 0; // When luck expires (System.currentTimeMillis())
-        public double luckMultiplier = 1.0; // Default 1.0 = no luck bonus
+        // Enhanced luck system with stacking
+        public long luckEndTime = 0; // When current luck expires (System.currentTimeMillis())
+        public double luckMultiplier = 1.0; // Current active luck multiplier
+        
+        // Queued luck system
+        public long queuedLuckEndTime = 0; // When queued luck expires
+        public double queuedLuckMultiplier = 1.0; // Queued luck multiplier
         
         // Treasure spawning toggle
         public boolean treasureSpawningEnabled = true; // Default enabled
@@ -271,17 +352,26 @@ public class StatsManager {
         }
         
         /**
+         * Check if player currently has active luck (without processing queue)
+         */
+        private boolean hasActiveLuckRaw() {
+            return System.currentTimeMillis() < luckEndTime;
+        }
+        
+        /**
          * Check if player currently has active luck
          */
         public boolean hasActiveLuck() {
-            return System.currentTimeMillis() < luckEndTime;
+            processLuckQueue(); // Process queue first, then check
+            return hasActiveLuckRaw();
         }
         
         /**
          * Get remaining luck time in seconds
          */
         public long getRemainingLuckSeconds() {
-            if (!hasActiveLuck()) {
+            processLuckQueue(); // Process queue first
+            if (!hasActiveLuckRaw()) {
                 return 0;
             }
             return (luckEndTime - System.currentTimeMillis()) / 1000;
@@ -291,7 +381,58 @@ public class StatsManager {
          * Get effective luck multiplier (1.0 if no active luck)
          */
         public double getEffectiveLuckMultiplier() {
-            return hasActiveLuck() ? luckMultiplier : 1.0;
+            processLuckQueue(); // Process queue first
+            return hasActiveLuckRaw() ? luckMultiplier : 1.0;
+        }
+        
+        /**
+         * Check if player has queued luck waiting
+         */
+        public boolean hasQueuedLuck() {
+            long currentTime = System.currentTimeMillis();
+            return queuedLuckEndTime > currentTime && queuedLuckMultiplier > 1.0;
+        }
+        
+        /**
+         * Get queued luck remaining time in seconds
+         */
+        public long getQueuedLuckRemainingSeconds() {
+            if (!hasQueuedLuck()) {
+                return 0;
+            }
+            return (queuedLuckEndTime - System.currentTimeMillis()) / 1000;
+        }
+        
+        /**
+         * Process the queued luck effect, activating it if the current luck has expired
+         * NOTE: This method uses hasActiveLuckRaw() to avoid infinite recursion
+         */
+        public void processLuckQueue() {
+            long currentTime = System.currentTimeMillis();
+            
+            // If current luck has expired and we have queued luck
+            // Use hasActiveLuckRaw() here to avoid infinite recursion
+            if (!hasActiveLuckRaw() && hasQueuedLuck()) {
+                // Calculate remaining time for queued luck
+                long queuedRemainingTime = queuedLuckEndTime - currentTime;
+                
+                if (queuedRemainingTime > 0) {
+                    // Activate queued luck
+                    luckMultiplier = queuedLuckMultiplier;
+                    luckEndTime = currentTime + queuedRemainingTime;
+                    
+                    // Reset queued luck
+                    queuedLuckMultiplier = 1.0;
+                    queuedLuckEndTime = 0;
+                    
+                    InfernalTresures.getInstance().getLogger().info("Activated queued luck: " + 
+                        String.format("%.1fx", luckMultiplier) + " for " + (queuedRemainingTime / 1000) + " seconds");
+                } else {
+                    // Queued luck has also expired, clear it
+                    queuedLuckMultiplier = 1.0;
+                    queuedLuckEndTime = 0;
+                }
+            }
         }
     }
 }
