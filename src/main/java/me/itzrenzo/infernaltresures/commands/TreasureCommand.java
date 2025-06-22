@@ -866,7 +866,7 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                 }
             } else if (args[0].equalsIgnoreCase("stats") && sender.hasPermission("infernaltresures.command.stats.others")) {
                 // Third argument of stats command: "set" subcommand
-                if (args[1].toLowerCase().startsWith("set")) {
+                if ("set".startsWith(args[2].toLowerCase())) {
                     completions.add("set");
                 }
             } else if (args[0].equalsIgnoreCase("progression") && sender.hasPermission("infernaltresures.command.progression")) {
