@@ -96,9 +96,9 @@ public final class InfernalTresures extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Save stats before shutting down
+        // Save stats and shutdown storage system
         if (statsManager != null) {
-            statsManager.saveStats();
+            statsManager.shutdown();
         }
         
         // Clean up any remaining treasures

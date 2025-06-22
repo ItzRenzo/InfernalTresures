@@ -2,87 +2,148 @@ package me.itzrenzo.infernaltresures.managers;
 
 import me.itzrenzo.infernaltresures.InfernalTresures;
 import me.itzrenzo.infernaltresures.models.Rarity;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class StatsManager {
     
     private final InfernalTresures plugin;
     private final Map<UUID, PlayerStats> playerStats = new HashMap<>();
     private final Map<UUID, Long> playerJoinTimes = new HashMap<>();
-    private File statsFile;
-    private FileConfiguration statsConfig;
+    private StatsStorage storage;
     
     public StatsManager(InfernalTresures plugin) {
         this.plugin = plugin;
-        this.statsFile = new File(plugin.getDataFolder(), "stats.yml");
+        initializeStorage();
         loadStats();
     }
     
-    private void loadStats() {
-        if (!statsFile.exists()) {
-            try {
-                statsFile.createNewFile();
-                plugin.getLogger().info("Created stats.yml file");
-            } catch (IOException e) {
-                plugin.getLogger().severe("Failed to create stats.yml: " + e.getMessage());
-                return;
-            }
-        }
-        
-        statsConfig = YamlConfiguration.loadConfiguration(statsFile);
-        
-        // Load all player stats from file
-        for (String uuidString : statsConfig.getKeys(false)) {
-            try {
-                UUID uuid = UUID.fromString(uuidString);
-                PlayerStats stats = new PlayerStats();
-                
-                stats.totalBlocksMined = statsConfig.getLong(uuidString + ".total-blocks-mined", 0);
-                stats.commonTreasuresFound = statsConfig.getLong(uuidString + ".common-treasures-found", 0);
-                stats.rareTreasuresFound = statsConfig.getLong(uuidString + ".rare-treasures-found", 0);
-                stats.epicTreasuresFound = statsConfig.getLong(uuidString + ".epic-treasures-found", 0);
-                stats.legendaryTreasuresFound = statsConfig.getLong(uuidString + ".legendary-treasures-found", 0);
-                stats.mythicTreasuresFound = statsConfig.getLong(uuidString + ".mythic-treasures-found", 0);
-                stats.minutesPlayed = statsConfig.getLong(uuidString + ".minutes-played", 0);
-                
-                playerStats.put(uuid, stats);
-            } catch (IllegalArgumentException e) {
-                plugin.getLogger().warning("Invalid UUID in stats file: " + uuidString);
-            }
-        }
-        
-        plugin.getLogger().info("Loaded statistics for " + playerStats.size() + " players");
-    }
-    
-    public void saveStats() {
-        if (statsConfig == null) return;
-        
-        // Save all current player stats to file
-        for (Map.Entry<UUID, PlayerStats> entry : playerStats.entrySet()) {
-            String uuidString = entry.getKey().toString();
-            PlayerStats stats = entry.getValue();
-            
-            statsConfig.set(uuidString + ".total-blocks-mined", stats.totalBlocksMined);
-            statsConfig.set(uuidString + ".common-treasures-found", stats.commonTreasuresFound);
-            statsConfig.set(uuidString + ".rare-treasures-found", stats.rareTreasuresFound);
-            statsConfig.set(uuidString + ".epic-treasures-found", stats.epicTreasuresFound);
-            statsConfig.set(uuidString + ".legendary-treasures-found", stats.legendaryTreasuresFound);
-            statsConfig.set(uuidString + ".mythic-treasures-found", stats.mythicTreasuresFound);
-            statsConfig.set(uuidString + ".minutes-played", stats.minutesPlayed);
-        }
+    private void initializeStorage() {
+        String storageType = plugin.getConfig().getString("database.type", "YML").toUpperCase();
         
         try {
-            statsConfig.save(statsFile);
-        } catch (IOException e) {
-            plugin.getLogger().severe("Failed to save stats.yml: " + e.getMessage());
+            switch (storageType) {
+                case "YML" -> {
+                    storage = new YmlStatsStorage(plugin);
+                    plugin.getLogger().info("Using YML file storage for player statistics");
+                }
+                case "SQLITE" -> {
+                    String filename = plugin.getConfig().getString("database.sqlite.filename", "stats.db");
+                    storage = new SqliteStatsStorage(plugin, filename);
+                    plugin.getLogger().info("Using SQLite database storage for player statistics");
+                }
+                case "MYSQL" -> {
+                    String host = plugin.getConfig().getString("database.mysql.host", "localhost");
+                    int port = plugin.getConfig().getInt("database.mysql.port", 3306);
+                    String database = plugin.getConfig().getString("database.mysql.database", "infernal_treasures");
+                    String username = plugin.getConfig().getString("database.mysql.username", "root");
+                    String password = plugin.getConfig().getString("database.mysql.password", "password");
+                    
+                    // Build properties map for MySQL configuration
+                    Map<String, Object> properties = new HashMap<>();
+                    
+                    // Pool settings
+                    Map<String, Object> poolConfig = new HashMap<>();
+                    poolConfig.put("maximum-pool-size", plugin.getConfig().getInt("database.mysql.pool.maximum-pool-size", 10));
+                    poolConfig.put("minimum-idle", plugin.getConfig().getInt("database.mysql.pool.minimum-idle", 5));
+                    poolConfig.put("connection-timeout", plugin.getConfig().getLong("database.mysql.pool.connection-timeout", 30000));
+                    poolConfig.put("idle-timeout", plugin.getConfig().getLong("database.mysql.pool.idle-timeout", 600000));
+                    poolConfig.put("max-lifetime", plugin.getConfig().getLong("database.mysql.pool.max-lifetime", 1800000));
+                    properties.putAll(poolConfig);
+                    
+                    // SSL settings
+                    Map<String, Object> sslConfig = new HashMap<>();
+                    sslConfig.put("enabled", plugin.getConfig().getBoolean("database.mysql.ssl.enabled", false));
+                    sslConfig.put("trust-certificate", plugin.getConfig().getBoolean("database.mysql.ssl.trust-certificate", false));
+                    properties.put("ssl", sslConfig);
+                    
+                    // Additional MySQL properties
+                    Map<String, Object> mysqlProps = new HashMap<>();
+                    mysqlProps.put("useSSL", plugin.getConfig().getBoolean("database.mysql.properties.useSSL", false));
+                    mysqlProps.put("allowPublicKeyRetrieval", plugin.getConfig().getBoolean("database.mysql.properties.allowPublicKeyRetrieval", true));
+                    mysqlProps.put("serverTimezone", plugin.getConfig().getString("database.mysql.properties.serverTimezone", "UTC"));
+                    properties.put("properties", mysqlProps);
+                    
+                    storage = new MysqlStatsStorage(plugin, host, port, database, username, password, properties);
+                    plugin.getLogger().info("Using MySQL database storage for player statistics");
+                }
+                default -> {
+                    plugin.getLogger().warning("Invalid database type '" + storageType + "'. Falling back to YML storage.");
+                    storage = new YmlStatsStorage(plugin);
+                }
+            }
+            
+            // Initialize the storage system
+            storage.initialize().join();
+            
+            if (!storage.isAvailable()) {
+                plugin.getLogger().severe("Failed to initialize " + storage.getStorageType() + " storage. Plugin may not function correctly.");
+            }
+            
+        } catch (Exception e) {
+            plugin.getLogger().severe("Error initializing storage system: " + e.getMessage());
+            plugin.getLogger().warning("Falling back to YML storage due to initialization error.");
+            storage = new YmlStatsStorage(plugin);
+            storage.initialize().join();
+        }
+    }
+    
+    private void loadStats() {
+        if (storage == null || !storage.isAvailable()) {
+            plugin.getLogger().warning("Storage not available, cannot load stats");
+            return;
+        }
+        
+        storage.loadAllPlayerStats().thenAccept(loadedStats -> {
+            playerStats.clear();
+            playerStats.putAll(loadedStats);
+            plugin.getLogger().info("Loaded statistics for " + playerStats.size() + " players from " + storage.getStorageType());
+        }).exceptionally(throwable -> {
+            plugin.getLogger().severe("Error loading player stats: " + throwable.getMessage());
+            return null;
+        });
+    }
+
+    public void saveStats() {
+        if (storage == null || !storage.isAvailable()) {
+            plugin.getLogger().warning("Storage not available, cannot save stats");
+            return;
+        }
+        
+        storage.saveAllPlayerStats(new HashMap<>(playerStats)).exceptionally(throwable -> {
+            plugin.getLogger().severe("Error saving player stats: " + throwable.getMessage());
+            return null;
+        });
+    }
+    
+    public void savePlayerStatsAsync(UUID uuid, PlayerStats stats) {
+        if (storage == null || !storage.isAvailable()) {
+            return;
+        }
+        
+        storage.savePlayerStats(uuid, stats).exceptionally(throwable -> {
+            plugin.getLogger().severe("Error saving stats for player " + uuid + ": " + throwable.getMessage());
+            return null;
+        });
+    }
+    
+    /**
+     * Shutdown the storage system and save all data
+     */
+    public void shutdown() {
+        saveStats();
+        
+        if (storage != null) {
+            storage.close().thenRun(() -> {
+                plugin.getLogger().info("Storage system shutdown complete");
+            }).exceptionally(throwable -> {
+                plugin.getLogger().warning("Error during storage shutdown: " + throwable.getMessage());
+                return null;
+            });
         }
     }
     
@@ -182,6 +243,71 @@ public class StatsManager {
         loadStats();
         
         plugin.getLogger().info("Statistics reloaded");
+    }
+    
+    /**
+     * Set the total blocks mined for a player
+     */
+    public void setBlocksMined(UUID uuid, long blocks) {
+        PlayerStats stats = getPlayerStats(uuid);
+        stats.totalBlocksMined = blocks;
+    }
+    
+    /**
+     * Set the total treasures found for a player by recalculating from individual rarity counts
+     */
+    public void setTotalTreasuresFound(UUID uuid, long total) {
+        PlayerStats stats = getPlayerStats(uuid);
+        
+        // Calculate current total
+        long currentTotal = stats.commonTreasuresFound + stats.rareTreasuresFound + 
+                           stats.epicTreasuresFound + stats.legendaryTreasuresFound + 
+                           stats.mythicTreasuresFound;
+        
+        if (total == 0) {
+            // Reset all rarity counts to 0
+            stats.commonTreasuresFound = 0;
+            stats.rareTreasuresFound = 0;
+            stats.epicTreasuresFound = 0;
+            stats.legendaryTreasuresFound = 0;
+            stats.mythicTreasuresFound = 0;
+        } else if (total != currentTotal) {
+            // Distribute the difference proportionally across rarities
+            // If current total is 0, set all to common treasures
+            if (currentTotal == 0) {
+                stats.commonTreasuresFound = total;
+            } else {
+                // Calculate proportional distribution
+                double ratio = (double) total / currentTotal;
+                stats.commonTreasuresFound = Math.round(stats.commonTreasuresFound * ratio);
+                stats.rareTreasuresFound = Math.round(stats.rareTreasuresFound * ratio);
+                stats.epicTreasuresFound = Math.round(stats.epicTreasuresFound * ratio);
+                stats.legendaryTreasuresFound = Math.round(stats.legendaryTreasuresFound * ratio);
+                stats.mythicTreasuresFound = Math.round(stats.mythicTreasuresFound * ratio);
+                
+                // Adjust for rounding errors by adding difference to common treasures
+                long newTotal = stats.commonTreasuresFound + stats.rareTreasuresFound + 
+                              stats.epicTreasuresFound + stats.legendaryTreasuresFound + 
+                              stats.mythicTreasuresFound;
+                long difference = total - newTotal;
+                stats.commonTreasuresFound += difference;
+            }
+        }
+    }
+    
+    /**
+     * Set treasures found for a specific rarity
+     */
+    public void setTreasuresByRarity(UUID uuid, Rarity rarity, long count) {
+        PlayerStats stats = getPlayerStats(uuid);
+        
+        switch (rarity) {
+            case COMMON -> stats.commonTreasuresFound = count;
+            case RARE -> stats.rareTreasuresFound = count;
+            case EPIC -> stats.epicTreasuresFound = count;
+            case LEGENDARY -> stats.legendaryTreasuresFound = count;
+            case MYTHIC -> stats.mythicTreasuresFound = count;
+        }
     }
     
     /**

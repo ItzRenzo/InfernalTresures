@@ -38,6 +38,9 @@ permissions:
   infernaltresures.command.stats.others:
     description: Allows viewing other players' treasure hunting statistics
     default: op
+  infernaltresures.command.stats.set:
+    description: Allows setting player statistics
+    default: op
   infernaltresures.command.loot:
     description: Allows using the loot command
     default: true
@@ -50,3 +53,6 @@ permissions:
   infernaltresures.command.toggle:
     description: Allows toggling treasure spawning on/off for yourself
     default: true
+  infernaltresures.command.progression:
+    description: Allows managing loot progression settings
+    default: op

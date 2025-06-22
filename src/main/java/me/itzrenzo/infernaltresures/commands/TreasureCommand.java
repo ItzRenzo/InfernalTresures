@@ -163,17 +163,25 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(plugin.getMessageManager().getMessageComponent("no-permission"));
             return;
         }
-        
+
+        // Handle different subcommands: view stats or set stats
+        if (args.length >= 3 && args[2].equalsIgnoreCase("set")) {
+            // Handle stats setting: /treasure stats <player> set <stattype> <value>
+            handleStatsSetCommand(sender, args);
+            return;
+        }
+
+        // Original stats viewing functionality
         Player targetPlayer = null;
         String targetName = null;
-        
+
         if (args.length >= 2) {
             // Check if sender has permission to view other players' stats
             if (!sender.hasPermission("infernaltresures.command.stats.others")) {
                 sender.sendMessage(plugin.getMessageManager().getMessageComponent("no-permission-view-others"));
                 return;
             }
-            
+
             // Try to find the target player
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[1]);
             if (!offlinePlayer.hasPlayedBefore() && !offlinePlayer.isOnline()) {
@@ -181,7 +189,7 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                     "player-not-found", "{player}", args[1]));
                 return;
             }
-            
+
             targetPlayer = offlinePlayer.isOnline() ? offlinePlayer.getPlayer() : null;
             targetName = offlinePlayer.getName();
         } else {
@@ -193,8 +201,147 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             targetPlayer = (Player) sender;
             targetName = sender.getName();
         }
-        
+
         displayPlayerStats(sender, targetPlayer, targetName);
+    }
+
+    /**
+     * Handle the stats set command: /treasure stats <player> set <stattype> <value>
+     */
+    private void handleStatsSetCommand(CommandSender sender, String[] args) {
+        // Check permissions for setting stats
+        if (!sender.hasPermission("infernaltresures.command.stats.set")) {
+            sender.sendMessage(Component.text("You don't have permission to set player statistics.")
+                .color(NamedTextColor.RED));
+            return;
+        }
+
+        // Usage: /treasure stats <player> set <stattype> <value>
+        if (args.length < 5) {
+            sender.sendMessage(Component.text("Usage: /treasure stats <player> set <stattype> <value>")
+                .color(NamedTextColor.YELLOW));
+            sender.sendMessage(Component.text("Available stat types:").color(NamedTextColor.GRAY));
+            sender.sendMessage(Component.text("  • blocksmined - Total blocks mined")
+                .color(NamedTextColor.GRAY));
+            sender.sendMessage(Component.text("  • totaltreasuresfound - Total treasures found")
+                .color(NamedTextColor.GRAY));
+            sender.sendMessage(Component.text("  • commontreasures - Common treasures found")
+                .color(NamedTextColor.GRAY));
+            sender.sendMessage(Component.text("  • raretreasures - Rare treasures found")
+                .color(NamedTextColor.GRAY));
+            sender.sendMessage(Component.text("  • epictreasures - Epic treasures found")
+                .color(NamedTextColor.GRAY));
+            sender.sendMessage(Component.text("  • legendarytreasures - Legendary treasures found")
+                .color(NamedTextColor.GRAY));
+            sender.sendMessage(Component.text("  • mythictreasures - Mythic treasures found")
+                .color(NamedTextColor.GRAY));
+            return;
+        }
+
+        // Get target player
+        String targetName = args[1];
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(targetName);
+        if (!offlinePlayer.hasPlayedBefore() && !offlinePlayer.isOnline()) {
+            sender.sendMessage(Component.text("Player '" + targetName + "' not found.")
+                .color(NamedTextColor.RED));
+            return;
+        }
+
+        // Get stat type
+        String statType = args[3].toLowerCase();
+        
+        // Parse value
+        long value;
+        try {
+            value = Long.parseLong(args[4]);
+            if (value < 0) {
+                sender.sendMessage(Component.text("Value must be a positive number.")
+                    .color(NamedTextColor.RED));
+                return;
+            }
+        } catch (NumberFormatException e) {
+            sender.sendMessage(Component.text("Invalid value. Please enter a valid number.")
+                .color(NamedTextColor.RED));
+            return;
+        }
+
+        // Apply the stat change
+        boolean success = false;
+        String statDisplayName = "";
+        
+        switch (statType) {
+            case "blocksmined" -> {
+                plugin.getStatsManager().setBlocksMined(offlinePlayer.getUniqueId(), value);
+                statDisplayName = "blocks mined";
+                success = true;
+            }
+            case "totaltreasuresfound" -> {
+                plugin.getStatsManager().setTotalTreasuresFound(offlinePlayer.getUniqueId(), value);
+                statDisplayName = "total treasures found";
+                success = true;
+            }
+            case "commontreasures" -> {
+                plugin.getStatsManager().setTreasuresByRarity(offlinePlayer.getUniqueId(), 
+                    me.itzrenzo.infernaltresures.models.Rarity.COMMON, value);
+                statDisplayName = "common treasures found";
+                success = true;
+            }
+            case "raretreasures" -> {
+                plugin.getStatsManager().setTreasuresByRarity(offlinePlayer.getUniqueId(), 
+                    me.itzrenzo.infernaltresures.models.Rarity.RARE, value);
+                statDisplayName = "rare treasures found";
+                success = true;
+            }
+            case "epictreasures" -> {
+                plugin.getStatsManager().setTreasuresByRarity(offlinePlayer.getUniqueId(), 
+                    me.itzrenzo.infernaltresures.models.Rarity.EPIC, value);
+                statDisplayName = "epic treasures found";
+                success = true;
+            }
+            case "legendarytreasures" -> {
+                plugin.getStatsManager().setTreasuresByRarity(offlinePlayer.getUniqueId(), 
+                    me.itzrenzo.infernaltresures.models.Rarity.LEGENDARY, value);
+                statDisplayName = "legendary treasures found";
+                success = true;
+            }
+            case "mythictreasures" -> {
+                plugin.getStatsManager().setTreasuresByRarity(offlinePlayer.getUniqueId(), 
+                    me.itzrenzo.infernaltresures.models.Rarity.MYTHIC, value);
+                statDisplayName = "mythic treasures found";
+                success = true;
+            }
+            default -> {
+                sender.sendMessage(Component.text("Invalid stat type: " + statType)
+                    .color(NamedTextColor.RED));
+                sender.sendMessage(Component.text("Valid types: blocksmined, totaltreasuresfound, commontreasures, raretreasures, epictreasures, legendarytreasures, mythictreasures")
+                    .color(NamedTextColor.GRAY));
+            }
+        }
+
+        if (success) {
+            // Save stats to persist changes
+            plugin.getStatsManager().saveStats();
+            
+            // Send success message
+            sender.sendMessage(Component.text("✅ Successfully set ")
+                .color(NamedTextColor.GREEN)
+                .append(Component.text(offlinePlayer.getName()).color(NamedTextColor.YELLOW))
+                .append(Component.text("'s ").color(NamedTextColor.GREEN))
+                .append(Component.text(statDisplayName).color(NamedTextColor.AQUA))
+                .append(Component.text(" to ").color(NamedTextColor.GREEN))
+                .append(Component.text(String.valueOf(value)).color(NamedTextColor.WHITE)));
+
+            // Notify target player if they're online
+            if (offlinePlayer.isOnline()) {
+                Player targetPlayer = offlinePlayer.getPlayer();
+                targetPlayer.sendMessage(Component.text("📊 Your ")
+                    .color(NamedTextColor.BLUE)
+                    .append(Component.text(statDisplayName).color(NamedTextColor.AQUA))
+                    .append(Component.text(" has been set to ").color(NamedTextColor.BLUE))
+                    .append(Component.text(String.valueOf(value)).color(NamedTextColor.WHITE))
+                    .append(Component.text(" by an administrator.").color(NamedTextColor.BLUE)));
+            }
+        }
     }
     
     private void displayPlayerStats(CommandSender sender, Player targetPlayer, String targetName) {
@@ -717,6 +864,11 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                         completions.add(playerName);
                     }
                 }
+            } else if (args[0].equalsIgnoreCase("stats") && sender.hasPermission("infernaltresures.command.stats.others")) {
+                // Third argument of stats command: "set" subcommand
+                if (args[1].toLowerCase().startsWith("set")) {
+                    completions.add("set");
+                }
             } else if (args[0].equalsIgnoreCase("progression") && sender.hasPermission("infernaltresures.command.progression")) {
                 // Third argument of progression command: level (1-4) if setting level
                 if (args[1].equalsIgnoreCase("set")) {
@@ -743,6 +895,24 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                 for (String multiplier : multipliers) {
                     if (multiplier.startsWith(args[3])) {
                         completions.add(multiplier);
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("stats") && args[2].equalsIgnoreCase("set") && sender.hasPermission("infernaltresures.command.stats.set")) {
+                // Fourth argument of stats set command: stat type
+                List<String> statTypes = List.of("blocksmined", "totaltreasuresfound", "commontreasures", "raretreasures", "epictreasures", "legendarytreasures", "mythictreasures");
+                for (String statType : statTypes) {
+                    if (statType.startsWith(args[3].toLowerCase())) {
+                        completions.add(statType);
+                    }
+                }
+            }
+        } else if (args.length == 5) {
+            if (args[0].equalsIgnoreCase("stats") && args[2].equalsIgnoreCase("set") && sender.hasPermission("infernaltresures.command.stats.set")) {
+                // Fifth argument of stats set command: value suggestions
+                List<String> valueSuggestions = List.of("0", "100", "500", "1000", "5000", "10000");
+                for (String value : valueSuggestions) {
+                    if (value.startsWith(args[4])) {
+                        completions.add(value);
                     }
                 }
             }

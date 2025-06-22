@@ -3,14 +3,13 @@ description: "Treasures found within the abandoned mineshafts of the badlands."
 biomes:
   - badlands
   - wooded_badlands
-  - eroded_badlands
   
 loot:
   COMMON:
     - executable_id: common_charm
       min_amount: 1
       max_amount: 1
-      chance: 10
+      chance: 2
   
     - material: RAW_GOLD
       min_amount: 1
@@ -119,37 +118,96 @@ loot:
       required_blocks_mined: 100000
 
   RARE:
-    - material: GOLD_NUGGET
-      min_amount: 6
-      max_amount: 12
-      chance: 40
-      display_name: "&9&lGold Dust"
-      lore:
-        - "&7Tiny gold particles found"
-        - "&7in badlands mineral deposits."
-    
-    - material: IRON_SHOVEL
+    - executable_id: rare_charm
       min_amount: 1
       max_amount: 1
+      chance: 2
+
+    - material: BONE
+      min_amount: 2
+      max_amount: 4
       chance: 30
-      display_name: "&9&lMiner's Spade"
-      lore:
-        - "&7A sturdy shovel used by"
-        - "&7badlands prospectors."
-      enchantments:
-        - enchant: EFFICIENCY
-          level: 3
-        - enchant: UNBREAKING
-          level: 2
-    
-    - material: CACTUS
+      required_blocks_mined: "0-599999"
+
+    - material: SKELETON_SKULL
+      min_amount: 1
+      max_amount: 1
+      chance: 28
+      required_blocks_mined: "0-599999"
+      
+    - material: EXPERIENCE_BOTTLE
       min_amount: 3
-      max_amount: 7
-      chance: 35
-      display_name: "&9&lDesert Cactus"
+      max_amount: 6
+      chance: 25
+
+    - material: GOLD_BLOCK
+      min_amount: 2
+      max_amount: 4
+      chance: 15
+
+    - executable_id: grenade
+      min_amount: 1
+      max_amount: 1
+      chance: 15
+
+    - material: TNT
+      min_amount: 2
+      max_amount: 4
+      chance: 20
+      required_blocks_mined: 50000
+
+    - material: TIPPED_ARROW
+      min_amount: 1
+      max_amount: 1
+      chance: 100
+      required_blocks_mined: 50000
+      display_name: "&5Venom-Tipped Arrow"
       lore:
-        - "&7Hardy desert plants that"
-        - "&7thrive in harsh conditions."
+        - "&9Effects:"
+        - "&9• Poison II (0:08)"
+        - "&9• Instant Damage I"
+      custom_effects:
+        - effect: POISON
+          duration: 160
+          amplifier: 1
+        - effect: INSTANT_DAMAGE
+          duration: 5
+          amplifier: 0
+        
+    - material: CROSSBOW
+      min_amount: 1
+      max_amount: 1
+      chance: 8
+      enchantments:
+        - enchant: "multishot"
+          min_level: 0
+          max_level: 1
+        - enchant: "piercing"
+          min_level: 0
+          max_level: 4
+        - enchant: "unbreaking"
+          min_level: 0
+          max_level: 5
+        - enchant: "quick_charge"
+          min_level: 0
+          max_level: 3
+        - enchant: "mending"
+          min_level: 0
+          max_level: 1
+        
+    - executable_id: boomproof_hat
+      min_amount: 1
+      max_amount: 1
+      chance: 6
+
+    - material: CHEST
+      min_amount: 1
+      max_amount: 1
+      chance: 5
+      display_name: "&bMineshaft Loot Chest"
+      lore:
+        - "&7A special chest containing"
+        - "&7the Badlands Mineshaft loot table."
 
   EPIC:
     - material: GOLDEN_PICKAXE

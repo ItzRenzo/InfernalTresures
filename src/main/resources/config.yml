@@ -177,6 +177,42 @@ player:
   save-stats: true
 
 # ========================================
+#         DATABASE SETTINGS
+# ========================================
+database:
+  # Storage type: YML, SQLITE, or MYSQL
+  type: "YML"
+  
+  # SQLite settings (only used if type is SQLITE)
+  sqlite:
+    # Database file name (will be created in plugin folder)
+    filename: "stats.db"
+    
+  # MySQL settings (only used if type is MYSQL)
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "infernal_treasures"
+    username: "root"
+    password: "password"
+    # Connection pool settings
+    pool:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+    # SSL settings
+    ssl:
+      enabled: false
+      trust-certificate: false
+    # Additional connection properties
+    properties:
+      useSSL: false
+      allowPublicKeyRetrieval: true
+      serverTimezone: "UTC"
+
+# ========================================
 #          RARITY SETTINGS
 # ========================================
 rarity:

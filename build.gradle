@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'me.itzrenzo'
@@ -35,6 +34,11 @@ dependencies {
     // Paper API
     compileOnly 'io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT'
     
+    // Database dependencies - minimal versions
+    implementation 'org.xerial:sqlite-jdbc:3.42.0.0'
+    implementation 'com.mysql:mysql-connector-j:8.0.33'
+    implementation 'com.zaxxer:HikariCP:5.0.1'
+    
     // Optional integrations
     compileOnly 'io.lumine:MythicLib-dist:1.6.2-SNAPSHOT'
     compileOnly 'net.Indyuce:MMOItems-API:6.10-SNAPSHOT'
@@ -51,28 +55,53 @@ processResources {
         expand props
     }
     
-    // Exclude JAR files from being copied to resources to reduce final JAR size
+    // Exclude JAR files from being copied to resources to prevent them from being included in final JAR
     exclude '**/*.jar'
+    exclude '**/SCore-*.jar'
 }
 
-shadowJar {
-    // Don't shade any dependencies - keep the JAR lightweight
-    dependencies {
-        // Exclude all dependencies from being bundled (they should be provided by server)
-        exclude(dependency('.*:.*'))
+jar {
+    from {
+        configurations.runtimeClasspath.collect { file ->
+            file.isDirectory() ? file : zipTree(file).matching {
+                // Include only class files
+                include '**/*.class'
+                
+                // Exclude unnecessary files to reduce size
+                exclude 'META-INF/MANIFEST.MF'
+                exclude 'META-INF/*.SF'
+                exclude 'META-INF/*.DSA'
+                exclude 'META-INF/*.RSA'
+                exclude 'META-INF/maven/**'
+                exclude 'META-INF/LICENSE*'
+                exclude 'META-INF/NOTICE*'
+                exclude 'META-INF/DEPENDENCIES*'
+                exclude 'META-INF/*.txt'
+                exclude 'META-INF/*.xml'
+                exclude 'META-INF/versions/**'
+                exclude 'module-info.class'
+                exclude '**/*.html'
+                exclude '**/*.md'
+                exclude '**/*.txt'
+                exclude '**/*.xml'
+                exclude '**/*.properties'
+                
+                // Exclude unused MySQL X DevAPI
+                exclude 'com/mysql/cj/xdevapi/**'
+                
+                // Keep essential services
+                include 'META-INF/services/**'
+            }
+        }
     }
     
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveClassifier = ''
 }
-
-// Make shadowJar the default jar task
-jar.enabled = false
-build.dependsOn shadowJar
 
 compileJava {
     options.encoding = 'UTF-8'
     options.compilerArgs += ['-parameters']
 }
 
-// Configure source and target compatibility
 compileJava.options.release = 21
