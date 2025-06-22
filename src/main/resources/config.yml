@@ -43,7 +43,7 @@ treasure:
         description: "Maximum treasure progression"
     
     # Enable debug logging for progression system
-    debug: false
+    debug: true
 
   # Per-rarity sound and particle effects
   rarity-effects:
@@ -228,7 +228,7 @@ rarity:
 #           DEBUG SETTINGS
 # ========================================
 debug:
-  enabled: false
+  enabled: true
   categories:
     loot-generation: true
     treasure-spawning: true
@@ -236,3 +236,4 @@ debug:
     executable-items: true
     barrel-filling: true
     biome-detection: true
+    progression-debug: true

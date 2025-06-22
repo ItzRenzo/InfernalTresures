@@ -45,45 +45,53 @@ public class TreasureManager {
         if (!plugin.getStatsManager().isTreasureSpawningEnabled(player)) {
             return false; // Player has disabled treasure spawning
         }
-        
+
         // Use BlockManager to determine if treasure should spawn and what rarity (with luck applied)
         Rarity rarity = InfernalTresures.getInstance().getBlockManager().shouldSpawnTreasure(minedBlock.getType(), player);
-        
+
         if (rarity == null) {
             // No treasure should spawn based on blocks.yml configuration
             return false;
         }
-        
+
         // Track treasure found statistics
         plugin.getStatsManager().onTreasureFound(player, rarity);
-        
+
         // Play rarity-specific sound and particle effects
         playTreasureEffects(player, rarity, minedBlock.getLocation());
-        
-        // Make final variable for lambda expression
+
+        // Make final variables for lambda expression
         final Rarity finalRarity = rarity;
-        
+        final UUID playerUUID = player.getUniqueId(); // Store UUID instead of player object
+
         // Use the exact location of the broken block, but delay the spawning
         Location spawnLocation = minedBlock.getLocation().add(0.5, 0, 0.5); // Center the barrel in the block
-        
+
         // Get biome
         Biome biome = minedBlock.getBiome();
-        
+
         // Delay the treasure creation to ensure the block breaking event completes first
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            // Don't try to retrieve the player again - use the original player reference
+            // The Treasure constructor will store the UUID internally for loot generation
+            
+            if (plugin.getConfigManager().isTreasureSpawningDebugEnabled()) {
+                plugin.getLogger().info("Creating treasure for player: " + player.getName() + " (UUID: " + playerUUID + ")");
+            }
+            
             Treasure treasure = new Treasure(spawnLocation, finalRarity, biome, player);
             activeTreasures.put(treasure.getId(), treasure);
         }, 1L); // 1 tick delay
-        
+
         // Announce to player immediately
         Component message = InfernalTresures.getInstance().getMessageManager().getTreasureFoundMessage(finalRarity, finalRarity.getDespawnTime());
         player.sendMessage(message);
-        
+
         // Check if we should announce this treasure to the server (configurable per rarity)
         if (shouldAnnounce(finalRarity)) {
             announceToServer(player, finalRarity, biome);
         }
-        
+
         return true;
     }
     

@@ -60,12 +60,19 @@ public class Treasure {
         }
         
         // Generate loot using the LootManager with progression support
-        List<ItemStack> loot = InfernalTresures.getInstance().getLootManager().generateLoot(biome, rarity, finder);
+        // Use UUID-based generation to ensure we get correct stats even if player goes offline
+        List<ItemStack> loot;
+        if (finderId != null) {
+            loot = InfernalTresures.getInstance().getLootManager().generateLootByUUID(biome, rarity, finderId);
+        } else {
+            // Fallback to regular method if no UUID (shouldn't happen in normal gameplay)
+            loot = InfernalTresures.getInstance().getLootManager().generateLoot(biome, rarity, finder);
+        }
         
         // Debug log
         if (InfernalTresures.getInstance().getConfigManager().isLootGenerationDebugEnabled()) {
             InfernalTresures.getInstance().getLogger().info("Generated " + loot.size() + " items for " + rarity + " treasure" +
-                (finder != null ? " for player " + finder.getName() : ""));
+                (finderId != null ? " for player UUID " + finderId : " (no player UUID)"));
             for (ItemStack item : loot) {
                 InfernalTresures.getInstance().getLogger().info("- " + item.getType() + " x" + item.getAmount());
             }

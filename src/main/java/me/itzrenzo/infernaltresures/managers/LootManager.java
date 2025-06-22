@@ -425,8 +425,11 @@ public class LootManager {
         
         // Get player's total blocks mined for progression check
         long playerBlocksMined = 0;
+        UUID playerUUID = null;
         if (player != null) {
-            playerBlocksMined = plugin.getStatsManager().getPlayerStats(player).totalBlocksMined;
+            playerUUID = player.getUniqueId();
+            // Use UUID to get stats to ensure we get the most current data
+            playerBlocksMined = plugin.getStatsManager().getPlayerStats(playerUUID).totalBlocksMined;
         }
         
         // Get current progression level and slot count
@@ -434,6 +437,8 @@ public class LootManager {
         
         if (plugin.getConfigManager().isProgressionDebugEnabled()) {
             plugin.getLogger().info("=== LOOT PROGRESSION DEBUG ===");
+            plugin.getLogger().info("Player: " + (player != null ? player.getName() + " (UUID: " + playerUUID + ")" : "unknown"));
+            plugin.getLogger().info("Player blocks mined: " + playerBlocksMined);
             plugin.getLogger().info("Current progression level: " + plugin.getConfigManager().getCurrentProgressionLevel());
             plugin.getLogger().info("Max slots to fill: " + maxSlots);
             plugin.getLogger().info("Available loot items for " + rarity + ": " + rarityLoot.size());
@@ -497,9 +502,98 @@ public class LootManager {
         return loot;
     }
     
-    // Keep the old method for backward compatibility (for cases where player is unknown)
-    public List<ItemStack> generateLoot(Biome biome, Rarity rarity) {
-        return generateLoot(biome, rarity, null);
+    /**
+     * Generate loot for a player using their UUID (works even if player is offline)
+     */
+    public List<ItemStack> generateLootByUUID(Biome biome, Rarity rarity, UUID playerUUID) {
+        List<ItemStack> loot = new ArrayList<>();
+        
+        Map<Rarity, List<LootItem>> biomeLootTable = lootTables.get(biome);
+        if (biomeLootTable == null) {
+            plugin.getLogger().warning("No loot table found for biome: " + biome.name());
+            return loot;
+        }
+        
+        List<LootItem> rarityLoot = biomeLootTable.get(rarity);
+        if (rarityLoot == null || rarityLoot.isEmpty()) {
+            plugin.getLogger().warning("No loot found for rarity " + rarity + " in biome " + biome.name());
+            return loot;
+        }
+        
+        // Get player's total blocks mined for progression check using UUID
+        long playerBlocksMined = 0;
+        if (playerUUID != null) {
+            playerBlocksMined = plugin.getStatsManager().getPlayerStats(playerUUID).totalBlocksMined;
+        }
+        
+        // Get current progression level and slot count
+        int maxSlots = plugin.getConfigManager().getCurrentProgressionSlots();
+        
+        if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+            plugin.getLogger().info("=== LOOT PROGRESSION DEBUG (UUID) ===");
+            plugin.getLogger().info("Player UUID: " + playerUUID);
+            plugin.getLogger().info("Player blocks mined: " + playerBlocksMined);
+            plugin.getLogger().info("Current progression level: " + plugin.getConfigManager().getCurrentProgressionLevel());
+            plugin.getLogger().info("Max slots to fill: " + maxSlots);
+            plugin.getLogger().info("Available loot items for " + rarity + ": " + rarityLoot.size());
+        }
+        
+        // Filter items based on progression requirements
+        List<LootItem> availableItems = new ArrayList<>();
+        for (LootItem lootItem : rarityLoot) {
+            // Check if player is within the required blocks mined range
+            if (playerBlocksMined < lootItem.minRequiredBlocksMined || playerBlocksMined > lootItem.maxRequiredBlocksMined) {
+                if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+                    plugin.getLogger().info("Player " + playerUUID + 
+                        " doesn't meet progression requirement: " + playerBlocksMined + " blocks mined not in range " + 
+                        lootItem.requiredBlocksMinedRange + " for item " + (lootItem.material != null ? lootItem.material.name() : 
+                        lootItem.isMMOItem ? lootItem.mmoType + "." + lootItem.mmoId : lootItem.executableId));
+                }
+                continue; // Skip this item
+            }
+            availableItems.add(lootItem);
+        }
+        
+        if (availableItems.isEmpty()) {
+            if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+                plugin.getLogger().info("No available items after progression filtering");
+            }
+            return loot;
+        }
+        
+        // Roll for each slot
+        for (int slot = 0; slot < maxSlots; slot++) {
+            // Randomly select an item from available items
+            LootItem selectedItem = availableItems.get(ThreadLocalRandom.current().nextInt(availableItems.size()));
+            
+            // Apply the item's individual chance
+            if (ThreadLocalRandom.current().nextDouble(100.0) < selectedItem.chance) {
+                ItemStack itemStack = createItemStack(selectedItem);
+                if (itemStack != null) {
+                    loot.add(itemStack);
+                    
+                    if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+                        plugin.getLogger().info("Slot " + (slot + 1) + ": Added " + itemStack.getType() + 
+                            " x" + itemStack.getAmount() + " (chance: " + selectedItem.chance + "%)");
+                    }
+                } else {
+                    if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+                        plugin.getLogger().info("Slot " + (slot + 1) + ": Failed to create item");
+                    }
+                }
+            } else {
+                if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+                    plugin.getLogger().info("Slot " + (slot + 1) + ": No item (chance missed: " + selectedItem.chance + "%)");
+                }
+            }
+        }
+        
+        if (plugin.getConfigManager().isProgressionDebugEnabled()) {
+            plugin.getLogger().info("Final loot count: " + loot.size() + "/" + maxSlots + " slots filled");
+            plugin.getLogger().info("=== END LOOT PROGRESSION DEBUG (UUID) ===");
+        }
+        
+        return loot;
     }
     
     /**

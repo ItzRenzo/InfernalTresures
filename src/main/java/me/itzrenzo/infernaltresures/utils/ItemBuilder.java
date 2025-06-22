@@ -179,12 +179,23 @@ public class ItemBuilder {
     }
     
     /**
-     * Add potion effects (for potions and food items)
+     * Add potion effects (for potions and tipped arrows)
      */
     public ItemBuilder addPotionEffect(PotionEffectType effectType, int duration, int amplifier) {
         if (effectType != null && itemMeta instanceof PotionMeta potionMeta) {
-            PotionEffect effect = new PotionEffect(effectType, duration, amplifier);
+            // For tipped arrows, we need to adjust the duration because Minecraft
+            // applies a different duration calculation for arrows vs potions
+            int adjustedDuration = duration;
+            if (itemStack.getType() == Material.TIPPED_ARROW) {
+                // Tipped arrows typically have their duration reduced by about 1/8th
+                // To get the desired duration, we need to multiply by 8
+                adjustedDuration = duration * 8;
+            }
+            
+            PotionEffect effect = new PotionEffect(effectType, adjustedDuration, amplifier);
             potionMeta.addCustomEffect(effect, true);
+            // Make sure to update the itemStack with the modified meta
+            itemStack.setItemMeta(potionMeta);
         }
         return this;
     }

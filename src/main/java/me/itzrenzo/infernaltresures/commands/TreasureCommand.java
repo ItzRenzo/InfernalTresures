@@ -119,8 +119,8 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(Component.text("Current biome: " + biome.name()).color(NamedTextColor.YELLOW));
         }
         
-        // Create treasure at player's location
-        Treasure treasure = new Treasure(location, rarity, biome);
+        // Create treasure at player's location - PASS THE PLAYER to ensure UUID is set
+        Treasure treasure = new Treasure(location, rarity, biome, player);
         plugin.getTreasureManager().addTreasure(treasure);
         
         player.sendMessage(Component.text("Spawned a ")
