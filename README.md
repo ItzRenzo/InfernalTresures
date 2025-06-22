@@ -99,6 +99,34 @@ treasure:
     particles: true         # Show particles when treasure is found
   hourly-limit: 0          # Max treasures per player per hour (0 = unlimited)
   
+  # Loot progression system
+  # Controls how many slots in the barrel are filled (barrel has 27 slots total)
+  loot-progression:
+    # Current progression level (1-4)
+    current-level: 1
+    
+    # Slot configuration for each level
+    levels:
+      1:
+        slots: 7     # Level 1: Only 7 slots are filled
+        name: "Beginner"
+        description: "Basic treasure progression"
+      2:
+        slots: 14    # Level 2: 14 slots are filled
+        name: "Intermediate" 
+        description: "Improved treasure progression"
+      3:
+        slots: 21    # Level 3: 21 slots are filled
+        name: "Advanced"
+        description: "Enhanced treasure progression"
+      4:
+        slots: 27    # Level 4: All 27 slots are filled (fastest progression)
+        name: "Master"
+        description: "Maximum treasure progression"
+    
+    # Enable debug logging for progression system
+    debug: false
+  
   # Per-rarity announcement settings
   announce-finds:
     common: false           # Announce common finds
@@ -216,6 +244,7 @@ loot-display:
 | `/treasure stats [player]` | `infernaltresures.command.stats` | View treasure hunting statistics |
 | `/treasure luck <seconds> <player> [multiplier]` | `infernaltresures.command.luck` | Give temporary treasure luck to a player |
 | `/treasure toggle` | `infernaltresures.command.toggle` | Toggle treasure spawning on/off for yourself |
+| `/treasure progression [info\|set <level>\|debug <on\|off>]` | `infernaltresures.command.progression` | Manage loot progression system |
 | `/lootgui` | `infernaltresures.command.loot.gui` | Open interactive loot browser |
 | `/treasure loot gui` | `infernaltresures.command.loot` | Alternative loot browser command |
 
@@ -256,6 +285,53 @@ Players have full control over their treasure hunting experience:
 - **Personal Preference**: Some players prefer traditional mining
 - **Persistent Setting**: Choice is saved across sessions
 
+### 📈 Loot Progression System
+
+**NEW!** Control how much loot appears in treasure barrels with a configurable progression system:
+
+```bash
+# View current progression settings
+/treasure progression info
+
+# Set progression level (1-4)
+treasure progression set 3
+
+# Enable/disable debug logging
+/treasure progression debug on
+```
+
+**Progression Levels:**
+- **Level 1 (Beginner)**: 7 slots filled - Slower, controlled progression
+- **Level 2 (Intermediate)**: 14 slots filled - Moderate loot amounts
+- **Level 3 (Advanced)**: 21 slots filled - Generous loot rewards
+- **Level 4 (Master)**: 27 slots filled - Maximum loot (full barrel)
+
+**Features:**
+- **Server-wide Control**: Set the progression level for all players
+- **Smart Slot Filling**: Each slot gets a chance to roll for items from the biome's loot table
+- **Item Chances Still Apply**: Individual item drop chances are still respected
+- **Debug Logging**: See exactly what happens in each slot when debug is enabled
+- **Instant Changes**: Progression changes apply immediately to new treasures
+
+**Use Cases:**
+- **Economy Control**: Start at Level 1 to prevent inflation, increase as server matures
+- **Event Management**: Boost to Level 4 during special events for maximum rewards
+- **Testing**: Use debug mode to see exactly how the system works
+
+**Example Debug Output:**
+```
+=== LOOT PROGRESSION DEBUG ===
+Current progression level: 3
+Max slots to fill: 21
+Available loot items for LEGENDARY: 8
+Slot 1: Added NETHERITE_INGOT x3 (chance: 15.0%)
+Slot 2: No item (chance missed: 25.0%)
+Slot 3: Added ENCHANTED_BOOK x1 (chance: 40.0%)
+...
+Final loot count: 12/21 slots filled
+=== END LOOT PROGRESSION DEBUG ===
+```
+
 ## 📊 Statistics System
 
 Track detailed treasure hunting progress with `/treasure stats`:
@@ -284,6 +360,7 @@ Track detailed treasure hunting progress with `/treasure stats`:
 | `infernaltresures.command.stats.others` | View other players' statistics | `op` |
 | `infernaltresures.command.luck` | Give treasure luck to players | `op` |
 | `infernaltresures.command.toggle` | Toggle treasure spawning for yourself | `true` |
+| `infernaltresures.command.progression` | Manage loot progression system | `op` |
 | `infernaltresures.command.loot` | Access to loot commands | `true` |
 | `infernaltresures.command.loot.gui` | Access to loot browser GUI | `true` |
 
