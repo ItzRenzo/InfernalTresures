@@ -200,47 +200,64 @@ loot:
       max_amount: 1
       chance: 6
 
-    - material: CHEST
+    - executable_id: mineshaft_chest
       min_amount: 1
       max_amount: 1
       chance: 5
-      display_name: "&bMineshaft Loot Chest"
-      lore:
-        - "&7A special chest containing"
-        - "&7the Badlands Mineshaft loot table."
 
   EPIC:
-    - material: GOLDEN_PICKAXE
-      min_amount: 1
-      max_amount: 1
-      chance: 15
-      display_name: "&5&lProspector's Pick"
-      lore:
-        - "&7A golden pickaxe favored"
-        - "&7by wealthy mine owners."
-      enchantments:
-        - enchant: EFFICIENCY
-          level: 5
-        - enchant: FORTUNE
-          level: 2
-    
-    - material: TNT
+    - executable_block_id: unstable_tnt_block
+      min_amount: 2
+      max_amount: 5
+      chance: 25
+      
+    - material: GOLDEN_APPLE
+      min_amount: 5
+      max_amount: 5
+      chance: 22
+
+    - material: DIAMOND
+      min_amount: 2
+      max_amount: 4
+      chance: 20
+
+    - material: GOLD_BLOCK
       min_amount: 4
       max_amount: 8
+      chance: 20
+      
+    - material: FIREWORK_STAR
+      min_amount: 4
+      max_amount: 8
+      chance: 18
+      required_blocks_mined: "0-99999"
+      
+    - executable_id: blight_rocket
+      min_amount: 1
+      max_amount: 2
+      chance: 15
+      required_blocks_mined: 50000
+
+    - material: NETHERITE_SCRAP
+      min_amount: 1
+      max_amount: 1
       chance: 12
-      display_name: "&5&lMining Explosives"
-      lore:
-        - "&7Dynamite used for large-scale"
-        - "&7badlands excavation projects."
-    
-    - material: MINECART
+      
+    - executable_id: detonation_mine
       min_amount: 1
       max_amount: 2
       chance: 10
-      display_name: "&5&lMine Cart"
-      lore:
-        - "&7Transport carts from the"
-        - "&7old badlands mining operations."
+      required_blocks_mined: 200000
+
+    - executable_id: epic_charm
+      min_amount: 1
+      max_amount: 1
+      chance: 4
+
+    - material: ENCHANTED_GOLDEN_APPLE
+      min_amount: 1
+      max_amount: 1
+      chance: 2
 
   LEGENDARY:
     - material: DIAMOND_PICKAXE

@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id("xyz.jpenilla.run-paper") version "2.3.1"    
 }
 
 group = 'me.itzrenzo'
@@ -13,8 +14,8 @@ java {
 repositories {
     mavenCentral()
     maven {
-        name = 'papermc-repo'
-        url = 'https://repo.papermc.io/repository/maven-public/'
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
     }
     maven {
         name = 'sonatype'
@@ -32,7 +33,7 @@ repositories {
 
 dependencies {
     // Paper API
-    compileOnly 'io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT'
+    compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
     
     // Database dependencies - minimal versions
     implementation 'org.xerial:sqlite-jdbc:3.42.0.0'
@@ -45,6 +46,7 @@ dependencies {
     
     // SCore - use local JAR file since it's not in public repositories
     compileOnly files('src/main/resources/SCore-5.25.6.14.jar')
+    compileOnly files('src/main/resources/ExecutableBlocks_5.25.6.24.jar')
 }
 
 processResources {

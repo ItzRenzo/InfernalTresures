@@ -176,6 +176,10 @@ public class ConfigManager {
             config.set("debug.categories.executable-items", true);
         }
         
+        if (!config.isSet("debug.categories.executable-blocks")) {
+            config.set("debug.categories.executable-blocks", true);
+        }
+        
         if (!config.isSet("debug.categories.barrel-filling")) {
             config.set("debug.categories.barrel-filling", true);
         }
@@ -275,6 +279,10 @@ public class ConfigManager {
     
     public boolean isExecutableItemsDebugEnabled() {
         return isDebugCategoryEnabled("executable-items");
+    }
+    
+    public boolean isExecutableBlocksDebugEnabled() {
+        return isDebugCategoryEnabled("executable-blocks");
     }
     
     public boolean isBarrelFillingDebugEnabled() {

@@ -1,6 +1,7 @@
 package me.itzrenzo.infernaltresures;
 
 import me.itzrenzo.infernaltresures.commands.TreasureCommand;
+import me.itzrenzo.infernaltresures.integrations.ExecutableBlocksIntegration;
 import me.itzrenzo.infernaltresures.integrations.ExecutableItemsIntegration;
 import me.itzrenzo.infernaltresures.integrations.MMOItemsIntegration;
 import me.itzrenzo.infernaltresures.listeners.MiningListener;
@@ -28,6 +29,7 @@ public final class InfernalTresures extends JavaPlugin {
     private StatsManager statsManager;
     private MMOItemsIntegration mmoItemsIntegration;
     private ExecutableItemsIntegration executableItemsIntegration;
+    private ExecutableBlocksIntegration executableBlocksIntegration;
 
     @Override
     public void onEnable() {
@@ -53,6 +55,7 @@ public final class InfernalTresures extends JavaPlugin {
         // Initialize integrations after managers are ready
         mmoItemsIntegration = new MMOItemsIntegration(this);
         executableItemsIntegration = new ExecutableItemsIntegration(this);
+        executableBlocksIntegration = new ExecutableBlocksIntegration(this);
         
         // Schedule delayed checks for integrations that might need more time to initialize
         getServer().getScheduler().runTaskLater(this, () -> {
@@ -63,6 +66,15 @@ public final class InfernalTresures extends JavaPlugin {
                 getLogger().info("Retrying ExecutableItems integration after server startup...");
                 executableItemsIntegration = new ExecutableItemsIntegration(this);
                 if (executableItemsIntegration.isEnabled()) {
+                    reloadNeeded = true;
+                }
+            }
+            
+            // Retry ExecutableBlocks integration if it failed initially
+            if (!executableBlocksIntegration.isEnabled()) {
+                getLogger().info("Retrying ExecutableBlocks integration after server startup...");
+                executableBlocksIntegration = new ExecutableBlocksIntegration(this);
+                if (executableBlocksIntegration.isEnabled()) {
                     reloadNeeded = true;
                 }
             }
@@ -148,6 +160,10 @@ public final class InfernalTresures extends JavaPlugin {
     
     public ExecutableItemsIntegration getExecutableItemsIntegration() {
         return executableItemsIntegration;
+    }
+    
+    public ExecutableBlocksIntegration getExecutableBlocksIntegration() {
+        return executableBlocksIntegration;
     }
     
     public LootGUIManager getLootGUIManager() {

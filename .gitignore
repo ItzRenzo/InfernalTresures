@@ -7,31 +7,43 @@
 .settings/
 .project
 .classpath
+.factorypath
+.buildpath
 
 # Build Directories
-/target/
 /build/
+/target/
 /out/
+/bin/
 
 # Gradle Files
 .gradle/
 gradle-app.setting
-!gradle-wrapper.jar
-!gradle-wrapper.properties
 
-# Maven Files
-dependency-reduced-pom.xml
+# Keep Gradle Wrapper (important for project setup)
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
 
-# Compiled Class Files
+# Compiled Files
 *.class
 
-# JAR Files (exclude dependency JARs but keep them in resources if needed)
+# JAR Files (with exceptions)
 *.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Keep Gradle Wrapper JAR
 !gradle/wrapper/gradle-wrapper.jar
+# Keep dependency JARs in resources (like SCore)
 !src/main/resources/*.jar
+!src/main/resources/ExecutableBlocks_5.25.6.24.jar
 
 # Log Files
 *.log
+logs/
 
 # Temporary Files
 *.tmp
@@ -39,6 +51,7 @@ dependency-reduced-pom.xml
 *.swp
 *.swo
 *~
+.cache/
 
 # OS Generated Files
 .DS_Store
@@ -50,19 +63,36 @@ ehthumbs.db
 Thumbs.db
 desktop.ini
 
-# Java
-*.class
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
+# Java Runtime
 hs_err_pid*
+replay_pid*
 
-# Gradle Wrapper (keep these)
-!gradle/wrapper/gradle-wrapper.jar
-!gradle/wrapper/gradle-wrapper.properties
+# Application specific
+dependency-reduced-pom.xml
 
-# Keep dependency JARs in resources (for SCore, etc.)
-!src/main/resources/*.jar
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# Eclipse
+.metadata
+.recommenders
+.project
+.classpath
+.settings/
+.loadpath
+.factorypath
+
+# VS Code
+.vscode/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
