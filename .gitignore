@@ -10,6 +10,9 @@
 .factorypath
 .buildpath
 
+# Workspace Files
+InfernalTresures.code-workspace
+
 # Build Directories
 /build/
 /target/
@@ -40,6 +43,9 @@ gradle-app.setting
 # Keep dependency JARs in resources (like SCore)
 !src/main/resources/*.jar
 !src/main/resources/ExecutableBlocks_5.25.6.24.jar
+
+# Specific JAR Files to ignore
+ExecutableBlocks_5.25.6.24.jar
 
 # Log Files
 *.log
