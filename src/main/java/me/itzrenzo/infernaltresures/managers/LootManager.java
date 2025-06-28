@@ -610,15 +610,24 @@ public class LootManager {
             // Randomly select an item from available items
             LootItem selectedItem = availableItems.get(ThreadLocalRandom.current().nextInt(availableItems.size()));
             
-            // Apply the item's individual chance
-            if (ThreadLocalRandom.current().nextDouble(100.0) < selectedItem.chance) {
+            // Check if we should use chance-based system or guarantee fills
+            boolean useChanceSystem = plugin.getConfigManager().useChanceBasedSystem();
+            
+            boolean shouldAddItem = true;
+            if (useChanceSystem) {
+                // Apply the item's individual chance
+                shouldAddItem = ThreadLocalRandom.current().nextDouble(100.0) < selectedItem.chance;
+            }
+            // If not using chance system, shouldAddItem remains true (guaranteed fill)
+            
+            if (shouldAddItem) {
                 ItemStack itemStack = createItemStack(selectedItem, player);
                 if (itemStack != null) {
                     loot.add(itemStack);
                     
                     if (plugin.getConfigManager().isProgressionDebugEnabled()) {
                         plugin.getLogger().info("Slot " + (slot + 1) + ": Added " + itemStack.getType() + 
-                            " x" + itemStack.getAmount() + " (chance: " + selectedItem.chance + "%)");
+                            " x" + itemStack.getAmount() + (useChanceSystem ? " (chance: " + selectedItem.chance + "%)" : " (guaranteed)"));
                     }
                 } else {
                     if (plugin.getConfigManager().isProgressionDebugEnabled()) {
@@ -704,15 +713,24 @@ public class LootManager {
             // Randomly select an item from available items
             LootItem selectedItem = availableItems.get(ThreadLocalRandom.current().nextInt(availableItems.size()));
             
-            // Apply the item's individual chance
-            if (ThreadLocalRandom.current().nextDouble(100.0) < selectedItem.chance) {
+            // Check if we should use chance-based system or guarantee fills
+            boolean useChanceSystem = plugin.getConfigManager().useChanceBasedSystem();
+            
+            boolean shouldAddItem = true;
+            if (useChanceSystem) {
+                // Apply the item's individual chance
+                shouldAddItem = ThreadLocalRandom.current().nextDouble(100.0) < selectedItem.chance;
+            }
+            // If not using chance system, shouldAddItem remains true (guaranteed fill)
+            
+            if (shouldAddItem) {
                 ItemStack itemStack = createItemStack(selectedItem, null); // Pass null for UUID-based generation
                 if (itemStack != null) {
                     loot.add(itemStack);
                     
                     if (plugin.getConfigManager().isProgressionDebugEnabled()) {
                         plugin.getLogger().info("Slot " + (slot + 1) + ": Added " + itemStack.getType() + 
-                            " x" + itemStack.getAmount() + " (chance: " + selectedItem.chance + "%)");
+                            " x" + itemStack.getAmount() + (useChanceSystem ? " (chance: " + selectedItem.chance + "%)" : " (guaranteed)"));
                     }
                 } else {
                     if (plugin.getConfigManager().isProgressionDebugEnabled()) {

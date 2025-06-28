@@ -337,7 +337,11 @@ public class ConfigManager {
     public boolean isProgressionDebugEnabled() {
         return config.getBoolean("treasure.loot-progression.debug", false);
     }
-
+    
+    public boolean useChanceBasedSystem() {
+        return config.getBoolean("treasure.loot-progression.use-chance-based-system", false);
+    }
+    
     // Backward compatibility - check if any rarity has announcements enabled
     public boolean isTreasureAnnouncementEnabled() {
         return isTreasureAnnouncementEnabled(me.itzrenzo.infernaltresures.models.Rarity.COMMON) ||

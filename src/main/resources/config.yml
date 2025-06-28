@@ -42,6 +42,11 @@ treasure:
         name: "Master"
         description: "Maximum treasure progression"
     
+    # Loot generation mode
+    # true = Use chance-based system (items may miss their chance and slots may be empty)
+    # false = Guarantee all slots are filled (ignore individual item chances)
+    use-chance-based-system: false
+    
     # Enable debug logging for progression system
     debug: true
 
