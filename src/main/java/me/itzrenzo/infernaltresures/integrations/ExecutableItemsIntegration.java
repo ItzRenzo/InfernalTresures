@@ -210,6 +210,7 @@ public class ExecutableItemsIntegration {
             if (item != null) {
                 if (debugEnabled) {
                     plugin.getLogger().info("Successfully created ExecutableItem: " + id + " -> " + item.getType());
+                    plugin.getLogger().info("Requested amount: " + amount + ", Actual item amount: " + item.getAmount());
                 }
             } else {
                 plugin.getLogger().warning("ExecutableItem builder returned null for: " + id);

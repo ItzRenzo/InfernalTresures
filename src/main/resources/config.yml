@@ -47,6 +47,22 @@ treasure:
     # false = Guarantee all slots are filled (ignore individual item chances)
     use-chance-based-system: false
     
+    # Shulker Box loot generation settings
+    shulker-box-loot:
+      # Whether to apply the same progression system to Shulker Box contents
+      # true = Use the same progression slots for Shulker Box contents
+      # false = Use fixed slot count specified below
+      use-progression-system: true
+      
+      # Fixed number of slots to fill in Shulker Boxes (only used if use-progression-system is false)
+      # Shulker Boxes have 27 slots total
+      fixed-slots: 9
+      
+      # Whether to use chance-based system for Shulker Box contents
+      # true = Apply individual item chances inside Shulker Boxes
+      # false = Guarantee all selected slots are filled (ignore individual item chances)
+      use-chance-based-system: false
+    
     # Enable debug logging for progression system
     debug: true
 
@@ -239,6 +255,7 @@ debug:
     treasure-spawning: true
     mmo-items: true
     executable-items: true
+    executable-blocks: true
     barrel-filling: true
     biome-detection: true
     progression-debug: true

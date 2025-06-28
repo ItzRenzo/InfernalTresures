@@ -189,6 +189,59 @@ public class ConfigManager {
         if (!config.isSet("debug.categories.biome-detection")) {
             config.set("debug.categories.biome-detection", true);
         }
+        
+        if (!config.isSet("debug.categories.progression-debug")) {
+            config.set("debug.categories.progression-debug", true);
+        }
+        
+        // Set loot progression defaults
+        if (!config.isSet("treasure.loot-progression.current-level")) {
+            config.set("treasure.loot-progression.current-level", 1);
+        }
+        
+        if (!config.isSet("treasure.loot-progression.use-chance-based-system")) {
+            config.set("treasure.loot-progression.use-chance-based-system", false);
+        }
+        
+        if (!config.isSet("treasure.loot-progression.debug")) {
+            config.set("treasure.loot-progression.debug", true);
+        }
+        
+        // Set Shulker Box loot progression defaults
+        if (!config.isSet("treasure.loot-progression.shulker-box-loot.use-progression-system")) {
+            config.set("treasure.loot-progression.shulker-box-loot.use-progression-system", true);
+        }
+        
+        if (!config.isSet("treasure.loot-progression.shulker-box-loot.fixed-slots")) {
+            config.set("treasure.loot-progression.shulker-box-loot.fixed-slots", 9);
+        }
+        
+        if (!config.isSet("treasure.loot-progression.shulker-box-loot.use-chance-based-system")) {
+            config.set("treasure.loot-progression.shulker-box-loot.use-chance-based-system", false);
+        }
+        
+        // Set progression level defaults if they don't exist
+        for (int level = 1; level <= 4; level++) {
+            String basePath = "treasure.loot-progression.levels." + level;
+            
+            if (!config.isSet(basePath + ".slots")) {
+                int slots = level == 1 ? 7 : level == 2 ? 14 : level == 3 ? 21 : 27;
+                config.set(basePath + ".slots", slots);
+            }
+            
+            if (!config.isSet(basePath + ".name")) {
+                String name = level == 1 ? "Beginner" : level == 2 ? "Intermediate" : level == 3 ? "Advanced" : "Master";
+                config.set(basePath + ".name", name);
+            }
+            
+            if (!config.isSet(basePath + ".description")) {
+                String description = level == 1 ? "Basic treasure progression" : 
+                                   level == 2 ? "Improved treasure progression" :
+                                   level == 3 ? "Enhanced treasure progression" : 
+                                   "Maximum treasure progression";
+                config.set(basePath + ".description", description);
+            }
+        }
     }
     
     public void saveConfig() {
@@ -340,6 +393,27 @@ public class ConfigManager {
     
     public boolean useChanceBasedSystem() {
         return config.getBoolean("treasure.loot-progression.use-chance-based-system", false);
+    }
+    
+    // Shulker Box loot progression configuration methods
+    public boolean useShulkerBoxProgressionSystem() {
+        return config.getBoolean("treasure.loot-progression.shulker-box-loot.use-progression-system", true);
+    }
+    
+    public int getShulkerBoxFixedSlots() {
+        return config.getInt("treasure.loot-progression.shulker-box-loot.fixed-slots", 9);
+    }
+    
+    public boolean useShulkerBoxChanceBasedSystem() {
+        return config.getBoolean("treasure.loot-progression.shulker-box-loot.use-chance-based-system", false);
+    }
+    
+    public int getShulkerBoxSlots() {
+        if (useShulkerBoxProgressionSystem()) {
+            return getCurrentProgressionSlots();
+        } else {
+            return getShulkerBoxFixedSlots();
+        }
     }
     
     // Backward compatibility - check if any rarity has announcements enabled
