@@ -1,5 +1,7 @@
 package me.itzrenzo.infernaltresures;
 
+import org.bukkit.plugin.java.JavaPlugin;
+
 import me.itzrenzo.infernaltresures.commands.TreasureCommand;
 import me.itzrenzo.infernaltresures.integrations.ExecutableBlocksIntegration;
 import me.itzrenzo.infernaltresures.integrations.ExecutableItemsIntegration;
@@ -14,7 +16,6 @@ import me.itzrenzo.infernaltresures.managers.MenuManager;
 import me.itzrenzo.infernaltresures.managers.MessageManager;
 import me.itzrenzo.infernaltresures.managers.StatsManager;
 import me.itzrenzo.infernaltresures.managers.TreasureManager;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public final class InfernalTresures extends JavaPlugin {
     

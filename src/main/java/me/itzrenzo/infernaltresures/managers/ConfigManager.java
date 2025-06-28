@@ -1,12 +1,14 @@
 package me.itzrenzo.infernaltresures.managers;
 
-import me.itzrenzo.infernaltresures.InfernalTresures;
-import org.bukkit.configuration.file.FileConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+
+import org.bukkit.configuration.file.FileConfiguration;
+
+import me.itzrenzo.infernaltresures.InfernalTresures;
 
 public class ConfigManager {
     private final InfernalTresures plugin;

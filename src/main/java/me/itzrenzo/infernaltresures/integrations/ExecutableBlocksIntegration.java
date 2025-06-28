@@ -1,13 +1,15 @@
 package me.itzrenzo.infernaltresures.integrations;
 
-import com.ssomar.executableblocks.api.ExecutableBlocksAPI;
-import me.itzrenzo.infernaltresures.InfernalTresures;
+import java.util.Optional;
+import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import java.util.Optional;
-import java.util.logging.Level;
+import com.ssomar.executableblocks.api.ExecutableBlocksAPI;
+
+import me.itzrenzo.infernaltresures.InfernalTresures;
 
 /**
  * Integration with ExecutableBlocks plugin using the official ExecutableBlocks API

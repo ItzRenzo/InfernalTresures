@@ -73,7 +73,7 @@ public class LootManager {
         }
         
         // Parse material
-        Material material = null;
+        Material material;
         if (materialName != null) {
             try {
                 material = Material.valueOf(materialName.toUpperCase());
@@ -420,6 +420,124 @@ public class LootManager {
                 item.requiredBlocksMinedRange = "0+";
             }
             
+            // Parse Shulker Box items if applicable
+            Object shulkerBoxObj = itemMap.get("shulker_box_items");
+            if (shulkerBoxObj instanceof List<?>) {
+                item.isShulkerBox = true;
+                item.shulkerBoxItems = new ArrayList<>();
+                for (Object shulkerItemObj : (List<?>) shulkerBoxObj) {
+                    if (shulkerItemObj instanceof Map<?, ?>) {
+                        Map<?, ?> shulkerItemMap = (Map<?, ?>) shulkerItemObj;
+                        ShulkerBoxItem shulkerItem = new ShulkerBoxItem();
+                        
+                        // Parse material
+                        String materialName = (String) shulkerItemMap.get("material");
+                        if (materialName != null) {
+                            try {
+                                shulkerItem.material = Material.valueOf(materialName.toUpperCase());
+                            } catch (IllegalArgumentException e) {
+                                plugin.getLogger().warning("Invalid material '" + materialName + "' for Shulker Box item");
+                            }
+                        }
+                        
+                        // Parse min_amount, max_amount, and chance (like regular loot items)
+                        Object shulkerMinAmountObj = shulkerItemMap.get("min_amount");
+                        shulkerItem.minAmount = shulkerMinAmountObj instanceof Number ? ((Number) shulkerMinAmountObj).intValue() : 1;
+                        
+                        Object shulkerMaxAmountObj = shulkerItemMap.get("max_amount");
+                        shulkerItem.maxAmount = shulkerMaxAmountObj instanceof Number ? ((Number) shulkerMaxAmountObj).intValue() : shulkerItem.minAmount;
+                        
+                        Object shulkerChanceObj = shulkerItemMap.get("chance");
+                        shulkerItem.chance = shulkerChanceObj instanceof Number ? ((Number) shulkerChanceObj).doubleValue() : 100.0;
+                        
+                        // Parse legacy amount field for backward compatibility
+                        Object amountObj = shulkerItemMap.get("amount");
+                        if (amountObj instanceof Number && shulkerMinAmountObj == null && shulkerMaxAmountObj == null) {
+                            // Only use legacy amount if min/max not specified
+                            int legacyAmount = ((Number) amountObj).intValue();
+                            shulkerItem.minAmount = legacyAmount;
+                            shulkerItem.maxAmount = legacyAmount;
+                        }
+                        
+                        // Parse progression requirement (same as main loot items)
+                        Object shulkerRequiredBlocksObj = shulkerItemMap.get("required_blocks_mined");
+                        if (shulkerRequiredBlocksObj instanceof Number) {
+                            long requiredBlocks = ((Number) shulkerRequiredBlocksObj).longValue();
+                            shulkerItem.minRequiredBlocksMined = requiredBlocks;
+                            shulkerItem.maxRequiredBlocksMined = Long.MAX_VALUE;
+                            shulkerItem.requiredBlocksMinedRange = String.valueOf(requiredBlocks) + "+";
+                        } else if (shulkerRequiredBlocksObj instanceof String) {
+                            String rangeStr = (String) shulkerRequiredBlocksObj;
+                            shulkerItem.requiredBlocksMinedRange = rangeStr;
+                            
+                            if (rangeStr.contains("-")) {
+                                String[] parts = rangeStr.split("-", 2);
+                                try {
+                                    shulkerItem.minRequiredBlocksMined = Long.parseLong(parts[0].trim());
+                                    shulkerItem.maxRequiredBlocksMined = Long.parseLong(parts[1].trim());
+                                } catch (NumberFormatException e) {
+                                    plugin.getLogger().warning("Invalid required_blocks_mined format for Shulker Box item: " + rangeStr);
+                                    shulkerItem.minRequiredBlocksMined = 0;
+                                    shulkerItem.maxRequiredBlocksMined = Long.MAX_VALUE;
+                                    shulkerItem.requiredBlocksMinedRange = "0+";
+                                }
+                            } else {
+                                try {
+                                    long requiredBlocks = Long.parseLong(rangeStr);
+                                    shulkerItem.minRequiredBlocksMined = requiredBlocks;
+                                    shulkerItem.maxRequiredBlocksMined = Long.MAX_VALUE;
+                                    shulkerItem.requiredBlocksMinedRange = requiredBlocks + "+";
+                                } catch (NumberFormatException e) {
+                                    plugin.getLogger().warning("Invalid required_blocks_mined format for Shulker Box item: " + rangeStr);
+                                    shulkerItem.minRequiredBlocksMined = 0;
+                                    shulkerItem.maxRequiredBlocksMined = Long.MAX_VALUE;
+                                    shulkerItem.requiredBlocksMinedRange = "0+";
+                                }
+                            }
+                        }
+                        
+                        // Parse display name
+                        shulkerItem.displayName = (String) shulkerItemMap.get("display_name");
+                        
+                        // Parse lore
+                        Object shulkerLoreObj = shulkerItemMap.get("lore");
+                        if (shulkerLoreObj instanceof List<?>) {
+                            shulkerItem.lore = new ArrayList<>();
+                            for (Object loreItem : (List<?>) shulkerLoreObj) {
+                                if (loreItem instanceof String) {
+                                    shulkerItem.lore.add((String) loreItem);
+                                }
+                            }
+                        }
+                        
+                        // Check for ExecutableItem
+                        String shulkerExecutableId = (String) shulkerItemMap.get("executable_id");
+                        if (shulkerExecutableId != null) {
+                            shulkerItem.isExecutableItem = true;
+                            shulkerItem.executableId = shulkerExecutableId;
+                        }
+                        
+                        // Check for ExecutableBlock
+                        String shulkerExecutableBlockId = (String) shulkerItemMap.get("executable_block_id");
+                        if (shulkerExecutableBlockId != null) {
+                            shulkerItem.isExecutableBlock = true;
+                            shulkerItem.executableBlockId = shulkerExecutableBlockId;
+                        }
+                        
+                        // Check for MMOItem
+                        String shulkerMmoType = (String) shulkerItemMap.get("mmo_type");
+                        String shulkerMmoId = (String) shulkerItemMap.get("mmo_id");
+                        if (shulkerMmoType != null && shulkerMmoId != null) {
+                            shulkerItem.isMMOItem = true;
+                            shulkerItem.mmoType = shulkerMmoType;
+                            shulkerItem.mmoId = shulkerMmoId;
+                        }
+                        
+                        item.shulkerBoxItems.add(shulkerItem);
+                    }
+                }
+            }
+            
             return item;
             
         } catch (Exception e) {
@@ -494,7 +612,7 @@ public class LootManager {
             
             // Apply the item's individual chance
             if (ThreadLocalRandom.current().nextDouble(100.0) < selectedItem.chance) {
-                ItemStack itemStack = createItemStack(selectedItem);
+                ItemStack itemStack = createItemStack(selectedItem, player);
                 if (itemStack != null) {
                     loot.add(itemStack);
                     
@@ -588,7 +706,7 @@ public class LootManager {
             
             // Apply the item's individual chance
             if (ThreadLocalRandom.current().nextDouble(100.0) < selectedItem.chance) {
-                ItemStack itemStack = createItemStack(selectedItem);
+                ItemStack itemStack = createItemStack(selectedItem, null); // Pass null for UUID-based generation
                 if (itemStack != null) {
                     loot.add(itemStack);
                     
@@ -710,7 +828,87 @@ public class LootManager {
                 }
             }
             
-            // Handle MMOItems
+            // Handle Shulker Box items
+            if (lootItem.isShulkerBox) {
+                // Use the configured material (supports all colored shulker boxes)
+                Material shulkerMaterial = lootItem.material != null ? lootItem.material : Material.SHULKER_BOX;
+                ItemStack shulkerBox = new ItemStack(shulkerMaterial, 1);
+                
+                // Set custom display name and lore for the Shulker Box itself if specified
+                if (lootItem.displayName != null || (lootItem.lore != null && !lootItem.lore.isEmpty())) {
+                    ItemBuilder builder = ItemBuilder.from(shulkerBox);
+                    
+                    if (lootItem.displayName != null) {
+                        builder.setDisplayName(lootItem.displayName);
+                    }
+                    
+                    if (lootItem.lore != null && !lootItem.lore.isEmpty()) {
+                        builder.setLore(lootItem.lore);
+                    }
+                    
+                    shulkerBox = builder.build();
+                }
+                
+                // Set up the contained items using BlockStateMeta
+                if (lootItem.shulkerBoxItems != null && !lootItem.shulkerBoxItems.isEmpty()) {
+                    org.bukkit.inventory.meta.BlockStateMeta blockStateMeta = (org.bukkit.inventory.meta.BlockStateMeta) shulkerBox.getItemMeta();
+                    org.bukkit.block.ShulkerBox shulkerBoxState = (org.bukkit.block.ShulkerBox) blockStateMeta.getBlockState();
+                    org.bukkit.inventory.Inventory shulkerInventory = shulkerBoxState.getInventory();
+                    
+                    // Add contained items to the shulker box inventory
+                    for (ShulkerBoxItem shulkerItem : lootItem.shulkerBoxItems) {
+                        ItemStack containedItem = null;
+                        
+                        // Handle ExecutableItems
+                        if (shulkerItem.isExecutableItem) {
+                            containedItem = InfernalTresures.getInstance().getExecutableItemsIntegration()
+                                .createExecutableItem(shulkerItem.executableId, shulkerItem.minAmount);
+                        }
+                        // Handle ExecutableBlocks
+                        else if (shulkerItem.isExecutableBlock) {
+                            containedItem = InfernalTresures.getInstance().getExecutableBlocksIntegration()
+                                .createExecutableBlock(shulkerItem.executableBlockId, shulkerItem.minAmount);
+                        }
+                        // Handle MMOItems
+                        else if (shulkerItem.isMMOItem) {
+                            containedItem = InfernalTresures.getInstance().getMMOItemsIntegration()
+                                .createMMOItem(shulkerItem.mmoType, shulkerItem.mmoId, shulkerItem.minAmount);
+                        }
+                        // Handle material-based items
+                        else if (shulkerItem.material != null) {
+                            containedItem = new ItemStack(shulkerItem.material, shulkerItem.minAmount);
+                        }
+                        
+                        // Apply custom display name and lore to contained item if specified
+                        if (containedItem != null && (shulkerItem.displayName != null || (shulkerItem.lore != null && !shulkerItem.lore.isEmpty()))) {
+                            ItemBuilder itemBuilder = ItemBuilder.from(containedItem);
+                            
+                            if (shulkerItem.displayName != null) {
+                                itemBuilder.setDisplayName(shulkerItem.displayName);
+                            }
+                            
+                            if (shulkerItem.lore != null && !shulkerItem.lore.isEmpty()) {
+                                itemBuilder.setLore(shulkerItem.lore);
+                            }
+                            
+                            containedItem = itemBuilder.build();
+                        }
+                        
+                        // Add the item to the shulker box inventory
+                        if (containedItem != null) {
+                            shulkerInventory.addItem(containedItem);
+                        }
+                    }
+                    
+                    // Update the block state and apply it back to the item
+                    blockStateMeta.setBlockState(shulkerBoxState);
+                    shulkerBox.setItemMeta(blockStateMeta);
+                }
+                
+                return shulkerBox;
+            }
+            
+            // Handle MMOItems for regular items
             if (lootItem.isMMOItem) {
                 ItemStack mmoItem = InfernalTresures.getInstance().getMMOItemsIntegration()
                     .createMMOItem(lootItem.mmoType, lootItem.mmoId, amount);
@@ -733,7 +931,7 @@ public class LootManager {
                     
                     return mmoItem;
                 } else {
-                    plugin.getLogger().warning("Failed to create MMOItem for display: " + lootItem.mmoType + "." + lootItem.mmoId);
+                    plugin.getLogger().warning("Failed to create MMOItem: " + lootItem.mmoType + "." + lootItem.mmoId);
                     return null;
                 }
             }
@@ -809,7 +1007,7 @@ public class LootManager {
     /**
      * Create an ItemStack for actual loot generation (with random amounts and full functionality)
      */
-    private ItemStack createItemStack(LootItem lootItem) {
+    private ItemStack createItemStack(LootItem lootItem, org.bukkit.entity.Player player) {
         try {
             // Calculate random amount between min and max
             int amount = lootItem.minAmount;
@@ -871,6 +1069,108 @@ public class LootManager {
                     plugin.getLogger().warning("Failed to create ExecutableBlock: " + lootItem.executableBlockId);
                     return null;
                 }
+            }
+            
+            // Handle Shulker Box items
+            if (lootItem.isShulkerBox) {
+                // Use the configured material (supports all colored shulker boxes)
+                Material shulkerMaterial = lootItem.material != null ? lootItem.material : Material.SHULKER_BOX;
+                ItemStack shulkerBox = new ItemStack(shulkerMaterial, 1);
+                
+                // Set custom display name and lore for the Shulker Box itself if specified
+                if (lootItem.displayName != null || (lootItem.lore != null && !lootItem.lore.isEmpty())) {
+                    ItemBuilder builder = ItemBuilder.from(shulkerBox);
+                    
+                    if (lootItem.displayName != null) {
+                        builder.setDisplayName(lootItem.displayName);
+                    }
+                    
+                    if (lootItem.lore != null && !lootItem.lore.isEmpty()) {
+                        builder.setLore(lootItem.lore);
+                    }
+                    
+                    shulkerBox = builder.build();
+                }
+                
+                // Set up the contained items using BlockStateMeta
+                if (lootItem.shulkerBoxItems != null && !lootItem.shulkerBoxItems.isEmpty()) {
+                    org.bukkit.inventory.meta.BlockStateMeta blockStateMeta = (org.bukkit.inventory.meta.BlockStateMeta) shulkerBox.getItemMeta();
+                    org.bukkit.block.ShulkerBox shulkerBoxState = (org.bukkit.block.ShulkerBox) blockStateMeta.getBlockState();
+                    org.bukkit.inventory.Inventory shulkerInventory = shulkerBoxState.getInventory();
+                    
+                    // Add contained items to the shulker box inventory
+                    for (ShulkerBoxItem shulkerItem : lootItem.shulkerBoxItems) {
+                        // Check progression requirement for this shulker item
+                        long playerBlocksMined = 0;
+                        if (player != null) {
+                            playerBlocksMined = plugin.getStatsManager().getPlayerStats(player.getUniqueId()).totalBlocksMined;
+                        }
+                        
+                        // Skip this item if player doesn't meet progression requirement
+                        if (playerBlocksMined < shulkerItem.minRequiredBlocksMined || playerBlocksMined > shulkerItem.maxRequiredBlocksMined) {
+                            continue;
+                        }
+                        
+                        // Apply chance check
+                        if (ThreadLocalRandom.current().nextDouble(100.0) >= shulkerItem.chance) {
+                            continue; // Item didn't roll successfully
+                        }
+                        
+                        // Calculate random amount between min and max
+                        int itemAmount = shulkerItem.minAmount;
+                        if (shulkerItem.maxAmount > shulkerItem.minAmount) {
+                            itemAmount = ThreadLocalRandom.current().nextInt(shulkerItem.minAmount, shulkerItem.maxAmount + 1);
+                        }
+                        
+                        ItemStack containedItem = null;
+                        
+                        // Handle ExecutableItems
+                        if (shulkerItem.isExecutableItem) {
+                            containedItem = InfernalTresures.getInstance().getExecutableItemsIntegration()
+                                .createExecutableItem(shulkerItem.executableId, itemAmount);
+                        }
+                        // Handle ExecutableBlocks
+                        else if (shulkerItem.isExecutableBlock) {
+                            containedItem = InfernalTresures.getInstance().getExecutableBlocksIntegration()
+                                .createExecutableBlock(shulkerItem.executableBlockId, itemAmount);
+                        }
+                        // Handle MMOItems
+                        else if (shulkerItem.isMMOItem) {
+                            containedItem = InfernalTresures.getInstance().getMMOItemsIntegration()
+                                .createMMOItem(shulkerItem.mmoType, shulkerItem.mmoId, itemAmount);
+                        }
+                        // Handle material-based items
+                        else if (shulkerItem.material != null) {
+                            containedItem = new ItemStack(shulkerItem.material, itemAmount);
+                        }
+                        
+                        // Apply custom display name and lore to contained item if specified
+                        if (containedItem != null && (shulkerItem.displayName != null || (shulkerItem.lore != null && !shulkerItem.lore.isEmpty()))) {
+                            ItemBuilder itemBuilder = ItemBuilder.from(containedItem);
+                            
+                            if (shulkerItem.displayName != null) {
+                                itemBuilder.setDisplayName(shulkerItem.displayName);
+                            }
+                            
+                            if (shulkerItem.lore != null && !shulkerItem.lore.isEmpty()) {
+                                itemBuilder.setLore(shulkerItem.lore);
+                            }
+                            
+                            containedItem = itemBuilder.build();
+                        }
+                        
+                        // Add the item to the shulker box inventory
+                        if (containedItem != null) {
+                            shulkerInventory.addItem(containedItem);
+                        }
+                    }
+                    
+                    // Update the block state and apply it back to the item
+                    blockStateMeta.setBlockState(shulkerBoxState);
+                    shulkerBox.setItemMeta(blockStateMeta);
+                }
+                
+                return shulkerBox;
             }
             
             // Regular Bukkit item handling
@@ -1015,6 +1315,10 @@ public class LootManager {
         boolean isExecutableBlock;
         String executableBlockId;
         
+        // Shulker Box fields
+        boolean isShulkerBox;
+        List<ShulkerBoxItem> shulkerBoxItems;
+        
         // Progression requirement - now supports ranges
         long minRequiredBlocksMined = 0; // Minimum blocks required (inclusive)
         long maxRequiredBlocksMined = Long.MAX_VALUE; // Maximum blocks allowed (inclusive)
@@ -1039,6 +1343,33 @@ public class LootManager {
         String effect;
         int duration;
         int amplifier;
+    }
+    
+    private static class ShulkerBoxItem {
+        Material material;
+        int minAmount = 1;
+        int maxAmount = 1;
+        double chance = 100.0;
+        String displayName;
+        List<String> lore;
+        
+        // Progression requirement - same as main loot items
+        long minRequiredBlocksMined = 0;
+        long maxRequiredBlocksMined = Long.MAX_VALUE;
+        String requiredBlocksMinedRange = "0+";
+        
+        // MMOItem fields
+        boolean isMMOItem;
+        String mmoType;
+        String mmoId;
+        
+        // ExecutableItem fields
+        boolean isExecutableItem;
+        String executableId;
+        
+        // ExecutableBlock fields
+        boolean isExecutableBlock;
+        String executableBlockId;
     }
     
     /**
@@ -1089,6 +1420,10 @@ public class LootManager {
             return lootItem.isExecutableBlock;
         }
         
+        public boolean isShulkerBox() {
+            return lootItem.isShulkerBox;
+        }
+        
         public String getItemType() {
             if (lootItem.isExecutableItem) {
                 return "ExecutableItem: " + lootItem.executableId;
@@ -1096,6 +1431,8 @@ public class LootManager {
                 return "ExecutableBlock: " + lootItem.executableBlockId;
             } else if (lootItem.isMMOItem) {
                 return "MMOItem: " + lootItem.mmoType + "." + lootItem.mmoId;
+            } else if (lootItem.isShulkerBox) {
+                return "ShulkerBox with " + lootItem.shulkerBoxItems.size() + " items";
             } else {
                 return "Material: " + lootItem.material.name();
             }
