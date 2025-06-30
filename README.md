@@ -1,12 +1,13 @@
 # InfernalTreasures
 
-A comprehensive Minecraft plugin that adds treasure hunting while mining! Find valuable treasures hidden in blocks as you mine, with biome-specific loot, multiple item system integrations, customizable GUI browsers, player luck system, and highly configurable features.
+A comprehensive Minecraft plugin that adds treasure hunting while mining! Find valuable treasures hidden in blocks as you mine, with biome-specific loot, multiple item system integrations, customizable GUI browsers, player luck system, difficulty scaling, and highly configurable features with full comment preservation.
 
 ## 🌟 Features
 
 - 🎯 **Treasure Hunting**: Find treasures while mining specific blocks with configurable spawn chances
 - 🌍 **Biome-Specific Loot**: Different treasures spawn based on the biome you're mining in
 - ⭐ **Advanced Rarity System**: 5 rarity tiers (Common, Rare, Epic, Legendary, Mythic) with individual spawn chances
+- 🎚️ **Difficulty System**: 4 difficulty levels (Easy, Medium, Hard, Extreme) that scale treasure requirements
 - 📦 **Interactive Treasure Barrels**: Treasures spawn as barrels with scattered loot inside
 - 🖥️ **Interactive Loot GUI**: Browse all available treasures by biome and rarity with detailed information
 - 🎨 **Fully Customizable Menus**: Configure GUI titles, layouts, colors, and content through YAML files
@@ -14,80 +15,192 @@ A comprehensive Minecraft plugin that adds treasure hunting while mining! Find v
 - 🍀 **Treasure Luck System**: Admin command to boost player treasure spawn rates temporarily
 - ⚙️ **Player Toggle Control**: Players can enable/disable treasure spawning for themselves
 - 📊 **Comprehensive Statistics**: Track blocks mined, treasures found, playtime, and luck status
-- 🔧 **Highly Configurable**: Extensive configuration options for every aspect of the plugin
+- 🔧 **Highly Configurable**: Extensive configuration options with **comment preservation**
 - 🎨 **Advanced Item System**: Support for enchantments, attributes, custom names, lore, and potion effects
 - 📊 **Player Progression**: Track blocks mined and gate items behind progression requirements
 - ⏰ **Smart Auto-Despawn**: Treasures automatically despawn after configurable times per rarity
 - 🎵 **Visual & Audio Effects**: Optional sound and particle effects when treasures are discovered
-- 🔗 **Plugin Integrations**: Native support for MMOItems and ExecutableItems
+- 🔗 **Plugin Integrations**: Native support for MMOItems and ExecutableItems/ExecutableBlocks
 - 📊 **Debug System**: Comprehensive debug logging with categorized output
 - ⚡ **Performance Optimized**: Efficient treasure spawning and management system
+- 💬 **Config Comment Preservation**: Beautiful, documented configs that maintain formatting and comments
 
-## 🖥️ Interactive Loot Browser
+## 🆕 Latest Features
 
-### GUI System Features
-- **📋 Biome Selection**: Browse all available biomes with custom icons and descriptions
-- **⭐ Rarity Browser**: View available rarities for each biome with item counts
-- **🎁 Loot Display**: See ALL possible items with detailed statistics (no random disappearing!)
-- **📊 Item Information**: View drop chances, amount ranges, progression requirements, and item types
-- **🎨 Full Customization**: Configure every aspect through YAML menu files
+### 🎚️ Difficulty System
+**NEW!** Dynamic difficulty scaling that adjusts treasure requirements based on server progression:
 
-### GUI Commands
+**Difficulty Levels:**
+- **Easy (1.0x)**: Default requirements - perfect for new servers
+- **Medium (2.0x)**: Double the mining requirements - for established servers
+- **Hard (3.0x)**: Triple requirements - challenging but rewarding
+- **Extreme (4.0x)**: Quadruple requirements - for hardcore treasure hunters
+
+**Smart Scaling:**
+- **Number Requirements**: `required_blocks_mined: 1000` becomes `4000` on Extreme
+- **Range Requirements**: `0-99999` becomes `0-24999` on Extreme (shorter availability window)
+- **Plus Requirements**: `5000+` becomes `20000+` on Extreme
+- **Configurable**: Enable/disable range scaling and customize multipliers
+
+### 💬 Config Comment Preservation
+**BREAKTHROUGH FEATURE!** Your beautiful, documented config files now stay beautiful forever:
+
+✅ **Perfect Structure**: All sections, indentation, and formatting preserved  
+✅ **Comment Preservation**: Every header, explanation, and comment maintained  
+✅ **Smart Updates**: Only changed values are updated, everything else stays intact  
+✅ **Professional Appearance**: Your configs remain clean and readable  
+
+**Example: Changing difficulty from EASY to EXTREME:**
+```yaml
+# Before AND After - only the value changes!
+# ========================================
+#           DIFFICULTY SETTINGS  
+# ========================================
+treasure:
+  difficulty:
+    # Current difficulty setting: EASY, MEDIUM, HARD, EXTREME
+    current: EXTREME  # ← Only this changes!
+    
+    # Multipliers for required_blocks_mined values
+    multipliers:
+      easy: 1.0 # No change (x1)
+      # All comments and structure preserved perfectly!
+```
+
+### 🔗 Enhanced Plugin Integrations
+- **ExecutableBlocks Support**: Full integration with ExecutableBlocks for advanced treasure types
+- **Improved MMOItems**: Better error handling and validation
+- **Smart Detection**: Automatic retry systems handle plugin load timing
+- **Debug Integration**: Detailed logging for all integration events
+
+## 🎮 Commands
+
+### 🎚️ Difficulty Commands
+| Command | Permission | Description |
+|---------|------------|-------------|
+| `/treasure difficulty info` | `infernaltresures.command.difficulty` | Show current difficulty and settings |
+| `/treasure difficulty set <level>` | `infernaltresures.command.difficulty.set` | Set difficulty (EASY/MEDIUM/HARD/EXTREME) |
+| `/treasure difficulty multipliers` | `infernaltresures.command.difficulty` | View all difficulty multipliers |
+| `/treasure difficulty test <value>` | `infernaltresures.command.difficulty` | Test how difficulty affects a specific value |
+
+**Examples:**
+```bash
+# Check current difficulty settings
+/treasure difficulty info
+
+# Set server to extreme difficulty
+/treasure difficulty set EXTREME
+
+# See how difficulty affects specific values
+/treasure difficulty test 5000
+# Output: "5000 blocks becomes 20000 blocks on EXTREME difficulty"
+
+# View all multiplier settings
+/treasure difficulty multipliers
+```
+
+### 📊 Enhanced Stats Commands
+| Command | Permission | Description |
+|---------|------------|-------------|
+| `/treasure stats [player]` | `infernaltresures.command.stats` | View treasure hunting statistics |
+| `/treasure stats <player> set <stattype> <value>` | `infernaltresures.command.stats.set` | Set specific statistics for a player |
+| `/treasure luck <seconds> <player> [multiplier]` | `infernaltresures.command.luck` | Give temporary treasure luck to a player |
+| `/treasure toggle` | `infernaltresures.command.toggle` | Toggle treasure spawning on/off for yourself |
+| `/treasure progression [info\|set <level>\|debug <on\|off>]` | `infernaltresures.command.progression` | Manage loot progression system |
+| `/lootgui` | `infernaltresures.command.loot.gui` | Open interactive loot browser |
+| `/treasure loot gui` | `infernaltresures.command.loot` | Alternative loot browser command |
+
+### 🖥️ GUI Commands
 | Command | Permission | Description |
 |---------|------------|-------------|
 | `/lootgui` | `infernaltresures.command.use` | Open the loot browser GUI |
 | `/treasure loot gui` | `infernaltresures.command.use` | Alternative command for loot GUI |
 
-### Menu Customization
-Create your own menu themes by editing files in the `menus/` folder:
-
-**`menus/biome-selection.yml`** - Customize the biome selection screen
-**`menus/rarity-selection.yml`** - Configure rarity browsing interface  
-**`menus/loot-display.yml`** - Customize loot item display and information
-
-Example menu customization:
-```yaml
-# menus/loot-display.yml
-loot-display:
-  show-details:
-    chance: true              # Show drop percentages
-    amount-range: true        # Show min/max amounts
-    required-blocks: true     # Show progression requirements
-    item-type: true          # Show if it's MMOItem/ExecutableItem
-    biome-source: true       # Show source biome
-  
-  format:
-    chance: "&7Chance: &f{chance}%"
-    amount-range: "&7Amount: &f{min_amount} - {max_amount}"
-    required-blocks: "&7Required Blocks: &f{required_blocks}"
-    # Fully customizable with color codes!
-```
-
-## 🔌 Plugin Integrations
-
-### MMOItems Integration
-- **Native Support**: Create MMOItems as treasure rewards
-- **Dynamic Detection**: Automatically detects and integrates with MMOItems
-- **Validation**: Validates MMOItem existence before adding to loot pools
-- **Configuration**: Use `mmo_type` and `mmo_id` in biome loot tables
-
-### ExecutableItems Integration  
-- **SCore API**: Uses official SCore API for ExecutableItems integration
-- **Automatic Retry**: Smart initialization system handles plugin load timing
-- **Custom Items**: Support for complex ExecutableItems as treasure rewards
-- **Configuration**: Use `executable_id` in biome loot tables
-
-## 📥 Installation
-
-1. Download the latest release from the [releases page](../../releases)
-2. Place the `InfernalTreasures-1.0.jar` file in your server's `plugins` folder
-3. *Optional*: Install [MMOItems](https://www.spigotmc.org/resources/mmoitems.39267/) for advanced item support
-4. *Optional*: Install [SCore](https://www.spigotmc.org/resources/score.84702/) and [ExecutableItems](https://www.spigotmc.org/resources/executableitems.77578/) for executable item support
-5. Restart your server
-6. Configure the plugin by editing the generated config files
-7. **NEW**: Customize the loot browser GUI by editing files in the `menus/` folder
+### 📈 Progression Commands
+| Command | Permission | Description |
+|---------|------------|-------------|
+| `/treasure progression [info\|set <level>\|debug <on\|off>]` | `infernaltresures.command.progression` | Manage loot progression system |
 
 ## ⚙️ Configuration
+
+### 🎚️ Difficulty System Configuration
+
+```yaml
+treasure:
+  # Difficulty system - affects required_blocks_mined values
+  difficulty:
+    # Current difficulty setting: EASY, MEDIUM, HARD, EXTREME
+    current: EASY
+    
+    # Multipliers for required_blocks_mined values
+    multipliers:
+      easy: 1.0     # No change (x1)
+      medium: 2.0   # Double requirements (x2)
+      hard: 3.0     # Triple requirements (x3)
+      extreme: 4.0  # Quadruple requirements (x4)
+    
+    # Whether to affect range-type requirements like "0-99999"
+    # If true: "0-99999" becomes "0-24999" on extreme difficulty
+    # If false: range-type requirements are not affected by difficulty
+    affect-range-requirements: true
+```
+
+**How Difficulty Affects Treasure Requirements:**
+
+| Original Requirement | Easy (1x) | Medium (2x) | Hard (3x) | Extreme (4x) |
+|----------------------|-----------|-------------|-----------|--------------|
+| `required_blocks_mined: 1000` | 1000 | 2000 | 3000 | 4000 |
+| `required_blocks_mined: "5000+"` | 5000+ | 10000+ | 15000+ | 20000+ |
+| `required_blocks_mined: "0-99999"` | 0-99999 | 0-49999 | 0-33333 | 0-24999 |
+
+**Use Cases:**
+- **New Servers**: Start on Easy for quick treasure discovery
+- **Established Servers**: Medium/Hard for balanced progression
+- **Hardcore Servers**: Extreme for maximum challenge
+- **Events**: Temporarily lower difficulty for special events
+
+### 💬 Config Comment Preservation
+
+**Revolutionary Feature**: Your config files maintain their beautiful structure forever!
+
+**What's Preserved:**
+- ✅ All section headers and dividers
+- ✅ Explanatory comments and documentation
+- ✅ Indentation and formatting
+- ✅ Empty lines and spacing
+- ✅ Custom organization and structure
+
+**Smart Update System:**
+- Only changed values are updated
+- All comments and structure remain intact
+- Original template formatting preserved
+- No more config recreation or comment loss
+
+**Before vs After Example:**
+```yaml
+# ========================================
+#         DIFFICULTY SETTINGS
+# ========================================
+# This system allows you to scale treasure
+# requirements based on your server's needs.
+# Perfect for balancing treasure hunting!
+
+treasure:
+  difficulty:
+    # Current setting - affects ALL treasure requirements
+    # Options: EASY, MEDIUM, HARD, EXTREME
+    current: EASY  # ← Changes to: EXTREME
+    
+    # The multipliers applied to required_blocks_mined
+    # Higher values = more blocks needed = harder game
+    multipliers:
+      easy: 1.0    # Vanilla experience
+      medium: 2.0  # 2x harder
+      hard: 3.0    # 3x harder  
+      extreme: 4.0 # 4x harder (hardcore mode!)
+```
+
+**Result**: Only `current: EASY` becomes `current: EXTREME` - everything else stays perfect!
 
 ### Main Config (`config.yml`)
 
@@ -167,379 +280,130 @@ debug:
     biome-detection: true
 ```
 
-### Player Progression System
+## 🎨 Advanced Biome Configuration
 
-Gate valuable items behind progression requirements:
+### Difficulty-Aware Loot Tables
+
+Configure treasures that respond to difficulty settings:
 
 ```yaml
-# In any biome loot table
+# biomes/desert.yml
 loot:
   LEGENDARY:
     - material: NETHERITE_INGOT
+      min_amount: 1
+      max_amount: 3
+      chance: 15
+      # This scales with difficulty automatically!
+      required_blocks_mined: 5000  # Easy: 5000, Medium: 10000, Hard: 15000, Extreme: 20000
+      display_name: "&6Desert Master's Ingot"
+      lore:
+        - "&7Only experienced miners can find this"
+        - "&7in the harsh desert conditions."
+        
+    - material: DIAMOND_BLOCK
       min_amount: 2
       max_amount: 5
-      chance: 10
-      required_blocks_mined: 5000  # Player must mine 5000 blocks first
-      display_name: "&6&lNether Master's Ingot"
+      chance: 25
+      # Range requirements also scale!
+      required_blocks_mined: "1000-9999"  # Extreme: "1000-2499" (shorter window)
+      display_name: "&bDesert Diamond Cache"
       lore:
-        - "&7Only the most experienced"
-        - "&7miners can find this treasure."
+        - "&7A cache of diamonds hidden by"
+        - "&7ancient desert civilizations."
 ```
 
-### Menu Configuration (`menus/`)
+### 🔗 Enhanced Integration Examples
 
-**Full GUI Customization**: Every aspect of the loot browser can be customized!
-
+**ExecutableBlocks Integration:**
 ```yaml
-# menus/biome-selection.yml
-gui:
-  title: "&6&lTreasure Biomes"
-  size: 54
-
-biome-items:
-  desert:
-    material: SAND
-    display-name: "&e&lDesert Treasures"
-    lore:
-      - "&7Hot sands hide ancient secrets"
-      - "&7Click to explore desert loot!"
-  # Configure each biome individually
-  
-navigation:
-  close:
-    material: BARRIER
-    slot: 53
-    display-name: "&c&lClose"
-    lore: ["&7Click to close this menu"]
-```
-
-```yaml
-# menus/loot-display.yml
-loot-display:
-  show-details:
-    chance: true              # Show drop chances
-    amount-range: true        # Show min/max amounts  
-    single-amount: false      # Show amount when min=max
-    required-blocks: true     # Show progression requirements
-    item-type: true          # Show MMOItem/ExecutableItem info
-    biome-source: true       # Show source biome
-
-  format:
-    chance: "&7Chance: &f{chance}%"
-    amount-range: "&7Amount: &f{min_amount} - {max_amount}"
-    required-blocks: "&7Required Blocks: &f{required_blocks}"
-    no-requirement: "&7Required Blocks: &aNone"
-    item-type: "&7Type: &f{item_type}"
-    # All formats support full color codes!
-```
-
-## 🎮 Commands
-
-| Command | Permission | Description |
-|---------|------------|-------------|
-| `/treasure help` | `infernaltresures.command.use` | Show help message |
-| `/treasure spawn [rarity]` | `infernaltresures.command.spawn` | Spawn a treasure at your location |
-| `/treasure reload` | `infernaltresures.command.reload` | Reload all configurations and menus |
-| `/treasure info` | `infernaltresures.command.info` | Show plugin and integration status |
-| `/treasure stats [player]` | `infernaltresures.command.stats` | View treasure hunting statistics |
-| `/treasure stats <player> set <stattype> <value>` | `infernaltresures.command.stats.set` | Set specific statistics for a player |
-| `/treasure luck <seconds> <player> [multiplier]` | `infernaltresures.command.luck` | Give temporary treasure luck to a player |
-| `/treasure toggle` | `infernaltresures.command.toggle` | Toggle treasure spawning on/off for yourself |
-| `/treasure progression [info\|set <level>\|debug <on\|off>]` | `infernaltresures.command.progression` | Manage loot progression system |
-| `/lootgui` | `infernaltresures.command.loot.gui` | Open interactive loot browser |
-| `/treasure loot gui` | `infernaltresures.command.loot` | Alternative loot browser command |
-
-### 🍀 Treasure Luck System
-
-Administrators can grant temporary treasure luck to players, significantly boosting their treasure spawn rates:
-
-```bash
-# Give Steve 2x treasure spawn rate for 5 minutes
-/treasure luck 300 Steve 2.0
-
-# Give Alice 3x treasure spawn rate for 30 minutes  
-/treasure luck 1800 Alice 3.0
-
-# Default multiplier is 2.0 if not specified
-/treasure luck 600 Bob
-```
-
-**Features:**
-- **Multiplier Range**: 1.0x to 10.0x spawn rate boost
-- **Duration**: Any time in seconds (60s = 1min, 3600s = 1hr)
-- **Real-time Application**: Affects all treasure spawning immediately
-- **Stats Integration**: Shows active luck and remaining time in `/treasure stats`
-- **Debug Logging**: See luck calculations in debug mode
-
-### ⚙️ Player Control System
-
-Players have full control over their treasure hunting experience:
-
-```bash
-# Toggle treasure spawning on/off for yourself
-/treasure toggle
-```
-
-**Benefits:**
-- **No Interruptions**: Mine without treasures spawning when you don't want them
-- **Building Projects**: Focus on gathering blocks without treasure distractions  
-- **Personal Preference**: Some players prefer traditional mining
-- **Persistent Setting**: Choice is saved across sessions
-
-### 📈 Loot Progression System
-
-**NEW!** Control how much loot appears in treasure barrels with a configurable progression system:
-
-```bash
-# View current progression settings
-/treasure progression info
-
-# Set progression level (1-4)
-treasure progression set 3
-
-# Enable/disable debug logging
-/treasure progression debug on
-```
-
-**Progression Levels:**
-- **Level 1 (Beginner)**: 7 slots filled - Slower, controlled progression
-- **Level 2 (Intermediate)**: 14 slots filled - Moderate loot amounts
-- **Level 3 (Advanced)**: 21 slots filled - Generous loot rewards
-- **Level 4 (Master)**: 27 slots filled - Maximum loot (full barrel)
-
-**Features:**
-- **Server-wide Control**: Set the progression level for all players
-- **Smart Slot Filling**: Each slot gets a chance to roll for items from the biome's loot table
-- **Item Chances Still Apply**: Individual item drop chances are still respected
-- **Debug Logging**: See exactly what happens in each slot when debug is enabled
-- **Instant Changes**: Progression changes apply immediately to new treasures
-
-**Use Cases:**
-- **Economy Control**: Start at Level 1 to prevent inflation, increase as server matures
-- **Event Management**: Boost to Level 4 during special events for maximum rewards
-- **Testing**: Use debug mode to see exactly how the system works
-
-**Example Debug Output:**
-```
-=== LOOT PROGRESSION DEBUG ===
-Current progression level: 3
-Max slots to fill: 21
-Available loot items for LEGENDARY: 8
-Slot 1: Added NETHERITE_INGOT x3 (chance: 15.0%)
-Slot 2: No item (chance missed: 25.0%)
-Slot 3: Added ENCHANTED_BOOK x1 (chance: 40.0%)
-...
-Final loot count: 12/21 slots filled
-=== END LOOT PROGRESSION DEBUG ===
-```
-
-## 📊 Statistics System
-
-Track detailed treasure hunting progress with `/treasure stats`:
-
-**Player Statistics Include:**
-- 🔨 **Total Blocks Mined**: Lifetime mining progress
-- 💎 **Treasures Found**: Breakdown by rarity (Common, Rare, Epic, Legendary, Mythic)
-- ⏱️ **Playtime**: Total and current session time
-- 🍀 **Active Luck**: Current luck multiplier and remaining duration
-- ⚙️ **Treasure Toggle**: Current treasure spawning preference
-
-**Admin Features:**
-- View any player's statistics with `/treasure stats <player>`
-- Monitor server-wide treasure activity
-- Track player engagement and progression
-
-### 🔧 Statistics Management System
-
-**NEW!** Administrators can now directly modify player statistics using the stats set command:
-
-```bash
-# Set a player's total blocks mined
-/treasure stats ItzRenzo set blocksmined 10000
-
-# Set total treasures found
-/treasure stats Steve set totaltreasuresfound 500
-
-# Set specific rarity counts
-/treasure stats Alice set commontreasures 100
-/treasure stats Alice set raretreasures 50
-/treasure stats Alice set epictreasures 20
-/treasure stats Alice set legendarytreasures 10
-/treasure stats Alice set mythictreasures 5
-```
-
-**Available Stat Types:**
-- `blocksmined` - Total blocks mined by the player
-- `totaltreasuresfound` - Total treasures found (automatically calculated from rarity counts)
-- `commontreasures` - Number of common treasures found
-- `raretreasures` - Number of rare treasures found  
-- `epictreasures` - Number of epic treasures found
-- `legendarytreasures` - Number of legendary treasures found
-- `mythictreasures` - Number of mythic treasures found
-
-**Features:**
-- **Instant Updates**: Changes are applied immediately and saved to disk
-- **Player Notification**: Online players are notified when their stats are modified
-- **Admin Feedback**: Confirmation messages show exactly what was changed
-- **Data Validation**: Values must be positive numbers, with helpful error messages
-- **Tab Completion**: Full tab completion support for all stat types and values
-- **Permission Control**: Requires `infernaltresures.command.stats.set` permission
-
-**Use Cases:**
-- **Event Rewards**: Grant players treasure finds for participating in events
-- **Migration**: Transfer stats from other plugins or previous systems
-- **Testing**: Set specific values for testing progression features
-- **Corrections**: Fix incorrect stats due to bugs or data issues
-- **Competitions**: Reset or adjust stats for treasure hunting competitions
-
-**Example Admin Workflow:**
-```bash
-# Check current stats
-/treasure stats ItzRenzo
-
-# Set mining progress for new VIP player
-/treasure stats ItzRenzo set blocksmined 5000
-
-# Grant event participation rewards
-/treasure stats ItzRenzo set legendarytreasures 10
-/treasure stats ItzRenzo set mythictreasures 2
-
-# Verify changes
-/treasure stats ItzRenzo
-```
-
-## 🔐 Permissions
-
-| Permission | Description | Default |
-|------------|-------------|---------|
-| `infernaltresures.command.use` | Access to basic commands | `true` |
-| `infernaltresures.command.spawn` | Access to spawn command | `op` |
-| `infernaltresures.command.reload` | Access to reload command | `op` |
-| `infernaltresures.command.info` | Access to info command | `op` |
-| `infernaltresures.command.stats` | View your own statistics | `true` |
-| `infernaltresures.command.stats.others` | View other players' statistics | `op` |
-| `infernaltresures.command.stats.set` | Set/modify player statistics | `op` |
-| `infernaltresures.command.luck` | Give treasure luck to players | `op` |
-| `infernaltresures.command.toggle` | Toggle treasure spawning for yourself | `true` |
-| `infernaltresures.command.progression` | Manage loot progression system | `op` |
-| `infernaltresures.command.loot` | Access to loot commands | `true` |
-| `infernaltresures.command.loot.gui` | Access to loot browser GUI | `true` |
-
-## 🌍 Supported Biomes
-
-The plugin includes pre-configured biome loot tables for **17 biomes**:
-
-### Overworld Biomes
-- **Desert** - Sand dune treasures and oasis artifacts
-- **Forest** - Nature-themed items and druidic equipment  
-- **Ocean** - Aquatic treasures and maritime artifacts
-- **Plains** - Pastoral items and farming equipment
-- **Mountains** (Windswept Hills) - Alpine treasures and mining equipment
-- **Swamp** - Mystical bog artifacts and witch brewing supplies
-- **Jungle** - Tropical treasures and ancient jungle artifacts
-- **Taiga** - Cold-weather survival gear and forestry items
-- **Savanna** - Tribal artifacts and wildlife equipment
-- **Badlands** - Desert mining equipment and geological specimens
-
-### Nether Biomes
-- **Nether Wastes** - Classic infernal artifacts and fire-resistant gear
-- **Soul Sand Valley** - Soul-themed items and undead artifacts
-- **Crimson Forest** - Crimson fungus materials and hoglin gear
-- **Warped Forest** - Warped fungus materials and enderman artifacts
-- **Basalt Deltas** - Volcanic treasures and heat-resistant equipment
-
-### End Biomes
-- **The End** - Otherworldly treasures and dragon-themed artifacts
-
-### Legacy Support
-- **Nether** (General) - Broad nether treasures for compatibility
-
-*Custom biome configurations can be added by creating new YAML files in the `biomes/` folder. The system automatically detects and loads new biome files!*
-
-## ⭐ Rarity System
-
-| Rarity | Color | Default Chance | Hologram | Despawn Time |
-|--------|-------|----------------|----------|--------------|
-| **Common** | &f(White) | 60% | Hidden | 5 minutes |
-| **Rare** | &9(Blue) | 25% | Hidden | 7 minutes |
-| **Epic** | &5(Purple) | 10% | Hidden | 10 minutes |
-| **Legendary** | &6(Gold) | 4% | Visible | 15 minutes |
-| **Mythic** | &c(Red) | 1% | Visible | 20 minutes |
-
-## 🎨 Advanced Item Features
-
-### Supported Item Types
-- **Regular Minecraft Items** - Use `material` field
-- **MMOItems** - Use `mmo_type` and `mmo_id` fields
-- **ExecutableItems** - Use `executable_id` field
-
-### Item Customization Options
-- **Enchantments** - Custom enchantments with level ranges or random enchants
-- **Attributes** - Modify item attributes (damage, speed, health, etc.)
-- **Potion Effects** - Add potion effects to consumable items
-- **Display Names** - Custom item names with color codes and formatting
-- **Lore** - Multi-line item descriptions with color support
-- **Unbreakable** - Make items unbreakable
-- **Custom Model Data** - Support for resource pack models
-
-### Example Advanced Item Configuration
-
-```yaml
-- material: NETHERITE_SWORD
+- executable_block_id: "custom_desert_shrine"
   min_amount: 1
   max_amount: 1
   chance: 5
-  display_name: "&c&lBlade of the Nether King"
+  required_blocks_mined: 10000
+  display_name: "&6&lDesert Shrine Block"
   lore:
-    - "&7Forged in the depths of the Nether"
-    - "&7by ancient demonic smiths."
-    - ""
-    - "&c⚔ Legendary Weapon"
-  enchantments:
-    - enchant: SHARPNESS
-      level: 7
-    - enchant: FIRE_ASPECT
-      level: 3
-  attributes:
-    - attribute: GENERIC_ATTACK_DAMAGE
-      value: 15.0
-      operation: ADD_NUMBER
-    - attribute: GENERIC_ATTACK_SPEED
-      value: -2.0
-      operation: ADD_NUMBER
-  unbreakable: true
-  custom_model_data: 1001
+    - "&7A mystical shrine block that can"
+    - "&7be placed to create desert magic!"
 ```
 
-## 🔧 Building from Source
+**MMOItems Integration:**
+```yaml
+- mmo_type: "SWORD"
+  mmo_id: "DESERT_BLADE"
+  min_amount: 1
+  max_amount: 1
+  chance: 8
+  required_blocks_mined: 7500
+  # MMOItems handle their own display names and lore
+```
 
-### Prerequisites
-- Java 21 or higher
-- Maven 3.6 or higher
-- Git
+## 🛠️ Advanced Admin Tools
 
-### Build Steps
+### 🎚️ Difficulty Management
+
+**Server Progression Planning:**
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/InfernalTreasures.git
-cd InfernalTreasures
+# Start new server on easy mode
+/treasure difficulty set EASY
 
-# Compile and package
-mvn clean package
+# Monitor player engagement and progression
+/treasure stats TopPlayer
 
-# The compiled JAR will be in the target/ folder
+# Gradually increase difficulty as players progress
+/treasure difficulty set MEDIUM  # After 1 month
+/treasure difficulty set HARD     # After 3 months  
+/treasure difficulty set EXTREME  # For endgame content
 ```
 
-## 📋 Requirements
+**Testing and Balancing:**
+```bash
+# Test how difficulty affects specific requirements
+/treasure difficulty test 5000
+/treasure difficulty test "0-99999"
+/treasure difficulty test "10000+"
 
-- **Minecraft Server**: 1.21+ (Paper/Spigot)
-- **Java**: 21 or higher
-- **Optional Dependencies**:
-  - MMOItems 6.10+ (for MMOItems integration)
-  - SCore 5.25+ (required for ExecutableItems)
-  - ExecutableItems 7.25+ (for ExecutableItems integration)
+# View all current multipliers
+/treasure difficulty multipliers
+
+# Check current difficulty impact
+/treasure difficulty info
+```
+
+### 💬 Config Management
+
+**No More Config Loss!** The revolutionary comment preservation system means:
+
+- ✅ **Safe Updates**: Change difficulty without losing your beautiful configs
+- ✅ **Documentation Preserved**: All your custom comments stay intact
+- ✅ **Professional Appearance**: Configs remain clean and organized
+- ✅ **Version Control Friendly**: Only actual changes show in git diffs
+
+**Perfect for:**
+- **Server Networks**: Maintain consistent, documented configs across servers
+- **Team Management**: Comments help team members understand settings
+- **Version Control**: Clean diffs show only actual configuration changes
+- **Professional Setups**: Beautiful configs that stay beautiful
 
 ## 🐛 Troubleshooting
+
+### Difficulty System Issues
+
+**Difficulty not applying:**
+1. Check current difficulty: `/treasure difficulty info`
+2. Verify config syntax is correct (no extra spaces/characters)
+3. Enable debug logging: `debug.categories.loot-generation: true`
+4. Check if `affect-range-requirements` is set as desired
+
+**Config comments lost:**
+- This should no longer happen with the new preservation system!
+- If it does, please report as a bug with your config template
+
+**ExecutableBlocks not working:**
+1. Ensure ExecutableBlocks plugin is installed and enabled
+2. Verify your ExecutableBlock IDs exist
+3. Enable debug: `debug.categories.executable-blocks: true`
 
 ### Common Issues
 
@@ -596,6 +460,20 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - Use meaningful variable and method names
 
 ## 📈 Changelog
+
+### Version 1.1.0 (Latest)
+- ✨ **NEW**: Complete difficulty system with 4 scaling levels
+- ✨ **NEW**: Revolutionary config comment preservation system
+- ✨ **NEW**: ExecutableBlocks integration for advanced treasure types
+- 🔧 **IMPROVED**: Enhanced MMOItems integration with better error handling
+- 🔧 **IMPROVED**: Smart config merging preserves all formatting and comments
+- 🔧 **IMPROVED**: Difficulty scaling affects both number and range requirements
+- 🔧 **IMPROVED**: Advanced admin commands for difficulty management
+- 🔧 **IMPROVED**: Enhanced debug logging for all systems
+- 🔧 **IMPROVED**: Better plugin integration detection and retry systems
+- 🐛 **FIXED**: Config file structure mixing issues
+- 🐛 **FIXED**: Comment loss during config updates
+- 🐛 **FIXED**: Compilation errors from deprecated Bukkit APIs
 
 ### Version 1.0.0
 - ✨ **NEW**: Initial release with core treasure hunting system

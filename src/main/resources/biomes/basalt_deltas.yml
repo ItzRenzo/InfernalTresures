@@ -299,39 +299,120 @@ loot:
     chance: 1
 
   LEGENDARY:
-    - material: NETHERITE_LEGGINGS
-      min_amount: 1
-      max_amount: 1
-      chance: 8
-      display_name: "&6&lMagma Walker's Greaves"
-      lore:
-        - "&7Leggings that protect against"
-        - "&7the delta's molten hazards."
-      enchantments:
-        - enchant: FIRE_PROTECTION
-          level: 4
-        - enchant: PROTECTION
-          level: 3
-        - enchant: UNBREAKING
-          level: 3
+  - material: COOKED_PORKCHOP
+    min_amount: 6
+    max_amount: 12
+    chance: 18
+    required_blocks_mined: "0-199999"
+
+  - material: MAGMA_BLOCK
+    min_amount: 6
+    max_amount: 12
+    chance: 18
+    required_blocks_mined: "0-199999"
+
+  - material: EXPERIENCE_BOTTLE
+    min_amount: 3
+    max_amount: 7
+    chance: 16
+      
+  - material: GOLD_BLOCK
+    min_amount: 8
+    max_amount: 16
+    chance: 15
+
+  - material: DIAMOND
+    min_amount: 4
+    max_amount: 8
+    chance: 15
+    required_blocks_mined: "0-99999"
+
+  - material: GILDED_BLACKSTONE
+    min_amount: 10
+    max_amount: 20
+    chance: 12
+
+  - material: POLISHED_BLACKSTONE_BRICKS
+    min_amount: 16
+    max_amount: 32
+    chance: 12
+
+  - material: NETHERITE_SCRAP
+    min_amount: 2
+    max_amount: 4
+    chance: 10
+      
+  - material: POTION
+    min_amount: 1
+    max_amount: 1
+    chance: 8
+    required_blocks_mined: "0-199999"
+    display_name: "&cPotion of Strength"
+    custom_effects:
+      - effect: STRENGTH
+        duration: 3600
+        amplifier: 0
+        
+  - executable_id: ruined_portal_hack
+    min_amount: 1
+    max_amount: 1
+    chance: 7
     
-    - material: BEACON
-      min_amount: 1
-      max_amount: 1
-      chance: 5
-      display_name: "&6&lBasalt Beacon"
-      lore:
-        - "&7A beacon powered by the"
-        - "&7volcanic energy of the deltas."
+  - material: POTION
+    min_amount: 1
+    max_amount: 1
+    chance: 6
+    display_name: "&dDurable Potion"
+    custom_effects:
+      - effect: RESISTANCE
+        duration: 300
+        amplifier: 2
+
+  - executable_id: nether_driller
+    min_amount: 1
+    max_amount: 1
+    chance: 5
+    required_blocks_mined: 100000
+
+  - material: NETHERITE_INGOT
+    min_amount: 1
+    max_amount: 2
+    chance: 5
+    required_blocks_mined: "0-49999"
+
+  - executable_id: black_armor
+    min_amount: 1
+    max_amount: 3
+    chance: 4
+    min_required_blocks_mined: 200000
+
+  - material: POTION
+    min_amount: 1
+    max_amount: 1
+    chance: 3
+    required_blocks_mined: 50000
+    display_name: "&6&lSuper Durable Potion"
+    custom_effects:
+      - effect: RESISTANCE
+        duration: 200
+        amplifier: 3
+        
+  - executable_id: basalt_deltas_boots
+    min_amount: 1
+    max_amount: 1
+    chance: 3
+    required_blocks_mined: 50000
     
-    - material: RESPAWN_ANCHOR
-      min_amount: 1
-      max_amount: 1
-      chance: 4
-      display_name: "&6&lVolcanic Anchor"
-      lore:
-        - "&7An anchor charged with the"
-        - "&7power of volcanic eruptions."
+  - material: BEDROCK
+    min_amount: 1
+    max_amount: 2
+    chance: 2
+    min_required_blocks_mined: 200000
+
+  - executable_id: legendary_charm
+    min_amount: 1
+    max_amount: 1
+    chance: 1
 
   MYTHIC:
     - material: NETHERITE_PICKAXE
