@@ -27,13 +27,13 @@ loot:
       min_amount: 1
       max_amount: 3
       chance: 70
-      max_required_blocks_mined: "0-49999"
+      required_blocks_mined: "0-49999"
 
     - material: RAIL
       min_amount: 1
       max_amount: 3
       chance: 55
-      max_required_blocks_mined: "0-49999"
+      required_blocks_mined: "0-49999"
 
     - material: COBWEB
       min_amount: 1
@@ -49,7 +49,7 @@ loot:
       min_amount: 1
       max_amount: 1
       chance: 20
-      max_required_blocks_mined: "0-99999"
+      required_blocks_mined: "0-99999"
 
     - material: GOLD_INGOT
       min_amount: 1
@@ -61,7 +61,7 @@ loot:
       min_amount: 1
       max_amount: 3
       chance: 22
-      min_required_blocks_mined: 50000
+      required_blocks_mined: 50000
 
     - material: REPEATER
       min_amount: 1
@@ -260,39 +260,196 @@ loot:
       chance: 2
 
   LEGENDARY:
-    - material: DIAMOND_PICKAXE
-      min_amount: 1
-      max_amount: 1
-      chance: 6
-      display_name: "&6&lMaster Miner's Pick"
-      lore:
-        - "&7The legendary tool of the"
-        - "&7greatest badlands miner."
-      enchantments:
-        - enchant: EFFICIENCY
-          level: 5
-        - enchant: FORTUNE
-          level: 3
-        - enchant: UNBREAKING
-          level: 3
+  - material: GOLD_BLOCK
+    min_amount: 20
+    max_amount: 30
+    chance: 15
+      
+  - material: GOLDEN_APPLE
+    min_amount: 2
+    max_amount: 4
+    chance: 15
+
+  - material: SHULKER_SHELL
+    min_amount: 4
+    max_amount: 8
+    chance: 12 
+      
+  - material: DIAMOND_BLOCK
+    min_amount: 4
+    max_amount: 8
+    chance: 10
+
+  - material: NETHERITE_SCRAP
+    min_amount: 1
+    max_amount: 2
+    chance: 10
+
+  - executable_id: grenade
+    min_amount: 2
+    max_amount: 4
+    chance: 8
     
-    - material: GOLD_BLOCK
-      min_amount: 2
-      max_amount: 4
-      chance: 4
-      display_name: "&6&lStrike Gold"
-      lore:
-        - "&7Pure gold blocks from a"
-        - "&7legendary mining strike."
-    
-    - material: SHULKER_BOX
-      min_amount: 1
-      max_amount: 1
-      chance: 3
-      display_name: "&6&lMiner's Storage"
-      lore:
-        - "&7An advanced storage container"
-        - "&7used by master miners."
+  - material: SPLASH_POTION
+    min_amount: 1
+    max_amount: 1
+    chance: 7
+    display_name: "&4&lContact Bomb"
+    lore:
+      - "&7Does a ton of damage and blinds"
+      - "&7the opponents on a direct hit."
+    custom_effects:
+      - effect: INSTANT_DAMAGE
+        duration: 4
+        amplifier: 5
+
+  - executable_id: desolation_rocket
+    min_amount: 1
+    max_amount: 3
+    chance: 6
+
+  - material: ORANGE_SHULKER_BOX
+    min_amount: 1
+    max_amount: 1
+    chance: 5
+    display_name: "&6Terracotta-Stained Shulker Box"
+    lore:
+      - "&7A dimensional container filled with"
+      - "&7treasures from the Epic loot table."
+    shulker_box_items:
+      - executable_block_id: unstable_tnt_block
+        min_amount: 2
+        max_amount: 5
+        chance: 25
+      
+      - material: GOLDEN_APPLE
+        min_amount: 5
+        max_amount: 5
+        chance: 22
+
+      - material: DIAMOND
+        min_amount: 2
+        max_amount: 4
+        chance: 20
+
+      - material: GOLD_BLOCK
+        min_amount: 4
+        max_amount: 8
+        chance: 20
+      
+      - material: FIREWORK_STAR
+        min_amount: 4
+        max_amount: 8
+        chance: 18
+        required_blocks_mined: "0-99999"
+      
+      - executable_id: blight_rocket
+        min_amount: 1
+        max_amount: 2
+        chance: 15
+        required_blocks_mined: 50000
+
+      - material: NETHERITE_SCRAP
+        min_amount: 1
+        max_amount: 1
+        chance: 12
+      
+      - executable_id: detonation_mine
+        min_amount: 1
+        max_amount: 2
+        chance: 10
+        required_blocks_mined: 200000
+
+      - executable_id: epic_charm
+        min_amount: 1
+        max_amount: 1
+        chance: 4
+
+      - material: ENCHANTED_GOLDEN_APPLE
+        min_amount: 1
+        max_amount: 1
+        chance: 2
+
+  - material: ENCHANTED_GOLDEN_APPLE
+    min_amount: 1
+    max_amount: 3
+    chance: 4
+      
+  - material: CROSSBOW
+    min_amount: 1
+    max_amount: 1
+    chance: 3
+    required_blocks_mined: 100000
+    enchantments:
+      - enchant: "piercing"
+        min_level: 5
+        max_level: 10
+      - enchant: "quick_charge"
+        level: 5
+      - enchant: "unbreaking"
+        min_level: 1
+        max_level: 10
+      - enchant: "mending"
+        min_level: 0
+        max_level: 1
+      - enchant: "multishot"
+        min_level: 0
+        max_level: 1
+        
+  - material: NETHERITE_HOE
+    min_amount: 1
+    max_amount: 1
+    chance: 2
+    display_name: "&bForged Netherite Hoe"
+    enchantments:
+      - enchant: "unbreaking"
+        min_level: 0
+        max_level: 10
+      - enchant: "efficiency"
+        min_level: 0
+        max_level: 10
+      - enchant: "silk_touch"
+        min_level: 0
+        max_level: 1
+      - enchant: "mending"
+        min_level: 0
+        max_level: 1
+    attributes:
+      - attribute: "GENERIC_ATTACK_DAMAGE"
+        value: 10
+        operation: "ADD_NUMBER"
+        slot: "HAND"
+      - attribute: "GENERIC_ATTACK_SPEED"
+        value: 4
+        operation: "ADD_NUMBER"
+        slot: "HAND"
+        
+  - executable_id: badlands_helmet
+    min_amount: 1
+    max_amount: 1
+    chance: 1
+    required_blocks_mined: 200000
+    enchantments:
+      - enchant: "protection"
+        min_level: 2
+        max_level: 6
+      - enchant: "projectile_protection"
+        min_level: 2
+        max_level: 8
+      - enchant: "blast_protection"
+        min_level: 1
+        max_level: 3
+      - enchant: "respiration"
+        min_level: 1
+        max_level: 5
+      - enchant: "aqua_affinity"
+        min_level: 0
+        max_level: 1
+        
+  - executable_id: legendary_charm
+    min_amount: 1
+    max_amount: 1
+    chance: 1
 
   MYTHIC:
     - material: NETHERITE_PICKAXE

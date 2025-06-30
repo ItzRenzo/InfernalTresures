@@ -56,16 +56,20 @@ public class MysqlStatsStorage implements StatsStorage {
                 config.setMaxLifetime((Long) properties.getOrDefault("max-lifetime", 1800000L));
                 
                 // Additional MySQL properties
-                Map<String, Object> mysqlProps = (Map<String, Object>) properties.get("properties");
-                if (mysqlProps != null) {
+                Object mysqlPropsObj = properties.get("properties");
+                if (mysqlPropsObj instanceof Map<?, ?>) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> mysqlProps = (Map<String, Object>) mysqlPropsObj;
                     for (Map.Entry<String, Object> entry : mysqlProps.entrySet()) {
                         config.addDataSourceProperty(entry.getKey(), entry.getValue());
                     }
                 }
                 
                 // SSL configuration
-                Map<String, Object> sslProps = (Map<String, Object>) properties.get("ssl");
-                if (sslProps != null) {
+                Object sslPropsObj = properties.get("ssl");
+                if (sslPropsObj instanceof Map<?, ?>) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> sslProps = (Map<String, Object>) sslPropsObj;
                     config.addDataSourceProperty("useSSL", sslProps.get("enabled"));
                     config.addDataSourceProperty("trustCertificateKeyStoreUrl", sslProps.get("trust-certificate"));
                 }

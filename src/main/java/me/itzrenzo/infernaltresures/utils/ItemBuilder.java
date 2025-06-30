@@ -91,7 +91,8 @@ public class ItemBuilder {
         if (itemMeta != null) {
             // Get all enchantments that can be applied to this item
             List<Enchantment> applicableEnchants = new ArrayList<>();
-            for (Enchantment enchant : Enchantment.values()) {
+            // Use Registry instead of deprecated values() method
+            for (Enchantment enchant : org.bukkit.Registry.ENCHANTMENT) {
                 if (enchant.canEnchantItem(itemStack)) {
                     applicableEnchants.add(enchant);
                 }
@@ -244,11 +245,12 @@ public class ItemBuilder {
      */
     public static Enchantment getEnchantmentByName(String name) {
         try {
-            // Try direct lookup first
-            return Enchantment.getByKey(NamespacedKey.minecraft(name.toLowerCase()));
+            // Use Registry instead of deprecated methods
+            NamespacedKey key = NamespacedKey.minecraft(name.toLowerCase());
+            return org.bukkit.Registry.ENCHANTMENT.get(key);
         } catch (Exception e) {
-            // Fallback to checking all enchantments
-            for (Enchantment enchant : Enchantment.values()) {
+            // Fallback to checking all enchantments using Registry
+            for (Enchantment enchant : org.bukkit.Registry.ENCHANTMENT) {
                 if (enchant.getKey().getKey().equalsIgnoreCase(name)) {
                     return enchant;
                 }
@@ -262,8 +264,16 @@ public class ItemBuilder {
      */
     public static Attribute getAttributeByName(String name) {
         try {
-            return Attribute.valueOf(name.toUpperCase());
-        } catch (IllegalArgumentException e) {
+            // Use Registry instead of deprecated valueOf
+            NamespacedKey key = NamespacedKey.minecraft(name.toLowerCase());
+            return org.bukkit.Registry.ATTRIBUTE.get(key);
+        } catch (Exception e) {
+            // Fallback to checking all attributes using Registry
+            for (Attribute attribute : org.bukkit.Registry.ATTRIBUTE) {
+                if (attribute.getKey().getKey().equalsIgnoreCase(name)) {
+                    return attribute;
+                }
+            }
             return null;
         }
     }
@@ -284,10 +294,17 @@ public class ItemBuilder {
      */
     public static PotionEffectType getPotionEffectByName(String name) {
         try {
-            return PotionEffectType.getByKey(NamespacedKey.minecraft(name.toLowerCase()));
+            // Use Registry instead of deprecated methods
+            NamespacedKey key = NamespacedKey.minecraft(name.toLowerCase());
+            return org.bukkit.Registry.POTION_EFFECT_TYPE.get(key);
         } catch (Exception e) {
-            // Fallback for legacy names
-            return PotionEffectType.getByName(name.toUpperCase());
+            // Fallback to checking all potion effect types using Registry
+            for (PotionEffectType effectType : org.bukkit.Registry.POTION_EFFECT_TYPE) {
+                if (effectType.getKey().getKey().equalsIgnoreCase(name)) {
+                    return effectType;
+                }
+            }
+            return null;
         }
     }
 }

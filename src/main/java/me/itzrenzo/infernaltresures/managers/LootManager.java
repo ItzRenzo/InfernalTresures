@@ -380,34 +380,43 @@ public class LootManager {
             if (requiredBlocksObj instanceof Number) {
                 // Old format: single number (backward compatibility)
                 long requiredBlocks = ((Number) requiredBlocksObj).longValue();
-                item.minRequiredBlocksMined = requiredBlocks;
+                
+                // Apply difficulty multiplier
+                long adjustedRequiredBlocks = plugin.getConfigManager().applyDifficultyMultiplier(requiredBlocks);
+                
+                item.minRequiredBlocksMined = adjustedRequiredBlocks;
                 item.maxRequiredBlocksMined = Long.MAX_VALUE;
-                item.requiredBlocksMinedRange = String.valueOf(requiredBlocks) + "+";
+                item.requiredBlocksMinedRange = String.valueOf(adjustedRequiredBlocks) + "+";
             } else if (requiredBlocksObj instanceof String) {
                 // New format: range string like "0-999" or "1000-4999"
                 String rangeStr = (String) requiredBlocksObj;
-                item.requiredBlocksMinedRange = rangeStr;
                 
-                if (rangeStr.contains("-")) {
-                    String[] parts = rangeStr.split("-", 2);
+                // Apply difficulty multiplier to the range
+                String adjustedRangeStr = plugin.getConfigManager().applyDifficultyToRange(rangeStr);
+                item.requiredBlocksMinedRange = adjustedRangeStr;
+                
+                if (adjustedRangeStr.contains("-")) {
+                    String[] parts = adjustedRangeStr.split("-", 2);
                     try {
                         item.minRequiredBlocksMined = Long.parseLong(parts[0].trim());
                         item.maxRequiredBlocksMined = Long.parseLong(parts[1].trim());
                     } catch (NumberFormatException e) {
-                        plugin.getLogger().warning("Invalid required_blocks_mined range format: " + rangeStr + ". Expected format: 'min-max' (e.g., '0-999')");
+                        plugin.getLogger().warning("Invalid required_blocks_mined range format after difficulty adjustment: " + adjustedRangeStr + ". Expected format: 'min-max' (e.g., '0-999')");
                         item.minRequiredBlocksMined = 0;
                         item.maxRequiredBlocksMined = Long.MAX_VALUE;
                         item.requiredBlocksMinedRange = "0+";
                     }
                 } else {
-                    // Single number as string
+                    // Single number as string (possibly with + suffix)
                     try {
-                        long requiredBlocks = Long.parseLong(rangeStr);
+                        String numberPart = adjustedRangeStr.endsWith("+") ? 
+                            adjustedRangeStr.substring(0, adjustedRangeStr.length() - 1) : adjustedRangeStr;
+                        long requiredBlocks = Long.parseLong(numberPart);
                         item.minRequiredBlocksMined = requiredBlocks;
                         item.maxRequiredBlocksMined = Long.MAX_VALUE;
                         item.requiredBlocksMinedRange = requiredBlocks + "+";
                     } catch (NumberFormatException e) {
-                        plugin.getLogger().warning("Invalid required_blocks_mined format: " + rangeStr);
+                        plugin.getLogger().warning("Invalid required_blocks_mined format after difficulty adjustment: " + adjustedRangeStr);
                         item.minRequiredBlocksMined = 0;
                         item.maxRequiredBlocksMined = Long.MAX_VALUE;
                         item.requiredBlocksMinedRange = "0+";
@@ -463,32 +472,41 @@ public class LootManager {
                         Object shulkerRequiredBlocksObj = shulkerItemMap.get("required_blocks_mined");
                         if (shulkerRequiredBlocksObj instanceof Number) {
                             long requiredBlocks = ((Number) shulkerRequiredBlocksObj).longValue();
-                            shulkerItem.minRequiredBlocksMined = requiredBlocks;
+                            
+                            // Apply difficulty multiplier
+                            long adjustedRequiredBlocks = plugin.getConfigManager().applyDifficultyMultiplier(requiredBlocks);
+                            
+                            shulkerItem.minRequiredBlocksMined = adjustedRequiredBlocks;
                             shulkerItem.maxRequiredBlocksMined = Long.MAX_VALUE;
-                            shulkerItem.requiredBlocksMinedRange = String.valueOf(requiredBlocks) + "+";
+                            shulkerItem.requiredBlocksMinedRange = String.valueOf(adjustedRequiredBlocks) + "+";
                         } else if (shulkerRequiredBlocksObj instanceof String) {
                             String rangeStr = (String) shulkerRequiredBlocksObj;
-                            shulkerItem.requiredBlocksMinedRange = rangeStr;
                             
-                            if (rangeStr.contains("-")) {
-                                String[] parts = rangeStr.split("-", 2);
+                            // Apply difficulty multiplier to the range
+                            String adjustedRangeStr = plugin.getConfigManager().applyDifficultyToRange(rangeStr);
+                            shulkerItem.requiredBlocksMinedRange = adjustedRangeStr;
+                            
+                            if (adjustedRangeStr.contains("-")) {
+                                String[] parts = adjustedRangeStr.split("-", 2);
                                 try {
                                     shulkerItem.minRequiredBlocksMined = Long.parseLong(parts[0].trim());
                                     shulkerItem.maxRequiredBlocksMined = Long.parseLong(parts[1].trim());
                                 } catch (NumberFormatException e) {
-                                    plugin.getLogger().warning("Invalid required_blocks_mined format for Shulker Box item: " + rangeStr);
+                                    plugin.getLogger().warning("Invalid required_blocks_mined format for Shulker Box item after difficulty adjustment: " + adjustedRangeStr);
                                     shulkerItem.minRequiredBlocksMined = 0;
                                     shulkerItem.maxRequiredBlocksMined = Long.MAX_VALUE;
                                     shulkerItem.requiredBlocksMinedRange = "0+";
                                 }
                             } else {
                                 try {
-                                    long requiredBlocks = Long.parseLong(rangeStr);
+                                    String numberPart = adjustedRangeStr.endsWith("+") ? 
+                                        adjustedRangeStr.substring(0, adjustedRangeStr.length() - 1) : adjustedRangeStr;
+                                    long requiredBlocks = Long.parseLong(numberPart);
                                     shulkerItem.minRequiredBlocksMined = requiredBlocks;
                                     shulkerItem.maxRequiredBlocksMined = Long.MAX_VALUE;
                                     shulkerItem.requiredBlocksMinedRange = requiredBlocks + "+";
                                 } catch (NumberFormatException e) {
-                                    plugin.getLogger().warning("Invalid required_blocks_mined format for Shulker Box item: " + rangeStr);
+                                    plugin.getLogger().warning("Invalid required_blocks_mined format for Shulker Box item after difficulty adjustment: " + adjustedRangeStr);
                                     shulkerItem.minRequiredBlocksMined = 0;
                                     shulkerItem.maxRequiredBlocksMined = Long.MAX_VALUE;
                                     shulkerItem.requiredBlocksMinedRange = "0+";

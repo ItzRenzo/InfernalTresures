@@ -52,6 +52,7 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             case "luck" -> handleLuckCommand(sender, args);
             case "toggle" -> handleToggleCommand(sender, args);
             case "progression" -> handleProgressionCommand(sender, args);
+            case "difficulty" -> handleDifficultyCommand(sender, args);
             case "help" -> sendHelpMessage(sender);
             default -> {
                 sender.sendMessage(Component.text("Unknown command. Use /treasure help for a list of commands.")
@@ -116,7 +117,7 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         // Debug: Show what biome we're in
         Biome biome = player.getWorld().getBiome(location);
         if (InfernalTresures.getInstance().getConfigManager().isBiomeDetectionDebugEnabled()) {
-            player.sendMessage(Component.text("Current biome: " + biome.name()).color(NamedTextColor.YELLOW));
+            player.sendMessage(Component.text("Current biome: " + biome.getKey().getKey()).color(NamedTextColor.YELLOW));
         }
         
         // Create treasure at player's location - PASS THE PLAYER to ensure UUID is set
@@ -487,6 +488,10 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(Component.text("/treasure progression [info|set <level>|debug <on|off>] - Manage loot progression").color(NamedTextColor.YELLOW));
         }
         
+        if (sender.hasPermission("infernaltresures.command.difficulty")) {
+            sender.sendMessage(Component.text("/treasure difficulty [info|set <difficulty>|multipliers|range <on|off>] - Manage difficulty system").color(NamedTextColor.YELLOW));
+        }
+        
         sender.sendMessage(messageManager.getMessageComponent("help-help"));
     }
     
@@ -704,6 +709,109 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         }
     }
     
+    private void handleDifficultyCommand(CommandSender sender, String[] args) {
+        // Check permissions
+        if (!sender.hasPermission("infernaltresures.command.difficulty")) {
+            sender.sendMessage(Component.text("You don't have permission to use this command.").color(NamedTextColor.RED));
+            return;
+        }
+        
+        // Usage: /treasure difficulty [info|set <difficulty>|multipliers|range <on|off>]
+        if (args.length == 1) {
+            // Show current difficulty info
+            showDifficultyInfo(sender);
+            return;
+        }
+        
+        String subcommand = args[1].toLowerCase();
+        
+        switch (subcommand) {
+            case "info" -> showDifficultyInfo(sender);
+            case "set" -> {
+                if (args.length < 3) {
+                    sender.sendMessage(Component.text("Usage: /treasure difficulty set <difficulty>").color(NamedTextColor.YELLOW));
+                    sender.sendMessage(Component.text("Valid difficulties: EASY, MEDIUM, HARD, EXTREME").color(NamedTextColor.GRAY));
+                    return;
+                }
+                
+                try {
+                    // Use the static ConfigManager.Difficulty.fromString method
+                    var difficulty = me.itzrenzo.infernaltresures.managers.ConfigManager.Difficulty.fromString(args[2]);
+                    var oldDifficulty = plugin.getConfigManager().getCurrentDifficulty();
+                    
+                    plugin.getConfigManager().setCurrentDifficulty(difficulty);
+                    
+                    sender.sendMessage(Component.text("✅ Difficulty changed from ")
+                        .color(NamedTextColor.GREEN)
+                        .append(Component.text(oldDifficulty.name()).color(NamedTextColor.YELLOW))
+                        .append(Component.text(" to ").color(NamedTextColor.GREEN))
+                        .append(Component.text(difficulty.name()).color(NamedTextColor.YELLOW))
+                        .append(Component.text("!").color(NamedTextColor.GREEN)));
+                    
+                    // Reload loot tables to apply new difficulty multipliers without reloading config
+                    plugin.getLootManager().reload();
+                    sender.sendMessage(Component.text("🔄 Loot tables reloaded with new difficulty settings.").color(NamedTextColor.BLUE));
+                    
+                    showDifficultyInfo(sender);
+                    
+                } catch (IllegalArgumentException e) {
+                    sender.sendMessage(Component.text("Invalid difficulty. Must be EASY, MEDIUM, HARD, or EXTREME.").color(NamedTextColor.RED));
+                }
+            }
+            case "multipliers" -> {
+                sender.sendMessage(Component.text("=== Difficulty Multipliers ===").color(NamedTextColor.GOLD));
+                for (var difficulty : me.itzrenzo.infernaltresures.managers.ConfigManager.Difficulty.values()) {
+                    double multiplier = plugin.getConfigManager().getDifficultyMultiplier(difficulty);
+                    sender.sendMessage(Component.text("  " + difficulty.name() + ": ")
+                        .color(NamedTextColor.YELLOW)
+                        .append(Component.text(multiplier + "x").color(NamedTextColor.WHITE)));
+                }
+                sender.sendMessage(Component.text("These multipliers affect required_blocks_mined values in loot tables.").color(NamedTextColor.GRAY));
+            }
+            case "range" -> {
+                if (args.length < 3) {
+                    sender.sendMessage(Component.text("Usage: /treasure difficulty range <on|off>").color(NamedTextColor.YELLOW));
+                    sender.sendMessage(Component.text("Controls whether range-type requirements like \"0-99999\" are affected by difficulty.").color(NamedTextColor.GRAY));
+                    return;
+                }
+                
+                String rangeState = args[2].toLowerCase();
+                if (!rangeState.equals("on") && !rangeState.equals("off")) {
+                    sender.sendMessage(Component.text("Range setting must be 'on' or 'off'.").color(NamedTextColor.RED));
+                    return;
+                }
+                
+                boolean enable = rangeState.equals("on");
+                plugin.getConfig().set("treasure.difficulty.affect-range-requirements", enable);
+                plugin.saveConfig();
+                
+                sender.sendMessage(Component.text("🔧 Range requirement modification ")
+                    .color(NamedTextColor.BLUE)
+                    .append(Component.text(enable ? "ENABLED" : "DISABLED")
+                        .color(enable ? NamedTextColor.GREEN : NamedTextColor.RED))
+                    .append(Component.text("!").color(NamedTextColor.BLUE)));
+                
+                if (enable) {
+                    sender.sendMessage(Component.text("Range-type requirements will now be affected by difficulty multipliers.").color(NamedTextColor.GRAY));
+                } else {
+                    sender.sendMessage(Component.text("Range-type requirements will not be affected by difficulty multipliers.").color(NamedTextColor.GRAY));
+                }
+                
+                // Reload loot tables to apply new setting
+                plugin.getLootManager().reload();
+                sender.sendMessage(Component.text("🔄 Loot tables reloaded with new range setting.").color(NamedTextColor.BLUE));
+            }
+            default -> {
+                sender.sendMessage(Component.text("Usage: /treasure difficulty [info|set <difficulty>|multipliers|range <on|off>]").color(NamedTextColor.YELLOW));
+                sender.sendMessage(Component.text("Examples:").color(NamedTextColor.GRAY));
+                sender.sendMessage(Component.text("  /treasure difficulty info - Show current difficulty settings").color(NamedTextColor.GRAY));
+                sender.sendMessage(Component.text("  /treasure difficulty set HARD - Set difficulty to HARD").color(NamedTextColor.GRAY));
+                sender.sendMessage(Component.text("  /treasure difficulty multipliers - Show all difficulty multipliers").color(NamedTextColor.GRAY));
+                sender.sendMessage(Component.text("  /treasure difficulty range on - Enable range requirement modification").color(NamedTextColor.GRAY));
+            }
+        }
+    }
+    
     private void showProgressionInfo(CommandSender sender) {
         int currentLevel = plugin.getConfigManager().getCurrentProgressionLevel();
         int currentSlots = plugin.getConfigManager().getCurrentProgressionSlots();
@@ -749,6 +857,60 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(Component.text("Debug Logging: ").color(NamedTextColor.BLUE)
             .append(Component.text(debugEnabled ? "ENABLED" : "DISABLED")
                 .color(debugEnabled ? NamedTextColor.GREEN : NamedTextColor.RED)));
+    }
+    
+    private void showDifficultyInfo(CommandSender sender) {
+        var currentDifficulty = plugin.getConfigManager().getCurrentDifficulty();
+        double currentMultiplier = plugin.getConfigManager().getCurrentDifficultyMultiplier();
+        boolean affectRangeRequirements = plugin.getConfigManager().shouldAffectRangeRequirements();
+        
+        sender.sendMessage(Component.text("=== Difficulty System ===").color(NamedTextColor.GOLD));
+        sender.sendMessage(Component.text("Current Difficulty: ").color(NamedTextColor.YELLOW)
+            .append(Component.text(currentDifficulty.name()).color(NamedTextColor.WHITE))
+            .append(Component.text(" (").color(NamedTextColor.GRAY))
+            .append(Component.text(currentMultiplier + "x multiplier").color(NamedTextColor.AQUA))
+            .append(Component.text(")").color(NamedTextColor.GRAY)));
+        
+        sender.sendMessage(Component.text("Range Requirements Affected: ").color(NamedTextColor.YELLOW)
+            .append(Component.text(affectRangeRequirements ? "YES" : "NO")
+                .color(affectRangeRequirements ? NamedTextColor.GREEN : NamedTextColor.RED)));
+        
+        sender.sendMessage(Component.text("Effect: ").color(NamedTextColor.YELLOW)
+            .append(Component.text("required_blocks_mined values are multiplied by " + currentMultiplier + "x")
+                .color(NamedTextColor.WHITE)));
+        
+        // Show all difficulty options
+        sender.sendMessage(Component.text("Available Difficulties:").color(NamedTextColor.AQUA));
+        for (var difficulty : me.itzrenzo.infernaltresures.managers.ConfigManager.Difficulty.values()) {
+            double multiplier = plugin.getConfigManager().getDifficultyMultiplier(difficulty);
+            
+            Component difficultyLine = Component.text("  ")
+                .append(Component.text(difficulty.name()).color(difficulty == currentDifficulty ? NamedTextColor.GREEN : NamedTextColor.WHITE))
+                .append(Component.text(": ").color(NamedTextColor.GRAY))
+                .append(Component.text(multiplier + "x").color(NamedTextColor.YELLOW))
+                .append(Component.text(" multiplier").color(NamedTextColor.GRAY));
+            
+            if (difficulty == currentDifficulty) {
+                difficultyLine = difficultyLine.append(Component.text(" ← CURRENT").color(NamedTextColor.GREEN));
+            }
+            
+            sender.sendMessage(difficultyLine);
+        }
+        
+        // Show examples of how difficulty affects requirements
+        sender.sendMessage(Component.text("Examples (on " + currentDifficulty.name() + " difficulty):").color(NamedTextColor.BLUE));
+        sender.sendMessage(Component.text("  • Single value: 50000 → ").color(NamedTextColor.GRAY)
+            .append(Component.text(plugin.getConfigManager().applyDifficultyMultiplier(50000) + " blocks").color(NamedTextColor.WHITE))
+            .append(Component.text(" (harder to reach)").color(NamedTextColor.GRAY)));
+        
+        if (affectRangeRequirements) {
+            sender.sendMessage(Component.text("  • Range value: \"0-99999\" → ").color(NamedTextColor.GRAY)
+                .append(Component.text("\"" + plugin.getConfigManager().applyDifficultyToRange("0-99999") + "\"").color(NamedTextColor.WHITE))
+                .append(Component.text(" (shorter availability window)").color(NamedTextColor.GRAY)));
+        } else {
+            sender.sendMessage(Component.text("  • Range value: \"0-99999\" → ").color(NamedTextColor.GRAY)
+                .append(Component.text("\"0-99999\" (unchanged)").color(NamedTextColor.GRAY)));
+        }
     }
     
     /**
@@ -814,6 +976,10 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                 subcommands.add("progression");
             }
             
+            if (sender.hasPermission("infernaltresures.command.difficulty")) {
+                subcommands.add("difficulty");
+            }
+            
             subcommands.add("help");
             
             for (String subcommand : subcommands) {
@@ -854,6 +1020,14 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                         completions.add(subcommand);
                     }
                 }
+            } else if (args[0].equalsIgnoreCase("difficulty") && sender.hasPermission("infernaltresures.command.difficulty")) {
+                // Second argument of difficulty command: subcommands
+                List<String> difficultySubcommands = List.of("info", "set", "multipliers", "range");
+                for (String subcommand : difficultySubcommands) {
+                    if (subcommand.startsWith(args[1].toLowerCase())) {
+                        completions.add(subcommand);
+                    }
+                }
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("luck") && sender.hasPermission("infernaltresures.command.luck")) {
@@ -887,6 +1061,24 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                         }
                     }
                 }
+            } else if (args[0].equalsIgnoreCase("difficulty") && sender.hasPermission("infernaltresures.command.difficulty")) {
+                // Third argument of difficulty command: set <difficulty> if setting difficulty
+                if (args[1].equalsIgnoreCase("set")) {
+                    List<String> difficulties = List.of("EASY", "MEDIUM", "HARD", "EXTREME");
+                    for (String difficulty : difficulties) {
+                        if (difficulty.startsWith(args[2].toUpperCase())) {
+                            completions.add(difficulty);
+                        }
+                    }
+                } else if (args[1].equalsIgnoreCase("range")) {
+                    // Third argument of range subcommand: on/off
+                    List<String> rangeStates = List.of("on", "off");
+                    for (String state : rangeStates) {
+                        if (state.startsWith(args[2].toLowerCase())) {
+                            completions.add(state);
+                        }
+                    }
+                }
             }
         } else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("luck") && sender.hasPermission("infernaltresures.command.luck")) {
@@ -903,6 +1095,14 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
                 for (String statType : statTypes) {
                     if (statType.startsWith(args[3].toLowerCase())) {
                         completions.add(statType);
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("difficulty") && args[1].equalsIgnoreCase("set") && sender.hasPermission("infernaltresures.command.difficulty")) {
+                // Fourth argument of difficulty set command: difficulty value suggestions
+                List<String> difficultyValues = List.of("EASY", "MEDIUM", "HARD", "EXTREME");
+                for (String value : difficultyValues) {
+                    if (value.startsWith(args[3].toUpperCase())) {
+                        completions.add(value);
                     }
                 }
             }

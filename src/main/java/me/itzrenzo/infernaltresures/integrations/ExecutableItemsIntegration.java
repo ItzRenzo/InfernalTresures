@@ -1,12 +1,13 @@
 package me.itzrenzo.infernaltresures.integrations;
 
-import me.itzrenzo.infernaltresures.InfernalTresures;
+import java.lang.reflect.Method;
+import java.util.Optional;
+
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.Method;
-import java.util.Optional;
+import me.itzrenzo.infernaltresures.InfernalTresures;
 
 /**
  * Integration with ExecutableItems plugin using SCore API with reflection fallback

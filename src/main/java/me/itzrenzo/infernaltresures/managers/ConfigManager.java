@@ -43,18 +43,53 @@ public class ConfigManager {
     }
     
     public void loadConfig() {
-        plugin.saveDefaultConfig();
-        plugin.reloadConfig();
+        // Use our custom config setup that preserves comments
+        setupConfigWithComments();
+        
         config = plugin.getConfig();
         
         // Create and populate biomes folder
         setupBiomesFolder();
         
-        // Add default values
+        // Add default values (but don't save yet - we'll save with comments preserved)
         setDefaults();
         
-        // Save back any changes
-        plugin.saveConfig();
+        // Save with comment preservation if any defaults were added
+        saveConfigWithComments();
+    }
+    
+    /**
+     * Setup config file while preserving comments from template
+     */
+    private void setupConfigWithComments() {
+        File configFile = new File(plugin.getDataFolder(), "config.yml");
+        
+        // If config doesn't exist, copy it from template WITH comments preserved
+        if (!configFile.exists()) {
+            // Create plugin data folder if it doesn't exist
+            plugin.getDataFolder().mkdirs();
+            
+            try {
+                // Copy the template file directly to preserve comments
+                InputStream templateStream = plugin.getResource("config.yml");
+                if (templateStream != null) {
+                    Files.copy(templateStream, configFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    templateStream.close();
+                    plugin.getLogger().info("Created config.yml with comments preserved from template");
+                } else {
+                    // Fallback to Bukkit's method if template not found
+                    plugin.saveDefaultConfig();
+                    plugin.getLogger().warning("Template config.yml not found in JAR, used Bukkit default (comments lost)");
+                }
+            } catch (IOException e) {
+                plugin.getLogger().severe("Failed to copy config template: " + e.getMessage());
+                // Fallback to Bukkit's method
+                plugin.saveDefaultConfig();
+            }
+        }
+        
+        // Load the config into memory
+        plugin.reloadConfig();
     }
     
     /**
@@ -101,6 +136,31 @@ public class ConfigManager {
         
         if (!config.isSet("treasure.hourly-limit")) {
             config.set("treasure.hourly-limit", 0);
+        }
+        
+        // Set difficulty system defaults
+        if (!config.isSet("treasure.difficulty.current")) {
+            config.set("treasure.difficulty.current", "EASY");
+        }
+        
+        if (!config.isSet("treasure.difficulty.multipliers.easy")) {
+            config.set("treasure.difficulty.multipliers.easy", 1.0);
+        }
+        
+        if (!config.isSet("treasure.difficulty.multipliers.medium")) {
+            config.set("treasure.difficulty.multipliers.medium", 2.0);
+        }
+        
+        if (!config.isSet("treasure.difficulty.multipliers.hard")) {
+            config.set("treasure.difficulty.multipliers.hard", 3.0);
+        }
+        
+        if (!config.isSet("treasure.difficulty.multipliers.extreme")) {
+            config.set("treasure.difficulty.multipliers.extreme", 4.0);
+        }
+        
+        if (!config.isSet("treasure.difficulty.affect-range-requirements")) {
+            config.set("treasure.difficulty.affect-range-requirements", true);
         }
         
         // Set debug configuration defaults
@@ -256,6 +316,16 @@ public class ConfigManager {
         config = plugin.getConfig();
         
         // Also reload loot tables, messages, blocks, stats, and menus
+        reloadAssociatedManagers();
+        
+        plugin.getLogger().info("Configuration, loot tables, messages, blocks, stats, and menus reloaded.");
+    }
+    
+    /**
+     * Reload only the associated managers without reloading the config file
+     * Used when we want to apply config changes without losing in-memory changes
+     */
+    public void reloadAssociatedManagers() {
         if (plugin.getLootManager() != null) {
             plugin.getLootManager().reload();
         }
@@ -275,8 +345,6 @@ public class ConfigManager {
         if (plugin.getMenuManager() != null) {
             plugin.getMenuManager().reload();
         }
-        
-        plugin.getLogger().info("Configuration, loot tables, messages, blocks, stats, and menus reloaded.");
     }
     
     public boolean isMiningEffectEnabled() {
@@ -532,5 +600,231 @@ public class ConfigManager {
         };
         
         return config.getDouble("treasure.rarity-effects." + rarity.name().toLowerCase() + ".particles.offset", defaultOffset);
+    }
+    
+    // Difficulty system configuration methods
+    public enum Difficulty {
+        EASY, MEDIUM, HARD, EXTREME;
+        
+        public static Difficulty fromString(String str) {
+            try {
+                return valueOf(str.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return EASY; // Default fallback
+            }
+        }
+    }
+    
+    /**
+     * Get the current difficulty setting
+     */
+    public Difficulty getCurrentDifficulty() {
+        String difficultyStr = config.getString("treasure.difficulty.current", "EASY");
+        plugin.getLogger().info("Reading difficulty from config: " + difficultyStr);
+        return Difficulty.fromString(difficultyStr);
+    }
+    
+    /**
+     * Set the current difficulty setting
+     */
+    public void setCurrentDifficulty(Difficulty difficulty) {
+        plugin.getLogger().info("Setting difficulty to: " + difficulty.name());
+        
+        // Update the in-memory config
+        config.set("treasure.difficulty.current", difficulty.name());
+        
+        // Save with comment preservation
+        saveConfigWithComments();
+        
+        plugin.getLogger().info("Difficulty saved to config. Current value in memory: " + config.getString("treasure.difficulty.current", "NOT_SET"));
+    }
+    
+    /**
+     * Apply difficulty multiplier to a required blocks value
+     */
+    public long applyDifficultyMultiplier(long originalValue) {
+        double multiplier = getCurrentDifficultyMultiplier();
+        return Math.round(originalValue * multiplier);
+    }
+    
+    /**
+     * Apply difficulty multiplier to a range string like "0-99999"
+     * Returns the modified range string or original if not applicable
+     */
+    public String applyDifficultyToRange(String originalRange) {
+        if (!shouldAffectRangeRequirements()) {
+            return originalRange;
+        }
+        
+        double multiplier = getCurrentDifficultyMultiplier();
+        if (multiplier == 1.0) {
+            return originalRange; // No change needed
+        }
+        
+        if (originalRange.contains("-")) {
+            String[] parts = originalRange.split("-", 2);
+            try {
+                long min = Long.parseLong(parts[0].trim());
+                long max = Long.parseLong(parts[1].trim());
+                
+                // For ranges, we want to make it harder by shrinking the availability window
+                // Higher difficulty = shorter availability window
+                // We keep the min the same but reduce the max by dividing by the multiplier
+                long newMax = Math.max(min, Math.round(max / multiplier));
+                
+                return min + "-" + newMax;
+            } catch (NumberFormatException e) {
+                // If parsing fails, return original
+                return originalRange;
+            }
+        } else {
+            // Handle single number + format (these should be multiplied normally to make harder)
+            if (originalRange.endsWith("+")) {
+                try {
+                    String numberPart = originalRange.substring(0, originalRange.length() - 1);
+                    long value = Long.parseLong(numberPart);
+                    long newValue = Math.round(value * multiplier);
+                    return newValue + "+";
+                } catch (NumberFormatException e) {
+                    return originalRange;
+                }
+            } else {
+                // Try to parse as single number (multiply to make harder)
+                try {
+                    long value = Long.parseLong(originalRange);
+                    long newValue = Math.round(value * multiplier);
+                    return String.valueOf(newValue);
+                } catch (NumberFormatException e) {
+                    return originalRange;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Get the multiplier for a specific difficulty
+     */
+    public double getDifficultyMultiplier(Difficulty difficulty) {
+        double defaultMultiplier = switch (difficulty) {
+            case EASY -> 1.0;
+            case MEDIUM -> 2.0;
+            case HARD -> 3.0;
+            case EXTREME -> 4.0;
+        };
+        
+        return config.getDouble("treasure.difficulty.multipliers." + difficulty.name().toLowerCase(), defaultMultiplier);
+    }
+    
+    /**
+     * Get the current difficulty multiplier
+     */
+    public double getCurrentDifficultyMultiplier() {
+        return getDifficultyMultiplier(getCurrentDifficulty());
+    }
+    
+    /**
+     * Check if range-type requirements should be affected by difficulty
+     */
+    public boolean shouldAffectRangeRequirements() {
+        return config.getBoolean("treasure.difficulty.affect-range-requirements", true);
+    }
+    
+    /**
+     * Save config while preserving comments by doing a smart merge
+     */
+    private void saveConfigWithComments() {
+        try {
+            File configFile = new File(plugin.getDataFolder(), "config.yml");
+            
+            // If config file doesn't exist, use normal save (first time setup)
+            if (!configFile.exists()) {
+                plugin.saveConfig();
+                return;
+            }
+            
+            // Read the current file as string to preserve comments
+            String originalContent = Files.readString(configFile.toPath());
+            
+            // Create a temporary file with Bukkit's current config values
+            File tempFile = new File(plugin.getDataFolder(), "config_temp.yml");
+            plugin.getConfig().save(tempFile);
+            String newContent = Files.readString(tempFile.toPath());
+            
+            // Merge the new values with the original comments
+            String mergedContent = mergeConfigWithComments(originalContent, newContent);
+            
+            // Write the merged content back to the main config file
+            Files.writeString(configFile.toPath(), mergedContent);
+            
+            // Clean up temporary file
+            tempFile.delete();
+            
+            plugin.getLogger().info("Config saved with comments preserved");
+            
+        } catch (Exception e) {
+            plugin.getLogger().warning("Failed to save config with comments, falling back to standard save: " + e.getMessage());
+            plugin.saveConfig(); // Fallback to normal save
+        }
+    }
+    
+    /**
+     * Merge new config values with original comments and formatting
+     * This version uses a simpler approach that preserves structure better
+     */
+    private String mergeConfigWithComments(String originalContent, String newContent) {
+        // For now, use a targeted approach - only update specific values we know change
+        // This is more reliable than trying to parse the entire YAML structure
+        
+        String result = originalContent;
+        
+        // Extract the current difficulty from the new content
+        String[] newLines = newContent.split("\r?\n");
+        String newDifficultyValue = null;
+        
+        for (String line : newLines) {
+            String trimmed = line.trim();
+            if (trimmed.startsWith("current:")) {
+                newDifficultyValue = extractValue(line);
+                break;
+            }
+        }
+        
+        // If we found a new difficulty value, update it in the original content
+        if (newDifficultyValue != null) {
+            // Use regex to find and replace the difficulty value while preserving structure
+            result = result.replaceFirst(
+                "(\\s*current:\\s*)[^\\r\\n]*", 
+                "$1" + newDifficultyValue
+            );
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Extract the value from a YAML line (e.g., "  current: EASY" -> "EASY")
+     */
+    private String extractValue(String line) {
+        String trimmed = line.trim();
+        int colonIndex = trimmed.indexOf(':');
+        if (colonIndex >= 0 && colonIndex < trimmed.length() - 1) {
+            return trimmed.substring(colonIndex + 1).trim();
+        }
+        return "";
+    }
+    
+    /**
+     * Get the indentation (whitespace) from the beginning of a line
+     */
+    private String getIndentation(String line) {
+        StringBuilder indentation = new StringBuilder();
+        for (char c : line.toCharArray()) {
+            if (c == ' ' || c == '\t') {
+                indentation.append(c);
+            } else {
+                break;
+            }
+        }
+        return indentation.toString();
     }
 }

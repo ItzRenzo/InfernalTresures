@@ -16,6 +16,23 @@ treasure:
   despawn:
     # Whether items should drop when barrel despawns (this might cause lag if many items are dropped)
     drop-items-on-despawn: false
+  
+  # Difficulty system - affects required_blocks_mined values
+  difficulty:
+    # Current difficulty setting: EASY, MEDIUM, HARD, EXTREME
+    current: "EASY"
+    
+    # Multipliers for required_blocks_mined values
+    multipliers:
+      easy: 1.0      # No change (x1)
+      medium: 2.0    # Double requirements (x2)
+      hard: 3.0      # Triple requirements (x3)
+      extreme: 4.0   # Quadruple requirements (x4)
+    
+    # Whether to affect range-type requirements like "0-99999"
+    # If true: "0-99999" becomes "0-399996" on extreme difficulty
+    # If false: range-type requirements are not affected by difficulty
+    affect-range-requirements: true
     
   # Loot progression system
   # Controls how many slots in the barrel are filled (barrel has 27 slots total)

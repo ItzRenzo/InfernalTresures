@@ -7,94 +7,296 @@ biomes:
 loot:
   COMMON:
     - material: BASALT
-      min_amount: 16
-      max_amount: 32
-      chance: 80
-      display_name: "&f&lVolcanic Basalt"
-      lore:
-        - "&7Dark volcanic rock formed"
-        - "&7from ancient lava flows."
-    
-    - material: BLACKSTONE
-      min_amount: 8
-      max_amount: 16
-      chance: 70
-      display_name: "&f&lDelta Blackstone"
-      lore:
-        - "&7Black stone forged in the"
-        - "&7heat of basalt deltas."
-    
-    - material: MAGMA_BLOCK
-      min_amount: 4
-      max_amount: 8
-      chance: 65
-      display_name: "&f&lMolten Magma"
-      lore:
-        - "&7Blocks of solidified magma"
-        - "&7that still burn hot."
-
-  RARE:
-    - material: MAGMA_CREAM
-      min_amount: 4
-      max_amount: 8
-      chance: 50
-      display_name: "&9&lMagma Cube Essence"
-      lore:
-        - "&7Creamy essence extracted from"
-        - "&7the delta's magma cubes."
-    
-    - material: FIRE_CHARGE
-      min_amount: 6
-      max_amount: 12
-      chance: 45
-      display_name: "&9&lVolcanic Fire Charge"
-      lore:
-        - "&7Concentrated fire from the"
-        - "&7volcanic eruptions."
-    
-    - material: LAVA_BUCKET
-      min_amount: 2
-      max_amount: 4
-      chance: 40
-      display_name: "&9&lDelta Lava"
-      lore:
-        - "&7Pure lava from the basalt"
-        - "&7delta's molten pools."
-
-  EPIC:
-    - material: NETHERITE_SCRAP
       min_amount: 1
       max_amount: 3
+      chance: 80
+
+    - material: BLACKSTONE
+      min_amount: 3
+      max_amount: 6
+      chance: 75
+
+    - material: CHISELED_POLISHED_BLACKSTONE
+      min_amount: 1
+      max_amount: 3
+      chance: 65
+
+    - material: MAGMA_BLOCK
+      min_amount: 1
+      max_amount: 3
+      chance: 60
+
+    - material: MAGMA_CREAM
+      min_amount: 1
+      max_amount: 3
+      chance: 55
+
+    - material: POLISHED_BLACKSTONE
+      min_amount: 1
+      max_amount: 3
+      chance: 50
+
+    - material: FIRE_CHARGE
+      min_amount: 1
+      max_amount: 3
+      chance: 45
+        
+    - material: PORKCHOP
+      min_amount: 1
+      max_amount: 3
+      chance: 40
+
+    - material: EXPERIENCE_BOTTLE
+      min_amount: 3
+      max_amount: 7
+      chance: 35
+
+    - material: OBSIDIAN
+      min_amount: 2
+      max_amount: 4
       chance: 20
-      display_name: "&5&lAncient Debris Fragment"
+
+    - material: POTION
+      min_amount: 1
+      max_amount: 1
+      chance: 16
+      display_name: "&6Potion of Fire Resistance"
+      custom_effects:
+        - effect: FIRE_RESISTANCE
+          duration: 3600
+          amplifier: 1
+
+    - material: BLAZE_POWDER
+      min_amount: 1
+      max_amount: 1
+      chance: 10
+      
+    - material: ROTTEN_FLESH
+      min_amount: 1
+      max_amount: 2
+      chance: 5
+      required_blocks_mined: 100000
+      display_name: "&bFiery Flesh"
       lore:
-        - "&7Fragments of ancient debris"
-        - "&7exposed by volcanic activity."
-    
-    - material: ENCHANTED_BOOK
+        - "&7Gives the user Strength I"
+        - "&7and Fire Resistance for 2 minutes."
+      custom_effects:
+        - effect: STRENGTH
+          duration: 2400
+          amplifier: 0
+        - effect: FIRE_RESISTANCE
+          duration: 2400
+          amplifier: 0      
+
+    - executable_id: common_charm
+      min_amount: 1
+      max_amount: 1
+      chance: 1
+
+  RARE:
+    - material: BLAZE_ROD
+      min_amount: 1
+      max_amount: 1
+      chance: 45
+
+    - material: BLACKSTONE
+      min_amount: 6
+      max_amount: 12
+      chance: 40
+
+    - material: SMOOTH_BASALT
+      min_amount: 3
+      max_amount: 6
+      chance: 35
+
+    - material: POLISHED_BLACKSTONE
+      min_amount: 3
+      max_amount: 6
+      chance: 35
+      
+    - material: CHISELED_POLISHED_BLACKSTONE
+      min_amount: 3
+      max_amount: 6
+      chance: 30
+      
+    - material: MAGMA_BLOCK
+      min_amount: 1
+      max_amount: 3
+      chance: 30
+
+    - material: MAGMA_CREAM
+      min_amount: 2
+      max_amount: 4
+      chance: 28
+      
+    - material: COOKED_PORKCHOP
+      min_amount: 1
+      max_amount: 3
+      chance: 25
+
+    - material: EXPERIENCE_BOTTLE
+      min_amount: 3
+      max_amount: 7
+      chance: 25
+      
+    - material: OBSIDIAN
+      min_amount: 3
+      max_amount: 6
+      chance: 22
+
+    - material: POTION
+      min_amount: 1
+      max_amount: 1
+      chance: 20
+      display_name: "&6Potion of Fire Resistance"
+      custom_effects:
+        - effect: FIRE_RESISTANCE
+          duration: 3600
+          amplifier: 0
+
+    - material: POTION
       min_amount: 1
       max_amount: 1
       chance: 15
-      display_name: "&5&lTome of Fire Magic"
+      display_name: "&cPotion of Strength"
+      custom_effects:
+        - effect: STRENGTH
+          duration: 3600
+          amplifier: 0
+        
+    - material: ROTTEN_FLESH
+      min_amount: 1
+      max_amount: 2
+      chance: 10
+      required_blocks_mined: 100000
+      display_name: "&bFiery Flesh"
       lore:
-        - "&7Knowledge of fire magic"
-        - "&7written on basalt tablets."
-      enchantments:
-        - enchant: FIRE_PROTECTION
-          min_level: 3
-          max_level: 4
-    
-    - material: FLINT_AND_STEEL
+        - "&7Gives the user Strength I"
+        - "&7and Fire Resistance for 2 minutes."
+      custom_effects:
+        - effect: STRENGTH
+          duration: 2400
+          amplifier: 0
+        - effect: FIRE_RESISTANCE
+          duration: 2400
+          amplifier: 0   
+
+    - executable_id: rare_charm
       min_amount: 1
       max_amount: 1
-      chance: 12
-      display_name: "&5&lVolcanic Igniter"
-      lore:
-        - "&7A fire starter blessed by"
-        - "&7the delta's eternal flames."
-      enchantments:
-        - enchant: UNBREAKING
-          level: 3
+      chance: 1
+
+  EPIC:
+  - material: SMOOTH_BASALT
+    min_amount: 12
+    max_amount: 24
+    chance: 35
+
+  - material: GILDED_BLACKSTONE
+    min_amount: 12
+    max_amount: 24
+    chance: 35
+
+  - material: CHISELED_POLISHED_BLACKSTONE
+    min_amount: 12
+    max_amount: 24
+    chance: 30
+
+  - material: MAGMA_CREAM
+    min_amount: 12
+    max_amount: 24
+    chance: 30
+
+  - material: MAGMA_BLOCK
+    min_amount: 6
+    max_amount: 12
+    chance: 28
+
+  - material: COOKED_PORKCHOP
+    min_amount: 6
+    max_amount: 12
+    chance: 28
+
+  - material: OBSIDIAN
+    min_amount: 6
+    max_amount: 12
+    chance: 25
+      
+  - material: GOLD_BLOCK
+    min_amount: 4
+    max_amount: 8
+    chance: 25
+
+  - material: EXPERIENCE_BOTTLE
+    min_amount: 3
+    max_amount: 7
+    chance: 22
+
+  - material: POTION
+    min_amount: 1
+    max_amount: 1
+    chance: 20
+    display_name: "&6Potion of Fire Resistance"
+    custom_effects:
+      - effect: FIRE_RESISTANCE
+        duration: 3600
+        amplifier: 0
+        
+  - material: ANCIENT_DEBRIS
+    min_amount: 1
+    max_amount: 2
+    chance: 18
+
+  - material: POTION
+    min_amount: 1
+    max_amount: 1
+    chance: 15
+    display_name: "&cPotion of Strength"
+    custom_effects:
+      - effect: STRENGTH
+        duration: 3600
+        amplifier: 0
+        
+  - executable_id: ruined_portal_hack
+    min_amount: 1
+    max_amount: 1
+    chance: 12
+    
+  - material: POTION
+    min_amount: 1
+    max_amount: 1
+    chance: 12
+    display_name: "&dDurable Potion"
+    custom_effects:
+      - effect: RESISTANCE
+        duration: 300
+        amplifier: 2
+
+  - material: NETHERITE_HELMET
+    min_amount: 1
+    max_amount: 1
+    chance: 10
+    
+  - material: NETHERITE_BOOTS
+    min_amount: 1
+    max_amount: 1
+    chance: 10
+    
+  - material: NETHERITE_PICKAXE
+    min_amount: 1
+    max_amount: 1
+    chance: 8
+
+  - executable_id: black_armor
+    min_amount: 2
+    max_amount: 2
+    chance: 5
+    required_blocks_mined: 300000
+
+  - executable_id: epic_charm
+    min_amount: 1
+    max_amount: 1
+    chance: 1
 
   LEGENDARY:
     - material: NETHERITE_LEGGINGS

@@ -56,3 +56,6 @@ permissions:
   infernaltresures.command.progression:
     description: Allows managing loot progression settings
     default: op
+  infernaltresures.command.difficulty:
+    description: Allows managing difficulty settings
+    default: op
