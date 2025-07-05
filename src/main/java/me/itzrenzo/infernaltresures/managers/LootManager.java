@@ -1065,21 +1065,52 @@ public class LootManager {
                     .createExecutableItem(lootItem.executableId, amount);
                 
                 if (executableItem != null) {
-                    // Apply custom display name and lore if specified
-                    if (lootItem.displayName != null || (lootItem.lore != null && !lootItem.lore.isEmpty())) {
-                        ItemBuilder builder = ItemBuilder.from(executableItem);
-                        
-                        if (lootItem.displayName != null) {
-                            builder.setDisplayName(lootItem.displayName);
+                    // Only apply enchantments if specified - keep everything else from ExecutableItems
+                    if (lootItem.enchantments != null && !lootItem.enchantments.isEmpty()) {
+                        // Directly modify the ItemMeta to preserve ExecutableItem functionality
+                        org.bukkit.inventory.meta.ItemMeta meta = executableItem.getItemMeta();
+                        if (meta != null) {
+                            for (EnchantmentData enchantData : lootItem.enchantments) {
+                                if ("RANDOM".equalsIgnoreCase(enchantData.enchantment)) {
+                                    // Apply a random enchantment
+                                    Enchantment[] allEnchantments = Enchantment.values();
+                                    Enchantment randomEnchant = allEnchantments[ThreadLocalRandom.current().nextInt(allEnchantments.length)];
+                                    int randomLevel = ThreadLocalRandom.current().nextInt(enchantData.minLevel, enchantData.maxLevel + 1);
+                                    meta.addEnchant(randomEnchant, randomLevel, true); // Allow unsafe enchantments
+                                    
+                                    if (plugin.getConfigManager().isExecutableItemsDebugEnabled()) {
+                                        plugin.getLogger().info("Applied random enchantment " + randomEnchant.getKey().getKey() + 
+                                            " level " + randomLevel + " to ExecutableItem: " + lootItem.executableId);
+                                    }
+                                } else {
+                                    Enchantment enchantment = ItemBuilder.getEnchantmentByName(enchantData.enchantment);
+                                    if (enchantment != null) {
+                                        int level = enchantData.level;
+                                        
+                                        // If min/max levels are specified, use random level between them
+                                        if (enchantData.maxLevel > enchantData.minLevel) {
+                                            level = ThreadLocalRandom.current().nextInt(enchantData.minLevel, enchantData.maxLevel + 1);
+                                        } else if (enchantData.minLevel > 0) {
+                                            level = enchantData.minLevel;
+                                        }
+                                        
+                                        // Add enchantment directly to meta (preserves ExecutableItem NBT)
+                                        meta.addEnchant(enchantment, level, true); // Allow unsafe enchantments
+                                        
+                                        if (plugin.getConfigManager().isExecutableItemsDebugEnabled()) {
+                                            plugin.getLogger().info("Applied enchantment " + enchantment.getKey().getKey() + 
+                                                " level " + level + " to ExecutableItem: " + lootItem.executableId);
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Apply the modified meta back to the item
+                            executableItem.setItemMeta(meta);
                         }
-                        
-                        if (lootItem.lore != null && !lootItem.lore.isEmpty()) {
-                            builder.setLore(lootItem.lore);
-                        }
-                        
-                        return builder.build();
                     }
                     
+                    // Return the ExecutableItem with enchantments added (preserves ExecutableItem functionality)
                     return executableItem;
                 } else {
                     plugin.getLogger().warning("Failed to create ExecutableItem: " + lootItem.executableId);

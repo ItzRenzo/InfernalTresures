@@ -1,0 +1,665 @@
+name: "Default"
+description: "Default Treasures found within common biomes"
+biomes:
+  - plains
+  - forest
+  - stony_shore
+  - beach
+  - river
+  - birch_forest
+  - old_growth_birch_forest
+  
+loot:
+  COMMON:
+  - material: OAK_PLANKS
+    min_amount: 2
+    max_amount: 4
+    chance: 50
+    min_required_blocks_mined: 20000
+
+  - material: OAK_LOG
+    min_amount: 1
+    max_amount: 2
+    chance: 45
+    min_required_blocks_mined: 20000
+
+  - material: STRING
+    min_amount: 1
+    max_amount: 2
+    chance: 40
+
+  - material: BREAD
+    min_amount: 1
+    max_amount: 2
+    chance: 38
+    required_blocks_mined: "0-9999"
+
+  - material: EXPERIENCE_BOTTLE
+    min_amount: 1
+    max_amount: 2
+    chance: 35
+
+  - material: GUNPOWDER
+    min_amount: 2
+    max_amount: 4
+    chance: 30
+    required_blocks_mined: 50000
+
+  - material: IRON_NUGGET
+    min_amount: 3
+    max_amount: 6
+    chance: 28
+    required_blocks_mined: 20000
+      
+  - material: COAL
+    min_amount: 3
+    max_amount: 6
+    chance: 28
+    required_blocks_mined: 20000
+
+  - material: GOLD_NUGGET
+    min_amount: 3
+    max_amount: 6
+    chance: 25
+    required_blocks_mined: 20000
+      
+  - material: BREAD
+    min_amount: 1
+    max_amount: 2
+    chance: 22
+    required_blocks_mined: 10000
+      
+  - material: POTION
+    min_amount: 1
+    max_amount: 1
+    chance: 16 
+    display_name: "&fPotion of Night Vision"
+    custom_effects:
+      - effect: NIGHT_VISION
+        duration: 3600
+        amplifier: 1
+        
+  - material: WOODEN_PICKAXE
+    min_amount: 1
+    max_amount: 1
+    chance: 8
+    required_blocks_mined: "0-5000"
+    display_name: "&fWorn Wooden Pickaxe"
+    lore:
+      - "&7A simple tool, surprisingly sturdy."
+      - "&7It seems to have a faint magical aura."
+
+  - material: LEATHER_HELMET
+    min_amount: 1
+    max_amount: 1
+    chance: 6
+    required_blocks_mined: "0-5000"
+    display_name: "&fWorn Leather Cap"
+    lore:
+      - "&7Faded leather armor with"
+      - "&7a faint magical aura."
+    
+  - material: LEATHER_CHESTPLATE
+    min_amount: 1
+    max_amount: 1
+    chance: 6
+    required_blocks_mined: "0-5000"
+    display_name: "&fWorn Leather Tunic"
+    lore:
+      - "&7Faded leather armor with"
+      - "&7a faint magical aura."
+    
+  - material: LEATHER_LEGGINGS
+    min_amount: 1
+    max_amount: 1
+    chance: 6
+    required_blocks_mined: "0-5000"
+    display_name: "&fWorn Leather Pants"
+    lore:
+      - "&7Faded leather armor with"
+      - "&7a faint magical aura."
+
+  - material: LEATHER_BOOTS
+    min_amount: 1
+    max_amount: 1
+    chance: 6
+    required_blocks_mined: "0-5000"
+    display_name: "&fWorn Leather Boots"
+    lore:
+      - "&7Faded leather armor with"
+      - "&7a faint magical aura."
+      
+  - material: ENDER_PEARL
+    min_amount: 1
+    max_amount: 1
+    chance: 5
+      
+  - material: ENCHANTED_BOOK
+    min_amount: 1
+    max_amount: 1
+    chance: 4
+    required_blocks_mined: 100000
+    enchantments:
+      - enchant: "unbreaking"
+        level: 2
+
+  - executable_id: common_charm
+    min_amount: 1
+    max_amount: 1
+    chance: 2
+
+  RARE:
+  - material: COAL
+    min_amount: 2
+    max_amount: 4
+    chance: 50
+    required_blocks_mined: "0-4999"
+      
+  - material: RAW_IRON
+    min_amount: 3
+    max_amount: 6
+    chance: 45
+    required_blocks_mined: "0-49999"
+
+  - material: DIAMOND
+    min_amount: 2
+    max_amount: 4
+    chance: 40
+    required_blocks_mined: 5000
+      
+  - material: EMERALD
+    min_amount: 2
+    max_amount: 4
+    chance: 38
+      
+  - material: EXPERIENCE_BOTTLE
+    min_amount: 2
+    max_amount: 4
+    chance: 35
+      
+  - material: RAW_IRON_BLOCK
+    min_amount: 1
+    max_amount: 1
+    chance: 30
+    required_blocks_mined: 50000
+
+  - material: COBWEB
+    min_amount: 1
+    max_amount: 1
+    chance: 28
+
+  - material: REDSTONE
+    min_amount: 2
+    max_amount: 4
+    chance: 25
+
+  - material: RAW_GOLD_BLOCK
+    min_amount: 1
+    max_amount: 1
+    chance: 20
+    required_blocks_mined: 50000
+      
+  - material: GOLD_INGOT
+    min_amount: 2
+    max_amount: 4
+    chance: 18
+    required_blocks_mined: "0-49999"
+
+  - material: IRON_HELMET
+    min_amount: 1
+    max_amount: 1
+    chance: 15
+    required_blocks_mined: 20000
+    display_name: "&fEnchanted Iron Helmet"
+    enchantments:
+      - enchant: "protection"
+        min_level: 1
+        max_level: 3
+
+  - material: IRON_CHESTPLATE
+    min_amount: 1
+    max_amount: 1
+    chance: 15
+    required_blocks_mined: 20000
+    display_name: "&fEnchanted Iron Chestplate"
+    enchantments:
+      - enchant: "protection"
+        min_level: 1
+        max_level: 3
+
+  - material: IRON_LEGGINGS
+    min_amount: 1
+    max_amount: 1
+    chance: 15
+    required_blocks_mined: 20000
+    display_name: "&fEnchanted Iron Leggings"
+    enchantments:
+      - enchant: "protection"
+        min_level: 1
+        max_level: 3
+        
+  - material: IRON_BOOTS
+    min_amount: 1
+    max_amount: 1
+    chance: 15
+    required_blocks_mined: 20000
+    display_name: "&fEnchanted Iron Boots"
+    enchantments:
+      - enchant: "protection"
+        min_level: 1
+        max_level: 3
+        
+  - material: IRON_PICKAXE
+    min_amount: 1
+    max_amount: 1
+    chance: 12
+    required_blocks_mined: 20000
+    display_name: "&fEnchanted Iron Pickaxe"
+    enchantments:
+      - enchant: "efficiency"
+        min_level: 2
+        max_level: 3
+
+  - material: IRON_AXE
+    min_amount: 1
+    max_amount: 1
+    chance: 12
+    required_blocks_mined: 20000
+    display_name: "&fEnchanted Iron Axe"
+    enchantments:
+      - enchant: "sharpness"
+        min_level: 2
+        max_level: 3
+        
+  - material: CHICKEN_SPAWN_EGG
+    min_amount: 1
+    max_amount: 1
+    chance: 3
+    min_required_blocks_mined: 100000
+
+  - executable_id: rare_charm
+    min_amount: 1
+    max_amount: 1
+    chance: 2
+
+  # Epic rarity items
+  EPIC:
+  - material: IRON_BLOCK
+    min_amount: 4
+    max_amount: 8
+    chance: 30
+
+  - material: GOLD_BLOCK
+    min_amount: 2
+    max_amount: 4
+    chance: 28
+
+  - material: COAL_BLOCK
+    min_amount: 4
+    max_amount: 8
+    chance: 25
+    required_blocks_mined: 15000
+
+  - material: TNT
+    min_amount: 8
+    max_amount: 16
+    chance: 22
+
+  - material: GOLDEN_APPLE
+    min_amount: 5
+    max_amount: 5
+    chance: 20
+
+  - material: LAPIS_BLOCK
+    min_amount: 4
+    max_amount: 8
+    chance: 18
+    min_required_blocks_mined: 20000
+
+  - material: ENDER_EYE
+    min_amount: 2
+    max_amount: 4
+    chance: 16
+    required_blocks_mined: 20000
+      
+  - material: DIAMOND_SHOVEL
+    min_amount: 1
+    max_amount: 1
+    chance: 15
+    required_blocks_mined: 25000
+    display_name: "&b&lExpert's Diamond Shovel"
+    enchantments:
+      - enchant: "efficiency"
+        level: 5
+      - enchant: "unbreaking"
+        level: 3
+        
+  - material: DIAMOND_PICKAXE
+    min_amount: 1
+    max_amount: 1
+    chance: 15
+    required_blocks_mined: 25000
+    display_name: "&b&lExpert's Diamond Pickaxe"
+    enchantments:
+      - enchant: "efficiency"
+        level: 5
+      - enchant: "unbreaking"
+        level: 3
+        
+  - material: DIAMOND_AXE
+    min_amount: 1
+    max_amount: 1
+    chance: 15
+    required_blocks_mined: 25000
+    display_name: "&b&lExpert's Diamond Axe"
+    enchantments:
+      - enchant: "efficiency"
+        level: 5
+      - enchant: "unbreaking"
+        level: 3        
+        
+  - material: DIAMOND_HELMET
+    min_amount: 1
+    max_amount: 1
+    chance: 12
+    required_blocks_mined: 25000
+    display_name: "&b&lFortified Diamond Helmet"
+    enchantments:
+      - enchant: "protection"
+        level: 4
+
+  - material: DIAMOND_CHESTPLATE
+    min_amount: 1
+    max_amount: 1
+    chance: 12
+    required_blocks_mined: 25000
+    display_name: "&b&lFortified Diamond Chestplate"
+    enchantments:
+      - enchant: "protection"
+        level: 4
+        
+  - material: DIAMOND_LEGGINGS
+    min_amount: 1
+    max_amount: 1
+    chance: 12
+    required_blocks_mined: 25000
+    display_name: "&b&lFortified Diamond Leggings"
+    enchantments:
+      - enchant: "protection"
+        level: 4
+        
+  - material: DIAMOND_BOOTS
+    min_amount: 1
+    max_amount: 1
+    chance: 12
+    required_blocks_mined: 25000
+    display_name: "&b&lFortified Diamond Boots"
+    enchantments:
+      - enchant: "protection"
+        level: 4        
+  - material: DIAMOND
+    min_amount: 2
+    max_amount: 4
+    chance: 10
+    required_blocks_mined: 50000
+
+  - material: SHULKER_SHELL
+    min_amount: 2
+    max_amount: 4
+    chance: 8
+    required_blocks_mined: 100000
+      
+  - material: ENCHANTED_GOLDEN_APPLE
+    min_amount: 1
+    max_amount: 1
+    chance: 6
+      
+  - executable_id: epic_charm
+    min_amount: 1
+    max_amount: 1
+    chance: 4
+    
+  - executable_id: detonation_mine
+    min_amount: 1
+    max_amount: 2
+    chance: 3
+    required_blocks_mined: 200000
+
+  - material: SPAWNER
+    min_amount: 1
+    max_amount: 1
+    chance: 1
+    required_blocks_mined: 300000
+
+  LEGENDARY:
+  - material: IRON_BLOCK
+    min_amount: 4
+    max_amount: 8
+    chance: 18
+      
+  - material: GOLD_BLOCK
+    min_amount: 3
+    max_amount: 6
+    chance: 16
+
+  - material: ENDER_PEARL
+    min_amount: 4
+    max_amount: 8
+    chance: 15
+    required_blocks_mined: "0-99999"
+
+  - material: GOLDEN_APPLE
+    min_amount: 5
+    max_amount: 5
+    chance: 14
+      
+  - material: END_CRYSTAL
+    min_amount: 4
+    max_amount: 8
+    chance: 12
+    required_blocks_mined: "0-99999"
+
+  - material: DIAMOND_BLOCK
+    min_amount: 1
+    max_amount: 2
+    chance: 11
+    required_blocks_mined: 5000
+
+  - material: NETHERITE_PICKAXE
+    min_amount: 1
+    max_amount: 1
+    chance: 10
+    required_blocks_mined: 20000
+    display_name: "&8&lWorld-Breaker Pickaxe"
+    enchantments:
+      - enchant: "efficiency"
+        level: 5
+      - enchant: "fortune"
+        level: 3
+      - enchant: "unbreaking"
+        level: 4
+
+  - material: NETHERITE_INGOT
+    min_amount: 1
+    max_amount: 2
+    chance: 9
+    required_blocks_mined: 50000
+
+  - material: SHULKER_SHELL
+    min_amount: 8
+    max_amount: 16
+    chance: 8
+    min_required_blocks_mined: 50000
+
+  - material: ENCHANTED_GOLDEN_APPLE
+    min_amount: 1
+    max_amount: 3
+    chance: 6
+
+  - material: DIAMOND_HELMET
+    min_amount: 1
+    max_amount: 1
+    chance: 5
+    required_blocks_mined: "0-49999"
+    display_name: "&b&lChampion's Diamond Helmet"
+    enchantments:
+      - enchant: "protection"
+        level: 4
+      - enchant: "unbreaking"
+        level: 3
+        
+  - material: DIAMOND_CHESTPLATE
+    min_amount: 1
+    max_amount: 1
+    chance: 5
+    required_blocks_mined: "0-49999"
+    display_name: "&b&lChampion's Diamond Chestplate"
+    enchantments:
+      - enchant: "protection"
+        level: 4
+      - enchant: "unbreaking"
+        level: 3
+        
+  - material: DIAMOND_LEGGINGS
+    min_amount: 1
+    max_amount: 1
+    chance: 5
+    required_blocks_mined: "0-49999"
+    display_name: "&b&lChampion's Diamond Leggings"
+    enchantments:
+      - enchant: "protection"
+        level: 4
+      - enchant: "unbreaking"
+        level: 3
+        
+  - material: DIAMOND_BOOTS
+    min_amount: 1
+    max_amount: 1
+    chance: 5
+    required_blocks_mined: "0-49999"
+    display_name: "&b&lChampion's Diamond Boots"
+    enchantments:
+      - enchant: "protection"
+        level: 4
+      - enchant: "unbreaking"
+        level: 3        
+
+  - executable_id: refined_netherite_sword
+    min_amount: 1
+    max_amount: 1
+    chance: 4
+    required_blocks_mined: 50000
+
+  - executable_id: refined_netherite_helmet
+    min_amount: 1
+    max_amount: 1
+    chance: 4
+    required_blocks_mined: 50000
+    enchantments:
+    - enchant: "protection"
+      min_level: 1
+      max_level: 6
+    - enchant: "mending"
+      min_level: 0
+      max_level: 1
+    - enchant: "unbreaking"
+      min_level: 1
+      max_level: 10
+    
+  - executable_id: refined_netherite_chestplate
+    min_amount: 1
+    max_amount: 1
+    chance: 4
+    required_blocks_mined: 50000
+    enchantments:
+    - enchant: "protection"
+      min_level: 1
+      max_level: 6
+    - enchant: "mending"
+      min_level: 0
+      max_level: 1
+    - enchant: "unbreaking"
+      min_level: 1
+      max_level: 10
+    
+  - executable_id: refined_netherite_leggings
+    min_amount: 1
+    max_amount: 1
+    chance: 4
+    required_blocks_mined: 50000
+    enchantments:
+    - enchant: "protection"
+      min_level: 1
+      max_level: 6
+    - enchant: "mending"
+      min_level: 0
+      max_level: 1
+    - enchant: "unbreaking"
+      min_level: 1
+      max_level: 10
+    
+  - executable_id: refined_netherite_boots
+    min_amount: 1
+    max_amount: 1
+    chance: 4
+    required_blocks_mined: 50000
+    enchantments:
+    - enchant: "protection"
+      min_level: 1
+      max_level: 6
+    - enchant: "mending"
+      min_level: 0
+      max_level: 1
+    - enchant: "unbreaking"
+      min_level: 1
+      max_level: 10
+    
+  - executable_id: detonation_mine
+    min_amount: 2
+    max_amount: 4
+    chance: 2
+    required_blocks_mined: 200000
+
+  - executable_id: legendary_charm
+    min_amount: 1
+    max_amount: 1
+    chance: 1
+
+  # Mythic rarity items (extremely rare)
+  MYTHIC:
+    - material: BEACON
+      min_amount: 1
+      max_amount: 1
+      chance: 30.0
+      display_name: "&cBeacon of the Plains"
+      required_blocks_mined: 5000  # Unlocked after mining 5000 blocks
+      lore:
+        - "&7A mystical beacon that lights the way"
+        - "&7Grants power to those who find it"
+        - "&6Requires: 5000 blocks mined"
+    
+    - material: NETHERITE_PICKAXE
+      min_amount: 1
+      max_amount: 1
+      chance: 10.0
+      display_name: "&cEarthbreaker's Pick"
+      required_blocks_mined: 7500  # Unlocked after mining 7500 blocks
+      lore:
+        - "&7The ultimate mining tool"
+        - "&7Forged from the heart of the plains"
+        - "&7&lMythic Item"
+        - "&6Requires: 7500 blocks mined"
+      enchantments:
+        - enchant: "efficiency"
+          min_level: 5
+          max_level: 5
+        - enchant: "fortune"
+          min_level: 3
+          max_level: 3
+        - enchant: "unbreaking"
+          min_level: 3
+          max_level: 3
+        - enchant: "mending"
+          min_level: 1
+          max_level: 1
+      unbreakable: true
