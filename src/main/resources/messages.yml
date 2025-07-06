@@ -47,24 +47,12 @@ messages:
   
   # Command messages
   no-permission: "&cYou don't have permission to use this command!"
+  no-permission-view-others: "&cYou don't have permission to view other players' statistics."
+  console-specify-player: "&cConsole must specify a player name."
+  player-not-found: "&cPlayer '{player}' not found."
   config-reloaded: "&aConfiguration and messages reloaded successfully!"
   treasure-spawned: "&aSpawned a &{rarity_color}{rarity} &atreasure at your location."
   biome-info: "&eCurrent biome: &f{biome}"
-  
-  # Plugin info messages
-  plugin-info-header: "&6=== InfernalTreasures Info ==="
-  active-treasures: "&eActive treasures: &f{count}"
-  spawn-chance: "&eSpawn chance: &f{chance}%"
-  biomes-loaded: "&aBiome configurations loaded: &f{count} &abiomes"
-  
-  # Error messages
-  only-players: "&cOnly players can use this command."
-  invalid-rarity: "&cInvalid rarity. Valid options are: &f{rarities}"
-  unknown-command: "&cUnknown command. Use &f/treasure help &cfor a list of commands."
-  biome-not-found: "&cBiome configuration not found for &f{biome}&c, using default loot"
-  player-not-found: "&cPlayer not found: &f{player}"
-  console-specify-player: "&cConsole must specify a player name."
-  no-permission-view-others: "&cYou don't have permission to view other players' statistics."
   
   # Help messages
   help-header: "&6=== InfernalTreasures Commands ==="
@@ -73,53 +61,137 @@ messages:
   help-info: "&e/treasure info &f- Show plugin information"
   help-stats: "&e/treasure stats [player] &f- View treasure hunting statistics"
   help-loot: "&e/treasure loot gui &f- Browse biome loot tables (also: /lootgui)"
+  help-luck: "&e/treasure luck <seconds> <player> [multiplier] &f- Give treasure luck"
+  help-toggle: "&e/treasure toggle &f- Toggle treasure spawning on/off for yourself"
+  help-progression: "&e/treasure progression [info|set <level>|debug <on|off>] &f- Manage loot progression"
+  help-difficulty: "&e/treasure difficulty [info|set <difficulty>|multipliers|range <on|off>] &f- Manage difficulty system"
   help-help: "&e/treasure help &f- Show this help message"
   
-  # Statistics messages
-  stats-header: "&6=== Statistics for {player} ==="
+  # Command-specific messages
+  only-players: "&cOnly players can use this command."
+  treasure-spawned-admin: "&aSpawned a {rarity_color}{rarity} &atreasure at your location."
+  invalid-rarity: "&cInvalid rarity. Valid options are: &f{rarities}"
+  unknown-command: "&cUnknown command. Use &f/treasure help &cfor a list of commands."
+  current-biome: "&eCurrent biome: &f{biome}"
+  
+  # Plugin info messages
+  plugin-info-header: "&6=== InfernalTreasures Info ==="
+  active-treasures: "&eActive treasures: &f{count}"
+  block-spawn-info: "&7Block-specific spawn chances configured in blocks.yml"
+  
+  # Luck system messages
+  luck-given-admin: "&aGiven {player} treasure luck for {duration} with {multiplier} spawn rate."
+  luck-received: "&6✨ You have been blessed with treasure luck!"
+  luck-details: "&eDuration: &f{duration} &e| Multiplier: {multiplier}"
+  luck-invalid-duration: "&cDuration must be at least 1 second."
+  luck-invalid-multiplier: "&cMultiplier must be at least 1.0."
+  luck-multiplier-too-high: "&cMultiplier cannot exceed 10.0 for balance reasons."
+  luck-usage: "&eUsage: /treasure luck <seconds> <player> [multiplier]"
+  luck-example: "&7Example: /treasure luck 300 Steve 2.0"
+  
+  # Stats display messages
+  stats-active-luck: "&a🍀 Active Luck: {multiplier} &7for {duration}"
+  stats-queued-luck: "&e📋 Queued Luck: {multiplier} &7for {duration} &7(activates when current expires)"
+  stats-queued-luck-soon: "&e📋 Queued Luck: {multiplier} &7for {duration} &7(will activate soon)"
+  stats-luck-inactive: "&a🍀 Treasure Luck: &7INACTIVE"
+  
+  # Stats modification messages
+  stats-set-permission: "&cYou don't have permission to set player statistics."
+  stats-set-usage: "&eUsage: /treasure stats <player> set <stattype> <value>"
+  stats-set-types-header: "&7Available stat types:"
+  stats-set-type-blocks: "&7  • blocksmined - Total blocks mined"
+  stats-set-type-total: "&7  • totaltreasuresfound - Total treasures found"
+  stats-set-type-common: "&7  • commontreasures - Common treasures found"
+  stats-set-type-rare: "&7  • raretreasures - Rare treasures found"
+  stats-set-type-epic: "&7  • epictreasures - Epic treasures found"
+  stats-set-type-legendary: "&7  • legendarytreasures - Legendary treasures found"
+  stats-set-type-mythic: "&7  • mythictreasures - Mythic treasures found"
+  stats-set-invalid-value: "&cValue must be a positive number."
+  stats-set-invalid-number: "&cInvalid value. Please enter a valid number."
+  stats-set-invalid-type: "&cInvalid stat type: {type}"
+  stats-set-valid-types: "&7Valid types: blocksmined, totaltreasuresfound, commontreasures, raretreasures, epictreasures, legendarytreasures, mythictreasures"
+  stats-set-success: "&a✅ Successfully set {player}'s {stat_name} to {value}"
+  stats-set-notification: "&9📊 Your {stat_name} has been set to {value} by an administrator."
+  
+  # Toggle messages
+  treasure-toggle-enabled: "&a✅ Treasure spawning has been &a&lENABLED&a! You will now find treasures while mining."
+  treasure-toggle-disabled: "&e❌ Treasure spawning has been &e&lDISABLED&e! You will no longer find treasures while mining."
+  
+  # Progression system messages
+  progression-info-header: "&6=== Loot Progression System ==="
+  progression-current-level: "&eCurrent Level: &f{level} &7({name})"
+  progression-description: "&eDescription: &f{description}"
+  progression-slots-filled: "&eBarrel Slots Filled: &f{slots}&7/27 slots"
+  progression-available-levels: "&bAvailable Levels:"
+  progression-level-entry: "&f  {level}&7: &b{name} &7({slots} slots)"
+  progression-level-current: " &a← CURRENT"
+  progression-debug-status: "&9Debug Logging: {status}"
+  progression-level-changed: "&a✅ Progression level changed from {old_level} to {new_level}!"
+  progression-invalid-level: "&cInvalid level. Must be between 1 and 4."
+  progression-debug-enabled: "&9🔧 Progression debug logging &aENABLED&9!"
+  progression-debug-disabled: "&9🔧 Progression debug logging &cDISABLED&9!"
+  progression-debug-usage: "&eUsage: /treasure progression debug <on|off>"
+  progression-set-usage: "&eUsage: /treasure progression set <level>"
+  progression-set-valid-levels: "&7Valid levels: 1, 2, 3, 4"
+  progression-usage: "&eUsage: /treasure progression [info|set <level>|debug <on|off>]"
+  progression-examples-header: "&7Examples:"
+  progression-example-info: "&7  /treasure progression info - Show current settings"
+  progression-example-set: "&7  /treasure progression set 3 - Set to level 3"
+  progression-example-debug: "&7  /treasure progression debug on - Enable debug logging"
+  
+  # Difficulty system messages
+  difficulty-info-header: "&6=== Difficulty System ==="
+  difficulty-current: "&eCurrent Difficulty: &f{difficulty} &7({multiplier}x multiplier)"
+  difficulty-range-affected: "&eRange Requirements Affected: {status}"
+  difficulty-effect: "&eEffect: &frequired_blocks_mined values are multiplied by {multiplier}x"
+  difficulty-available: "&bAvailable Difficulties:"
+  difficulty-entry: "&f  {difficulty}&7: &e{multiplier}x &7multiplier"
+  difficulty-current-marker: " &a← CURRENT"
+  difficulty-changed: "&a✅ Difficulty changed from {old_difficulty} to {new_difficulty}!"
+  difficulty-loot-reloaded: "&9🔄 Loot tables reloaded with new difficulty settings."
+  difficulty-invalid: "&cInvalid difficulty. Must be EASY, MEDIUM, HARD, or EXTREME."
+  difficulty-multipliers-header: "&6=== Difficulty Multipliers ==="
+  difficulty-multiplier-entry: "&e  {difficulty}: &f{multiplier}x"
+  difficulty-multipliers-info: "&7These multipliers affect required_blocks_mined values in loot tables."
+  difficulty-range-enabled: "&9🔧 Range requirement modification &aENABLED&9!"
+  difficulty-range-disabled: "&9🔧 Range requirement modification &cDISABLED&9!"
+  difficulty-range-enabled-info: "&7Range-type requirements will now be affected by difficulty multipliers."
+  difficulty-range-disabled-info: "&7Range-type requirements will not be affected by difficulty multipliers."
+  difficulty-range-reloaded: "&9🔄 Loot tables reloaded with new range setting."
+  difficulty-range-usage: "&eUsage: /treasure difficulty range <on|off>"
+  difficulty-range-info: "&7Controls whether range-type requirements like \"0-99999\" are affected by difficulty."
+  difficulty-set-usage: "&eUsage: /treasure difficulty set <difficulty>"
+  difficulty-set-valid: "&7Valid difficulties: EASY, MEDIUM, HARD, EXTREME"
+  difficulty-usage: "&eUsage: /treasure difficulty [info|set <difficulty>|multipliers|range <on|off>]"
+  difficulty-examples-header: "&7Examples:"
+  difficulty-example-info: "&7  /treasure difficulty info - Show current difficulty settings"
+  difficulty-example-set: "&7  /treasure difficulty set HARD - Set difficulty to HARD"
+  difficulty-example-multipliers: "&7  /treasure difficulty multipliers - Show all difficulty multipliers"
+  difficulty-example-range: "&7  /treasure difficulty range on - Enable range requirement modification"
+  difficulty-examples-intro: "&9Examples (on {difficulty} difficulty):"
+  difficulty-example-single: "&7  • Single value: 50000 → &f{result} blocks &7(harder to reach)"
+  difficulty-example-range-enabled: "&7  • Range value: \"0-99999\" → &f\"{result}\" &7(shorter availability window)"
+  difficulty-example-range-disabled: "&7  • Range value: \"0-99999\" → &7\"0-99999\" (unchanged)"
+  
+  # GUI and loot messages
+  loot-gui-permission: "&cYou don't have permission to use the loot GUI."
+  loot-usage: "&eUsage: /treasure loot [gui]"
+  
+  # Status messages
+  enabled: "&aENABLED"
+  disabled: "&cDISABLED"
+  yes: "&aYES"
+  no: "&cNO"
+  
+  # Stats display messages  
+  stats-header: "&6=== {player}'s Treasure Statistics ==="
   stats-total-blocks-mined: "&eTotal Blocks Mined: &f{count}"
   stats-total-treasures-found: "&eTotal Treasures Found: &f{count}"
-  stats-treasure-breakdown: "&bTreasure Breakdown:"
+  stats-treasure-breakdown: "&6--- Treasure Breakdown ---"
   stats-common-treasures: "&f  Common: &f{count}"
   stats-rare-treasures: "&9  Rare: &f{count}"
-  stats-epic-treasures: "&d  Epic: &f{count}"
+  stats-epic-treasures: "&5  Epic: &f{count}"
   stats-legendary-treasures: "&6  Legendary: &f{count}"
   stats-mythic-treasures: "&c  Mythic: &f{count}"
-  stats-playtime: "&ePlaytime: &f{hours}h {minutes}m"
-  stats-current-session: "&7Current Session: &f{hours}h {minutes}m"
-
-# ========================================
-#          BIOME DISPLAY NAMES
-# ========================================
-biome-names:
-  # Custom display names for biomes (optional)
-  # If not specified, the plugin will format the biome name automatically
-  plains: "Plains"
-  forest: "Forest"
-  desert: "Desert"
-  ocean: "Ocean"
-  taiga: "Taiga"
-  jungle: "Jungle"
-  swamp: "Swamp"
-  mountains: "Mountains"
-  nether_wastes: "Nether Wastes"
-  the_end: "The End"
-  # Add more biomes as needed
-
-# ========================================
-#          FORMATTING
-# ========================================
-formatting:
-  # Color codes for rarities (used in {rarity_color} placeholder)
-  rarity-colors:
-    common: "&f"      # White
-    rare: "&9"        # Blue
-    epic: "&5"        # Purple
-    legendary: "&6"   # Gold
-    mythic: "&c"      # Red
-  
-  # Symbols and decorations
-  symbols:
-    treasure: "✦"
-    rare-treasure: "✧"
-    separator: "•"
+  stats-playtime: "&eTotal Playtime: &f{hours} hours, {minutes} minutes"
+  stats-current-session: "&eCurrent Session: &f{hours} hours, {minutes} minutes"

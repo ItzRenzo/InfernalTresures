@@ -627,39 +627,39 @@ loot:
 
   # Mythic rarity items (extremely rare)
   MYTHIC:
-    - material: BEACON
-      min_amount: 1
-      max_amount: 1
-      chance: 30.0
-      display_name: "&cBeacon of the Plains"
-      required_blocks_mined: 5000  # Unlocked after mining 5000 blocks
-      lore:
-        - "&7A mystical beacon that lights the way"
-        - "&7Grants power to those who find it"
-        - "&6Requires: 5000 blocks mined"
-    
-    - material: NETHERITE_PICKAXE
-      min_amount: 1
-      max_amount: 1
-      chance: 10.0
-      display_name: "&cEarthbreaker's Pick"
-      required_blocks_mined: 7500  # Unlocked after mining 7500 blocks
-      lore:
-        - "&7The ultimate mining tool"
-        - "&7Forged from the heart of the plains"
-        - "&7&lMythic Item"
-        - "&6Requires: 7500 blocks mined"
-      enchantments:
-        - enchant: "efficiency"
-          min_level: 5
-          max_level: 5
-        - enchant: "fortune"
-          min_level: 3
-          max_level: 3
-        - enchant: "unbreaking"
-          min_level: 3
-          max_level: 3
-        - enchant: "mending"
-          min_level: 1
-          max_level: 1
-      unbreakable: true
+  - material: BEACON
+    min_amount: 1
+    max_amount: 1
+    chance: 30.0
+    display_name: "&cBeacon of the Plains"
+    required_blocks_mined: 5000  # Unlocked after mining 5000 blocks
+    lore:
+      - "&7A mystical beacon that lights the way"
+      - "&7Grants power to those who find it"
+      - "&6Requires: 5000 blocks mined"
+  
+  - material: NETHERITE_PICKAXE
+    min_amount: 1
+    max_amount: 1
+    chance: 10.0
+    display_name: "&cEarthbreaker's Pick"
+    required_blocks_mined: 7500  # Unlocked after mining 7500 blocks
+    lore:
+      - "&7The ultimate mining tool"
+      - "&7Forged from the heart of the plains"
+      - "&7&lMythic Item"
+      - "&6Requires: 7500 blocks mined"
+    enchantments:
+      - enchant: "efficiency"
+        min_level: 5
+        max_level: 5
+      - enchant: "fortune"
+        min_level: 3
+        max_level: 3
+      - enchant: "unbreaking"
+        min_level: 3
+        max_level: 3
+      - enchant: "mending"
+        min_level: 1
+        max_level: 1
+    unbreakable: true

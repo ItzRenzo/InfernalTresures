@@ -344,9 +344,20 @@ public class LootGUIManager implements Listener {
     
     private Set<Rarity> getAvailableRarities(Biome biome) {
         Set<Rarity> rarities = new HashSet<>();
-        File biomeFile = getBiomeFile(biome);
         
-        if (biomeFile == null || !biomeFile.exists()) return rarities;
+        // Instead of looking for individual biome files, use the biome category system
+        BiomeCategory category = plugin.getLootManager().getBiomeCategory(biome);
+        if (category == null) {
+            plugin.getLogger().warning("No biome category found for biome: " + biome.name());
+            return rarities;
+        }
+        
+        File biomeFile = new File(new File(plugin.getDataFolder(), "biomes"), category.getFileName() + ".yml");
+        
+        if (!biomeFile.exists()) {
+            plugin.getLogger().warning("Biome file does not exist: " + biomeFile.getPath());
+            return rarities;
+        }
         
         FileConfiguration config = YamlConfiguration.loadConfiguration(biomeFile);
         ConfigurationSection lootSection = config.getConfigurationSection("loot");
@@ -364,9 +375,15 @@ public class LootGUIManager implements Listener {
     }
     
     private int getLootCount(Biome biome, Rarity rarity) {
-        File biomeFile = getBiomeFile(biome);
+        // Use the biome category system instead of individual biome mapping
+        BiomeCategory category = plugin.getLootManager().getBiomeCategory(biome);
+        if (category == null) {
+            return 0;
+        }
         
-        if (biomeFile == null || !biomeFile.exists()) return 0;
+        File biomeFile = new File(new File(plugin.getDataFolder(), "biomes"), category.getFileName() + ".yml");
+        
+        if (!biomeFile.exists()) return 0;
         
         FileConfiguration config = YamlConfiguration.loadConfiguration(biomeFile);
         ConfigurationSection lootSection = config.getConfigurationSection("loot");

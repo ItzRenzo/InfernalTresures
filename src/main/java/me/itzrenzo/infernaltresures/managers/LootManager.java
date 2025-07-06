@@ -776,16 +776,35 @@ public class LootManager {
     public List<LootItemDisplay> getAllLootItems(Biome biome, Rarity rarity) {
         List<LootItemDisplay> displayItems = new ArrayList<>();
         
+        if (plugin.getConfigManager().isLootGenerationDebugEnabled()) {
+            plugin.getLogger().info("=== GUI LOOT LOADING DEBUG ===");
+            plugin.getLogger().info("Requested biome: " + biome.name());
+            plugin.getLogger().info("Requested rarity: " + rarity.name());
+        }
+        
         Map<Rarity, List<LootItem>> biomeLootTable = lootTables.get(biome);
         if (biomeLootTable == null) {
             plugin.getLogger().warning("No loot table found for biome: " + biome.name());
+            if (plugin.getConfigManager().isLootGenerationDebugEnabled()) {
+                plugin.getLogger().info("Available biomes in loot tables: " + lootTables.keySet());
+            }
             return displayItems;
         }
         
         List<LootItem> rarityLoot = biomeLootTable.get(rarity);
         if (rarityLoot == null || rarityLoot.isEmpty()) {
             plugin.getLogger().warning("No loot found for rarity " + rarity + " in biome " + biome.name());
+            if (plugin.getConfigManager().isLootGenerationDebugEnabled()) {
+                plugin.getLogger().info("Available rarities for " + biome.name() + ": " + biomeLootTable.keySet());
+                plugin.getLogger().info("Items count per rarity: ");
+                biomeLootTable.forEach((r, items) -> 
+                    plugin.getLogger().info("  " + r.name() + ": " + items.size() + " items"));
+            }
             return displayItems;
+        }
+        
+        if (plugin.getConfigManager().isLootGenerationDebugEnabled()) {
+            plugin.getLogger().info("Found " + rarityLoot.size() + " loot items for " + rarity + " in " + biome.name());
         }
         
         // Create display items for each loot item
@@ -794,7 +813,28 @@ public class LootManager {
             if (itemStack != null) {
                 LootItemDisplay displayItem = new LootItemDisplay(itemStack, lootItem);
                 displayItems.add(displayItem);
+                
+                if (plugin.getConfigManager().isLootGenerationDebugEnabled()) {
+                    plugin.getLogger().info("Created display item: " + 
+                        (lootItem.material != null ? lootItem.material.name() : 
+                         lootItem.isExecutableItem ? "ExecutableItem:" + lootItem.executableId :
+                         lootItem.isMMOItem ? "MMOItem:" + lootItem.mmoType + "." + lootItem.mmoId :
+                         "Unknown"));
+                }
+            } else {
+                if (plugin.getConfigManager().isLootGenerationDebugEnabled()) {
+                    plugin.getLogger().warning("Failed to create display ItemStack for loot item: " + 
+                        (lootItem.material != null ? lootItem.material.name() : 
+                         lootItem.isExecutableItem ? "ExecutableItem:" + lootItem.executableId :
+                         lootItem.isMMOItem ? "MMOItem:" + lootItem.mmoType + "." + lootItem.mmoId :
+                         "Unknown"));
+                }
             }
+        }
+        
+        if (plugin.getConfigManager().isLootGenerationDebugEnabled()) {
+            plugin.getLogger().info("Final display items count: " + displayItems.size());
+            plugin.getLogger().info("=== END GUI LOOT LOADING DEBUG ===");
         }
         
         return displayItems;

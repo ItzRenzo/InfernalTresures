@@ -4,6 +4,28 @@
 # Configuration for treasure hunting while mining
 
 # ========================================
+#           WORLD SETTINGS
+# ========================================
+worlds:
+  # World whitelist - treasures will only spawn in these worlds
+  # Leave empty to allow treasures in all worlds
+  # World names are case-sensitive and must match exactly
+  whitelist:
+    - "world"
+    - "world_nether"
+    - "world_the_end"
+  
+  # Whether to use the whitelist (true) or blacklist (false)
+  # true = Only allow treasures in whitelisted worlds
+  # false = Allow treasures in all worlds EXCEPT blacklisted worlds
+  use-whitelist: true
+  
+  # World blacklist - treasures will NOT spawn in these worlds (only used if use-whitelist is false)
+  blacklist:
+    - "creative_world"
+    - "spawn_world"
+
+# ========================================
 #           TREASURE SETTINGS
 # ========================================
 treasure:

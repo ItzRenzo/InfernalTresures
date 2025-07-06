@@ -55,8 +55,7 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             case "difficulty" -> handleDifficultyCommand(sender, args);
             case "help" -> sendHelpMessage(sender);
             default -> {
-                sender.sendMessage(Component.text("Unknown command. Use /treasure help for a list of commands.")
-                    .color(NamedTextColor.RED));
+                sender.sendMessage(plugin.getMessageManager().getMessageComponent("unknown-command"));
                 return false;
             }
         }
@@ -409,36 +408,32 @@ public class TreasureCommand implements CommandExecutor, TabCompleter {
             if (stats.hasActiveLuck()) {
                 long remainingSeconds = stats.getRemainingLuckSeconds();
                 String luckDuration = formatDuration(remainingSeconds);
-                sender.sendMessage(Component.text("🍀 Active Luck: ").color(NamedTextColor.GREEN)
-                    .append(Component.text(String.format("%.1fx", stats.luckMultiplier)).color(NamedTextColor.GOLD))
-                    .append(Component.text(" for ").color(NamedTextColor.GRAY))
-                    .append(Component.text(luckDuration).color(NamedTextColor.WHITE)));
+                sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+                    "stats-active-luck", 
+                    "{multiplier}", String.format("%.1fx", stats.luckMultiplier),
+                    "{duration}", luckDuration));
                 
                 // Show queued luck if it exists
                 if (stats.hasQueuedLuck()) {
                     long queuedSeconds = stats.getQueuedLuckRemainingSeconds();
                     String queuedDuration = formatDuration(queuedSeconds);
-                    sender.sendMessage(Component.text("📋 Queued Luck: ").color(NamedTextColor.YELLOW)
-                        .append(Component.text(String.format("%.1fx", stats.queuedLuckMultiplier)).color(NamedTextColor.GOLD))
-                        .append(Component.text(" for ").color(NamedTextColor.GRAY))
-                        .append(Component.text(queuedDuration).color(NamedTextColor.WHITE))
-                        .append(Component.text(" (activates when current expires)").color(NamedTextColor.GRAY)));
+                    sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+                        "stats-queued-luck",
+                        "{multiplier}", String.format("%.1fx", stats.queuedLuckMultiplier),
+                        "{duration}", queuedDuration));
                 }
             } else {
                 // Check if there's queued luck that might activate
                 if (stats.hasQueuedLuck()) {
                     long queuedSeconds = stats.getQueuedLuckRemainingSeconds();
                     String queuedDuration = formatDuration(queuedSeconds);
-                    sender.sendMessage(Component.text("🍀 Treasure Luck: ").color(NamedTextColor.GREEN)
-                        .append(Component.text("INACTIVE").color(NamedTextColor.GRAY)));
-                    sender.sendMessage(Component.text("📋 Queued Luck: ").color(NamedTextColor.YELLOW)
-                        .append(Component.text(String.format("%.1fx", stats.queuedLuckMultiplier)).color(NamedTextColor.GOLD))
-                        .append(Component.text(" for ").color(NamedTextColor.GRAY))
-                        .append(Component.text(queuedDuration).color(NamedTextColor.WHITE))
-                        .append(Component.text(" (will activate soon)").color(NamedTextColor.GRAY)));
+                    sender.sendMessage(messageManager.getMessageComponent("stats-luck-inactive"));
+                    sender.sendMessage(messageManager.getMessageComponentWithPlaceholders(
+                        "stats-queued-luck-soon",
+                        "{multiplier}", String.format("%.1fx", stats.queuedLuckMultiplier),
+                        "{duration}", queuedDuration));
                 } else {
-                    sender.sendMessage(Component.text("🍀 Treasure Luck: ").color(NamedTextColor.GREEN)
-                        .append(Component.text("INACTIVE").color(NamedTextColor.GRAY)));
+                    sender.sendMessage(messageManager.getMessageComponent("stats-luck-inactive"));
                 }
             }
         }

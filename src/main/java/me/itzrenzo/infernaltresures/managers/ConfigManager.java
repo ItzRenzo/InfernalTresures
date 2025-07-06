@@ -20,22 +20,8 @@ public class ConfigManager {
     // Biome files to copy
     private static final String[] BIOME_FILES = {
         "badlands.yml",
-        "basalt_deltas.yml", 
-        "crimson_forest.yml",
-        "desert.yml",
-        "end.yml",
-        "forest.yml",
-        "jungle.yml",
-        "mountains.yml",
-        "nether.yml",
-        "nether_wastes.yml",
-        "ocean.yml",
-        "plains.yml",
-        "savanna.yml",
-        "soul_sand_valley.yml",
-        "swamp.yml",
-        "taiga.yml",
-        "warped_forest.yml"
+        "basalt_deltas.yml",
+        "default.yml"
     };
     
     public ConfigManager(InfernalTresures plugin) {
@@ -104,9 +90,13 @@ public class ConfigManager {
             plugin.getLogger().info("Created biomes folder.");
         }
         
+        plugin.getLogger().info("Setting up biomes folder. Checking " + BIOME_FILES.length + " biome files...");
+        
         // Copy each biome file if it doesn't exist
         for (String fileName : BIOME_FILES) {
             File biomeFile = new File(biomesFolder, fileName);
+            
+            plugin.getLogger().info("Checking biome file: " + fileName + " - Exists: " + biomeFile.exists());
             
             if (!biomeFile.exists()) {
                 try {
@@ -121,6 +111,17 @@ public class ConfigManager {
                 } catch (IOException e) {
                     plugin.getLogger().severe("Failed to copy biome config " + fileName + ": " + e.getMessage());
                 }
+            } else {
+                plugin.getLogger().info("Biome file already exists, skipping: " + fileName);
+            }
+        }
+        
+        // List all files actually in the biomes folder for debugging
+        File[] existingFiles = biomesFolder.listFiles();
+        if (existingFiles != null) {
+            plugin.getLogger().info("Current biomes folder contains " + existingFiles.length + " files:");
+            for (File file : existingFiles) {
+                plugin.getLogger().info("  - " + file.getName());
             }
         }
     }
@@ -301,6 +302,19 @@ public class ConfigManager {
                                    "Maximum treasure progression";
                 config.set(basePath + ".description", description);
             }
+        }
+        
+        // Set world whitelist defaults
+        if (!config.isSet("worlds.use-whitelist")) {
+            config.set("worlds.use-whitelist", true);
+        }
+        
+        if (!config.isSet("worlds.whitelist")) {
+            config.set("worlds.whitelist", java.util.Arrays.asList("world", "world_nether", "world_the_end"));
+        }
+        
+        if (!config.isSet("worlds.blacklist")) {
+            config.set("worlds.blacklist", java.util.Arrays.asList("creative_world", "spawn_world"));
         }
     }
     
@@ -826,5 +840,127 @@ public class ConfigManager {
             }
         }
         return indentation.toString();
+    }
+    
+    // World whitelist configuration methods
+    
+    /**
+     * Check if treasures should spawn in the specified world
+     */
+    public boolean isTreasureAllowedInWorld(String worldName) {
+        if (worldName == null) {
+            return false;
+        }
+        
+        boolean useWhitelist = config.getBoolean("worlds.use-whitelist", true);
+        
+        if (useWhitelist) {
+            // Whitelist mode - only allow treasures in whitelisted worlds
+            java.util.List<String> whitelist = config.getStringList("worlds.whitelist");
+            
+            // If whitelist is empty, allow all worlds
+            if (whitelist.isEmpty()) {
+                return true;
+            }
+            
+            return whitelist.contains(worldName);
+        } else {
+            // Blacklist mode - allow treasures in all worlds except blacklisted ones
+            java.util.List<String> blacklist = config.getStringList("worlds.blacklist");
+            return !blacklist.contains(worldName);
+        }
+    }
+    
+    /**
+     * Check if using whitelist mode or blacklist mode
+     */
+    public boolean isUsingWhitelist() {
+        return config.getBoolean("worlds.use-whitelist", true);
+    }
+    
+    /**
+     * Get the list of whitelisted worlds
+     */
+    public java.util.List<String> getWhitelistedWorlds() {
+        return config.getStringList("worlds.whitelist");
+    }
+    
+    /**
+     * Get the list of blacklisted worlds
+     */
+    public java.util.List<String> getBlacklistedWorlds() {
+        return config.getStringList("worlds.blacklist");
+    }
+    
+    /**
+     * Add a world to the whitelist
+     */
+    public void addWorldToWhitelist(String worldName) {
+        if (worldName == null || worldName.trim().isEmpty()) {
+            return;
+        }
+        
+        java.util.List<String> whitelist = config.getStringList("worlds.whitelist");
+        if (!whitelist.contains(worldName)) {
+            whitelist.add(worldName);
+            config.set("worlds.whitelist", whitelist);
+            saveConfigWithComments();
+        }
+    }
+    
+    /**
+     * Remove a world from the whitelist
+     */
+    public void removeWorldFromWhitelist(String worldName) {
+        if (worldName == null || worldName.trim().isEmpty()) {
+            return;
+        }
+        
+        java.util.List<String> whitelist = config.getStringList("worlds.whitelist");
+        if (whitelist.contains(worldName)) {
+            whitelist.remove(worldName);
+            config.set("worlds.whitelist", whitelist);
+            saveConfigWithComments();
+        }
+    }
+    
+    /**
+     * Add a world to the blacklist
+     */
+    public void addWorldToBlacklist(String worldName) {
+        if (worldName == null || worldName.trim().isEmpty()) {
+            return;
+        }
+        
+        java.util.List<String> blacklist = config.getStringList("worlds.blacklist");
+        if (!blacklist.contains(worldName)) {
+            blacklist.add(worldName);
+            config.set("worlds.blacklist", blacklist);
+            saveConfigWithComments();
+        }
+    }
+    
+    /**
+     * Remove a world from the blacklist
+     */
+    public void removeWorldFromBlacklist(String worldName) {
+        if (worldName == null || worldName.trim().isEmpty()) {
+            return;
+        }
+        
+        java.util.List<String> blacklist = config.getStringList("worlds.blacklist");
+        if (blacklist.contains(worldName)) {
+            blacklist.remove(worldName);
+            config.set("worlds.blacklist", blacklist);
+            saveConfigWithComments();
+        }
+    }
+    
+    /**
+     * Set whether to use whitelist mode or blacklist mode
+     */
+    public void setUseWhitelist(boolean useWhitelist) {
+        config.set("worlds.use-whitelist", useWhitelist);
+        saveConfigWithComments();
     }
 }
