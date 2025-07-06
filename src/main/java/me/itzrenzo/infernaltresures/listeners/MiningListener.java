@@ -1,6 +1,7 @@
 package me.itzrenzo.infernaltresures.listeners;
 
 import me.itzrenzo.infernaltresures.InfernalTresures;
+import me.itzrenzo.infernaltresures.models.Treasure;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -10,6 +11,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemStack;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class MiningListener implements Listener {
     
@@ -19,6 +23,32 @@ public class MiningListener implements Listener {
         this.plugin = plugin;
     }
     
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onTreasureBarrelBreak(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
+        
+        // Only check if this is a barrel
+        if (block.getType() != Material.BARREL) {
+            return;
+        }
+        
+        // Check if this barrel is a treasure barrel with loot
+        Treasure treasure = getTreasureAtLocation(block);
+        if (treasure != null && hasTreasureLoot(block)) {
+            // Cancel the event to prevent breaking
+            event.setCancelled(true);
+            
+            // Send message to player
+            player.sendMessage(Component.text("⚠️ You cannot break this treasure barrel while it still contains loot!")
+                .color(NamedTextColor.RED));
+            player.sendMessage(Component.text("💎 Take all the items first, then you can break it.")
+                .color(NamedTextColor.YELLOW));
+            
+            return;
+        }
+    }
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
@@ -43,9 +73,53 @@ public class MiningListener implements Listener {
         }
     }
     
+    /**
+     * Check if there's a treasure at the given block location
+     */
+    private Treasure getTreasureAtLocation(Block block) {
+        for (Treasure treasure : plugin.getTreasureManager().getActiveTreasures().values()) {
+            if (treasure.getLocation().equals(block.getLocation())) {
+                return treasure;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Check if a treasure barrel has any loot remaining
+     */
+    private boolean hasTreasureLoot(Block block) {
+        if (block.getType() != Material.BARREL) {
+            return false;
+        }
+        
+        try {
+            if (block.getState() instanceof org.bukkit.block.Barrel barrel) {
+                org.bukkit.inventory.Inventory inventory = barrel.getInventory();
+                
+                // Check if any slot contains an item
+                for (ItemStack item : inventory.getContents()) {
+                    if (item != null && item.getType() != Material.AIR) {
+                        return true; // Found loot
+                    }
+                }
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("Error checking treasure barrel contents: " + e.getMessage());
+        }
+        
+        return false; // No loot found or error occurred
+    }
+
     private boolean canSpawnTreasure(Player player, Block block) {
         // Ignore in creative mode
         if (player.getGameMode() == GameMode.CREATIVE) {
+            return false;
+        }
+        
+        // Check if treasures are allowed in this world
+        String worldName = block.getWorld().getName();
+        if (!plugin.getConfigManager().isTreasureAllowedInWorld(worldName)) {
             return false;
         }
         
