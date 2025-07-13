@@ -54,6 +54,18 @@ public class TreasureManager {
             return false;
         }
 
+        // Get biome and check if it has valid loot configured
+        Biome biome = minedBlock.getBiome();
+        
+        // Check if this biome has a valid loot table before proceeding
+        if (!hasValidLootTable(biome, rarity)) {
+            if (plugin.getConfigManager().isTreasureSpawningDebugEnabled()) {
+                plugin.getLogger().info("Skipping treasure spawn in biome " + biome.name() + 
+                    " - no valid loot table found in biomes folder");
+            }
+            return false; // Don't spawn treasure if biome has no valid loot
+        }
+
         // Track treasure found statistics
         plugin.getStatsManager().onTreasureFound(player, rarity);
 
@@ -66,9 +78,6 @@ public class TreasureManager {
 
         // Use the exact location of the broken block, but delay the spawning
         Location spawnLocation = minedBlock.getLocation().add(0.5, 0, 0.5); // Center the barrel in the block
-
-        // Get biome
-        Biome biome = minedBlock.getBiome();
 
         // Delay the treasure creation to ensure the block breaking event completes first
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -195,5 +204,28 @@ public class TreasureManager {
     
     public Map<UUID, Treasure> getActiveTreasures() {
         return Collections.unmodifiableMap(activeTreasures);
+    }
+    
+    /**
+     * Check if a biome has a valid loot table for the given rarity
+     */
+    private boolean hasValidLootTable(Biome biome, Rarity rarity) {
+        // Use the LootManager to check if this biome has valid loot configured
+        try {
+            // Check if biome category exists
+            if (plugin.getLootManager().getBiomeCategory(biome) == null) {
+                return false;
+            }
+            
+            // Try to get loot items for this biome and rarity
+            var lootItems = plugin.getLootManager().getAllLootItems(biome, rarity);
+            
+            // If we get a valid list with items, the biome has valid loot
+            return lootItems != null && !lootItems.isEmpty();
+        } catch (Exception e) {
+            // If any error occurs, assume no valid loot table
+            plugin.getLogger().warning("Error checking loot table for biome " + biome.name() + ": " + e.getMessage());
+            return false;
+        }
     }
 }

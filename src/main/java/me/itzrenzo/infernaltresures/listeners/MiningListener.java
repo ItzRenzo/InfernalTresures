@@ -1,7 +1,5 @@
 package me.itzrenzo.infernaltresures.listeners;
 
-import me.itzrenzo.infernaltresures.InfernalTresures;
-import me.itzrenzo.infernaltresures.models.Treasure;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -12,6 +10,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+
+import me.itzrenzo.infernaltresures.InfernalTresures;
+import me.itzrenzo.infernaltresures.models.Treasure;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
