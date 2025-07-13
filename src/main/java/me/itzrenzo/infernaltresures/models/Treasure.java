@@ -1,8 +1,8 @@
 package me.itzrenzo.infernaltresures.models;
 
-import me.itzrenzo.infernaltresures.InfernalTresures;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,15 +13,15 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.List;
-import java.util.UUID;
+import me.itzrenzo.infernaltresures.InfernalTresures;
+import net.kyori.adventure.text.Component;
 
 public class Treasure {
     private final UUID id;
     private final Location location;
     private final Rarity rarity;
     private final Biome biome;
-    private final UUID finderId; // Player who found this treasure
+    private final UUID finderId;
     private final BukkitTask despawnTask;
     private boolean claimed = false;
     private ArmorStand hologram;
@@ -44,13 +44,11 @@ public class Treasure {
         );
     }
     
-    // Backward compatibility constructor
     public Treasure(Location location, Rarity rarity, Biome biome) {
         this(location, rarity, biome, null);
     }
     
     private void spawnTreasure(org.bukkit.entity.Player finder) {
-        // Place the barrel block
         Block block = location.getBlock();
         block.setType(Material.BARREL);
         
@@ -69,7 +67,6 @@ public class Treasure {
             loot = InfernalTresures.getInstance().getLootManager().generateLoot(biome, rarity, finder);
         }
         
-        // Debug log
         if (InfernalTresures.getInstance().getConfigManager().isLootGenerationDebugEnabled()) {
             InfernalTresures.getInstance().getLogger().info("Generated " + loot.size() + " items for " + rarity + " treasure" +
                 (finderId != null ? " for player UUID " + finderId : " (no player UUID)"));
@@ -93,15 +90,15 @@ public class Treasure {
         hologram = (ArmorStand) location.getWorld().spawnEntity(hologramLocation, EntityType.ARMOR_STAND);
         
         // Configure the armor stand as a hologram
-        hologram.setVisible(false);           // Make armor stand invisible
-        hologram.setGravity(false);          // No gravity
-        hologram.setMarker(true);            // Make it a marker (no collision)
-        hologram.setSmall(true);             // Make it small
-        hologram.setBasePlate(false);        // Remove base plate
-        hologram.setArms(false);             // Remove arms
-        hologram.setCanPickupItems(false);   // Can't pickup items
-        hologram.setRemoveWhenFarAway(false); // Don't despawn when players leave
-        hologram.setInvulnerable(true);      // Make invulnerable
+        hologram.setVisible(false);           
+        hologram.setGravity(false);          
+        hologram.setMarker(true);            
+        hologram.setSmall(true);             
+        hologram.setBasePlate(false);        
+        hologram.setArms(false);             
+        hologram.setCanPickupItems(false);   
+        hologram.setRemoveWhenFarAway(false); 
+        hologram.setInvulnerable(true);      
         
         // Set the hologram text using MessageManager
         Component hologramText = InfernalTresures.getInstance().getMessageManager().getHologramText(rarity, biome);

@@ -34,10 +34,8 @@ public final class InfernalTresures extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Set instance
         instance = this;
         
-        // Initialize managers first
         configManager = new ConfigManager(this);
         configManager.loadConfig();
         
@@ -53,16 +51,13 @@ public final class InfernalTresures extends JavaPlugin {
         treasureManager = new TreasureManager(this);
         statsManager = new StatsManager(this);
         
-        // Initialize integrations after managers are ready
         mmoItemsIntegration = new MMOItemsIntegration(this);
         executableItemsIntegration = new ExecutableItemsIntegration(this);
         executableBlocksIntegration = new ExecutableBlocksIntegration(this);
         
-        // Schedule delayed checks for integrations that might need more time to initialize
         getServer().getScheduler().runTaskLater(this, () -> {
             boolean reloadNeeded = false;
             
-            // Retry ExecutableItems integration if it failed initially
             if (!executableItemsIntegration.isEnabled()) {
                 getLogger().info("Retrying ExecutableItems integration after server startup...");
                 executableItemsIntegration = new ExecutableItemsIntegration(this);
@@ -71,7 +66,6 @@ public final class InfernalTresures extends JavaPlugin {
                 }
             }
             
-            // Retry ExecutableBlocks integration if it failed initially
             if (!executableBlocksIntegration.isEnabled()) {
                 getLogger().info("Retrying ExecutableBlocks integration after server startup...");
                 executableBlocksIntegration = new ExecutableBlocksIntegration(this);
@@ -80,7 +74,6 @@ public final class InfernalTresures extends JavaPlugin {
                 }
             }
             
-            // Retry MMOItems integration if it failed initially  
             if (!mmoItemsIntegration.isEnabled()) {
                 getLogger().info("Retrying MMOItems integration after server startup...");
                 mmoItemsIntegration = new MMOItemsIntegration(this);
@@ -89,18 +82,15 @@ public final class InfernalTresures extends JavaPlugin {
                 }
             }
             
-            // Reload loot tables if any integration became available
             if (reloadNeeded) {
                 getLogger().info("Reloading loot tables with updated integrations...");
                 lootManager.reload();
             }
-        }, 60L); // Wait 3 seconds (60 ticks) after server startup
+        }, 60L);
         
-        // Register listeners
         getServer().getPluginManager().registerEvents(new MiningListener(this), this);
         getServer().getPluginManager().registerEvents(new StatsListener(this), this);
         
-        // Register commands
         getCommand("treasure").setExecutor(new TreasureCommand(this));
         getCommand("lootgui").setExecutor(new TreasureCommand(this));
         
@@ -109,17 +99,14 @@ public final class InfernalTresures extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Save stats and shutdown storage system
         if (statsManager != null) {
             statsManager.shutdown();
         }
         
-        // Clean up any remaining treasures
         if (treasureManager != null) {
             treasureManager.cleanupAllTreasures();
         }
         
-        // Save config if needed
         if (configManager != null) {
             configManager.saveConfig();
         }

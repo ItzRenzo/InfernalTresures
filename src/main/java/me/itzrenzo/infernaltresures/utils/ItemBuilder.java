@@ -1,8 +1,10 @@
 package me.itzrenzo.infernaltresures.utils;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -17,8 +19,9 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 public class ItemBuilder {
     private final ItemStack itemStack;
@@ -89,9 +92,7 @@ public class ItemBuilder {
      */
     public ItemBuilder addRandomEnchantment(int minLevel, int maxLevel) {
         if (itemMeta != null) {
-            // Get all enchantments that can be applied to this item
             List<Enchantment> applicableEnchants = new ArrayList<>();
-            // Use Registry instead of deprecated values() method
             for (Enchantment enchant : org.bukkit.Registry.ENCHANTMENT) {
                 if (enchant.canEnchantItem(itemStack)) {
                     applicableEnchants.add(enchant);
@@ -119,8 +120,6 @@ public class ItemBuilder {
      */
     public ItemBuilder addAttribute(Attribute attribute, double amount, AttributeModifier.Operation operation, EquipmentSlot slot) {
         if (attribute != null && itemMeta != null) {
-            // Use the constructor that takes NamespacedKey and EquipmentSlotGroup
-            // Convert EquipmentSlot to EquipmentSlotGroup
             EquipmentSlotGroup slotGroup = convertToSlotGroup(slot);
             NamespacedKey key = NamespacedKey.minecraft(attribute.getKey().getKey() + "_modifier");
             AttributeModifier modifier = new AttributeModifier(
@@ -245,11 +244,9 @@ public class ItemBuilder {
      */
     public static Enchantment getEnchantmentByName(String name) {
         try {
-            // Use Registry instead of deprecated methods
             NamespacedKey key = NamespacedKey.minecraft(name.toLowerCase());
             return org.bukkit.Registry.ENCHANTMENT.get(key);
         } catch (Exception e) {
-            // Fallback to checking all enchantments using Registry
             for (Enchantment enchant : org.bukkit.Registry.ENCHANTMENT) {
                 if (enchant.getKey().getKey().equalsIgnoreCase(name)) {
                     return enchant;
@@ -264,11 +261,9 @@ public class ItemBuilder {
      */
     public static Attribute getAttributeByName(String name) {
         try {
-            // Use Registry instead of deprecated valueOf
             NamespacedKey key = NamespacedKey.minecraft(name.toLowerCase());
             return org.bukkit.Registry.ATTRIBUTE.get(key);
         } catch (Exception e) {
-            // Fallback to checking all attributes using Registry
             for (Attribute attribute : org.bukkit.Registry.ATTRIBUTE) {
                 if (attribute.getKey().getKey().equalsIgnoreCase(name)) {
                     return attribute;
@@ -294,11 +289,9 @@ public class ItemBuilder {
      */
     public static PotionEffectType getPotionEffectByName(String name) {
         try {
-            // Use Registry instead of deprecated methods
             NamespacedKey key = NamespacedKey.minecraft(name.toLowerCase());
             return org.bukkit.Registry.POTION_EFFECT_TYPE.get(key);
         } catch (Exception e) {
-            // Fallback to checking all potion effect types using Registry
             for (PotionEffectType effectType : org.bukkit.Registry.POTION_EFFECT_TYPE) {
                 if (effectType.getKey().getKey().equalsIgnoreCase(name)) {
                     return effectType;
